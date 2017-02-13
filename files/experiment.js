@@ -40,118 +40,60 @@ function makeConstructorButton(functionIN,buttonClass,buttonID,clickable){
 }
 
 
-
-function drawIfNeeded(divIN){
-    if(divIN=="gameDiv"){if(isDivNotThere(divIN)){drawGame("regular");}}
-    else if(divIN=="regularDefaultDiv"){if(isDivNotThere(divIN)){drawDefault("regular");}}
-    else if(divIN=="regularConstructorDiv"){if(isDivNotThere(divIN)){drawConstructor("regular");}}
-    else if(divIN=="regularRuleList"){if(isDivNotThere(divIN)){drawRules("regular");}}
-    else if(divIN=="quizDiv"){if(isDivNotThere(divIN)){displayQuestion();}}
-    else if(divIN=="hypothetical"){if(isDivNotThere("hypLeft")){drawHypothetical();}}
-    else if(divIN=="regular_history"){if(isDivNotThere("regular_history")){drawHistory("regular");}}
-}
-
-
-
 function drawInfo(){
-    var topInfoLeft=createDiv("topInfoLeft");
-    topInfoLeft.innerHTML="Match #"+window.state["match"];
-    if(window.state['page']=="instructions"){topInfoLeft.innerHTML="Match #: Instructions";}
-    else if(window.state["match"]==0){topInfoLeft.innerHTML="Match #: Practice";}
-    $("#mainDiv").append(topInfoLeft);
+    placeTextNew({"divid":"topInfo1","text":"Match #"+window.state["match"],"top":"0px","fontSize":"150%","color":"red","width":"400px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
+    placeTextNew({"divid":"topInfo2","text":"Payoff this match: "+window.state["matchPayoff"],"top":"0px","fontSize":"150%","color":"black","width":"480px","textAlign":"center","left":"400px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
+    placeTextNew({"divid":"topInfo3","text":"Total Earned Today: "+window.state["totalPayoff"],"top":"0px","fontSize":"150%","color":"green","width":"400px","textAlign":"center","left":"880px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
 
-    var topInfoMiddle=createDiv("topInfoMiddle");
-    if(window.matchPayoff!=undefined){
-        topInfoMiddle.innerHTML="Payoff this match: "+window.matchPayoff[0];//You: "+window.matchPayoff[0];//+"  Other: "+window.matchPayoff[1];
-    }
-    else{
-        topInfoMiddle.innerHTML="Payoff this match: 0";//You: 0";//  Other: 0";
-    }
-    $("#mainDiv").append(topInfoMiddle);
+    // var topInfoLeft=createDiv("topInfoLeft");
+    // topInfoLeft.innerHTML="Match #"+window.state["match"];
+    // if(window.state['page']=="instructions"){topInfoLeft.innerHTML="Match #: Instructions";}
+    // else if(window.state["match"]==0){topInfoLeft.innerHTML="Match #: Practice";}
+    // $("#mainDiv").append(topInfoLeft);
 
-    var topInfoRight=createDiv("topInfoRight");
-    if(window.totalPayoff!=undefined){
-        topInfoRight.innerHTML="Total Earned Today: <span style='color:#008800'>"+window.totalPayoff+"</span> - <span style='color:#FF0000'>"+parseInt(window.unlockCosts)+"</span> = "+(window.totalPayoff-parseInt(window.unlockCosts));
-    }
-    else{
-        topInfoRight.innerHTML="Total Earned Today: 0";
-    }
-    $("#mainDiv").append(topInfoRight);
-}
-function drawGame(type){
-    //Create Game div
-    gameDiv=createDiv("gameDiv");
-    if(window.payoffs==undefined){
-        window.payoffs=[];
-        window.payoffs[0]=[1,2,0,4];
-        window.payoffs[1]=[1,2,0,4];
-        window.payoffs[2]=[1,2,0,4];
-        window.payoffs[3]=[1,2,0,4];
-    }
-    if (window.actionProfileFrequencies==undefined){
-        window.actionProfileFrequencies=[0,0,0,0]
-    }
+    // var topInfoMiddle=createDiv("topInfoMiddle");
+    // if(window.matchPayoff!=undefined){
+    //     topInfoMiddle.innerHTML="Payoff this match: "+window.matchPayoff[0];//You: "+window.matchPayoff[0];//+"  Other: "+window.matchPayoff[1];
+    // }
+    // else{
+    //     topInfoMiddle.innerHTML="Payoff this match: 0";//You: 0";//  Other: 0";
+    // }
+    // $("#mainDiv").append(topInfoMiddle);
 
-    table=[   ['My Choice','wSquare','wSquare','ySquare','ySquare'],
-        ['Other\'s Choice','wSquare','ySquare','wSquare','ySquare'],
-        ['My Payoff',window.payoffs[0][0],window.payoffs[1][0],window.payoffs[2][0],window.payoffs[3][0]],
-        ['Other\'s Payoff',window.payoffs[0][1],window.payoffs[1][1],window.payoffs[2][1],window.payoffs[3][1]],
-        ['Occurrences',window.actionProfileFrequencies[0],window.actionProfileFrequencies[1],window.actionProfileFrequencies[2],window.actionProfileFrequencies[3]]
-    ]
-    for(row=0;row<table.length;row++){
-        for(col=0;col<table[row].length;col++){
-            if(col==0){
-                var entryDiv=createDiv("gameTable_"+row+"_"+col);
-                entryDiv.className="entry entryTitle"
-                entryDiv.innerHTML=table[row][col];
-                entryDiv.style.transform="translate3d(0px,"+(row*50)+"px,0px)";
-                gameDiv.appendChild(entryDiv);
-            }
-            else{
-                var entryDiv=createDiv("gameTable_"+row+"_"+col);
-                entryDiv.style.transform="translate3d("+(100+col*50)+"px,"+(row*50)+"px,0px)";
-                if(table[row][col]=="wSquare"){
-                    entryDiv.className="wSquare square"                
-                }
-                else if(table[row][col]=="ySquare"){
-                    entryDiv.className="ySquare square"
-                }
-                else{
-                    entryDiv.className="entry"
-                    entryDiv.innerHTML=table[row][col];
-                }
-                gameDiv.appendChild(entryDiv);
-
-            }
-        }
-    }
+    // var topInfoRight=createDiv("topInfoRight");
+    // if(window.totalPayoff!=undefined){
+    //     topInfoRight.innerHTML="Total Earned Today: <span style='color:#008800'>"+window.totalPayoff+"</span> - <span style='color:#FF0000'>"+parseInt(window.unlockCosts)+"</span> = "+(window.totalPayoff-parseInt(window.unlockCosts));
+    // }
+    // else{
+    //     topInfoRight.innerHTML="Total Earned Today: 0";
+    // }
+    // $("#mainDiv").append(topInfoRight);
 }
 
 
-
-function drawGame2(){
+function drawGame(){
     //Create Game div
-    var gameDiv=createAndAddDiv("gameDiv","mainDiv");
-    if(window.payoffs==undefined){
-        window.payoffs=[];
-        window.payoffs[0]=[1,2,0,4];
-        window.payoffs[1]=[1,2,0,4];
-        window.payoffs[2]=[1,2,0,4];
-        window.payoffs[3]=[1,2,0,4];
+    var gameTable=createAndAddDiv("gameTable","mainDiv");
+    if(window.state['payoffs']==undefined){
+        window.state['payoffs']=[];
+        window.state['payoffs'][0]=[1,2,0,4];
+        window.state['payoffs'][1]=[1,2,0,4];
+        window.state['payoffs'][2]=[1,2,0,4];
+        window.state['payoffs'][3]=[1,2,0,4];
     }
-    if (window.actionProfileFrequencies==undefined){
-        window.actionProfileFrequencies=[0,0,0,0]
+    if (window.state['actionProfileFrequencies']==undefined){
+        window.state['actionProfileFrequencies']=[0,0,0,0]
     }
 
     table=[['My Choice','wSquare','wSquare','ySquare','ySquare'],
         ['Other\'s Choice','wSquare','ySquare','wSquare','ySquare'],
-        ['My Payoff',window.payoffs[0][0],window.payoffs[1][0],window.payoffs[2][0],window.payoffs[3][0]],
-        ['Other\'s Payoff',window.payoffs[0][1],window.payoffs[1][1],window.payoffs[2][1],window.payoffs[3][1]],
-        ['Occurrences',window.actionProfileFrequencies[0],window.actionProfileFrequencies[1],window.actionProfileFrequencies[2],window.actionProfileFrequencies[3]]
+        ['My Payoff',window.state['payoffs'][0][0],window.state['payoffs'][1][0],window.state['payoffs'][2][0],window.state['payoffs'][3][0]],
+        ['Other\'s Payoff',window.state['payoffs'][0][1],window.state['payoffs'][1][1],window.state['payoffs'][2][1],window.state['payoffs'][3][1]],
+        ['Occurrences',window.state['actionProfileFrequencies'][0],window.state['actionProfileFrequencies'][1],window.state['actionProfileFrequencies'][2],window.state['actionProfileFrequencies'][3]]
     ]
     for(row=0;row<table.length;row++){
         for(col=0;col<table[row].length;col++){
-            var entryDiv=createAndAddDiv("gameTable_"+row+"_"+col,"gameDiv")
+            var entryDiv=createAndAddDiv("gameTable_"+row+"_"+col,"gameTable")
             if(col==0){
                 entryDiv.className="entry entryTitle"
                 entryDiv.innerHTML=table[row][col];
@@ -175,11 +117,12 @@ function drawGame2(){
 }
 
 
-function deleteRule(constructorIn,type){
+function deleteRule(args){
+    var thisConstructor=args[0];
     if(thisStatus["page"]=="quiz" && window.questionType==4 && thisStatus["stage"]=="question"){
         var confirmation=confirmAction("Are you sure you want to delete this rule as your answer??");
         if(confirmation){
-            var message={"type":"quizAnswer","answer":constructorIn,"questionType":4};
+            var message={"type":"quizAnswer","answer":thisConstructor,"questionType":4};
             sock.send(JSON.stringify(message));
         }
     }
@@ -187,182 +130,87 @@ function deleteRule(constructorIn,type){
         var confirmation=confirmAction("You can't delete rules right now.");
     }
     else{
-        var message={"type":"deleteRule","rule":constructorIn,"rulesType":getRuleSet(type)};
+        var message={"type":"deleteRule","rule":thisConstructor};
         sock.send(JSON.stringify(message));
     }
 }
 
-function switchRules(args){
-    constructorDivName=args[0];
-    constructorParentDiv=args[1];
-    var message={"type":"switchRuleOutput","thisRule":window.constructors[constructorDivName],"rulesType":constructorDivName};
+function switchRules(){
+    var message={"type":"switchRuleOutput","thisRule":window.ruleConstructor};
     sock.send(JSON.stringify(message));
-    window.constructors[constructorDivName]=[[-1,-1],[-1]];
-    drawConstructor2(constructorDivName,constructorParentDiv);
+    window.ruleConstructor=[[-1,-1],[-1]];
+    drawConstructor2();
 }
 
-function addRule(args){
-    console.log("ssdf");
-    constructorDivName=args[0];
-    constructorParentDiv=args[1];
-    var message={"type":"addRule","thisRule":window.constructors[constructorDivName],"rulesType":constructorDivName};
+function addRule(){
+    var message={"type":"addRule","thisRule":window.ruleConstructor};
     sock.send(JSON.stringify(message));
-    window.constructors[constructorDivName]=[[-1,-1],[-1]];
-    drawConstructor2(constructorDivName,constructorParentDiv);
-}
-
-function addRuleFromHyp(type,constructorIN){
-    switchRule=JSON.parse(JSON.stringify(constructorIN));
-    switchRule[switchRule.length-1][0]=1-switchRule[switchRule.length-1][0];
-    if(JSON.stringify(window.ruleSets["regular"]).indexOf(JSON.stringify(constructorIN))>-1){
-        alert("That rule is already in your Actual Rule Set.");
-    }
-    else if(JSON.stringify(window.ruleSets["regular"]).indexOf(JSON.stringify(switchRule))>-1){
-        var confirmation=confirmAction("There is a conflicting rule in your set, do you want to switch it with this rule?");
-        if(confirmation){
-            var message={"type":"switchRuleOutput","thisRule":constructorIN,"rulesType":getRuleSet(type)};
-            sock.send(JSON.stringify(message));
-        }
-    }
-    else{
-        var message={"type":"addRule","thisRule":constructorIN,"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
- }
-
-
-function setConstructor(constructorIn,type){
-    thisConstructor=JSON.parse(JSON.stringify(constructorIn));
-    if(thisStatus["page"]=="quiz" && window.questionType!=5){
-        var confirmation=confirmAction("You can't COPY RULES right now.");
-    }
-    else{
-        window.constructors[type]=thisConstructor;
-        drawConstructor(type);
-    }
-}
-
-function drawConstructor(type){
-    divName=type+"ConstructorDiv";
-    //Create entire Div
-    constructorDiv=createDiv(divName);
-    constructorDiv.className = "constructor";
-    thisConstructor=window.constructors[getRuleSet(type)]
-
-    //Create ConstructorIn div (so that you can scroll on long slider)
-    var constructorIn2 = document.createElement("div");
-    constructorIn2.className = "constructorIn2";
-
-
-    var constructorIn = document.createElement("div");
-    constructorIn.className = "constructorIn";
-    if(thisConstructor.length*50>525){  
-        constructorIn.setAttribute("style","width:"+(thisConstructor.length+3)*50+"px");
-        constructorIn.style.left="0px";
-    }
-    else{
-        constructorIn.setAttribute("style","width:"+(thisConstructor.length+1)*50+"px");        
-        constructorIn.style.left=((730-(thisConstructor.length+1)*50)/2)+"px";
-    }
-
-    //plus button
-    var plusButton = document.createElement("div");
-    var pf = partial(constructorPlusMinus,"+",-1,getRuleSet(type));
-    plusButton.addEventListener("mousedown",pf);
-    plusButton.id=type+"_plusConstructorButton";
-    plusButton.className="plusConstructorButton constructorButton";
-    plusButton.style.transform="translate3d(0px,80px,0px)";
-    constructorIn.appendChild(plusButton);
-
-
-    for(col=0;col<thisConstructor.length;col++){
-        if(thisConstructor.length-col>2 && thisConstructor.length>2){
-            var minusButton = document.createElement("div");
-            minusButton.className="minusConstructorButton constructorButton";
-            minusButton.id=type+"_minusConstructorButton_"+col;
-            var pf = partial(constructorPlusMinus,"-",col,getRuleSet(type));
-            minusButton.addEventListener("click",pf);
-            minusButton.style.transform="translate3d("+(col*50+60)+"px,0px,0px)";
-            constructorIn.appendChild(minusButton);
-        }
-        for(row=0;row<thisConstructor[col].length;row++){
-            action=actionFromInteger(thisConstructor[col][row]);
-            var s = document.createElement("a");
-            s.id="square_"+col+"_"+row;
-            var pf = partial(changeConstructorEntry,s.id,row,col,getRuleSet(type));
-            s.addEventListener("mousedown",pf);
-            s.className=action+"Square square";
-            s.style.transform="translate3d("+(50+col*50)+"px,"+(50*row+50)+"px,0px)";
-
-            constructorIn.appendChild(s);
-        }
-    }
-
-    constructorIn2.appendChild(constructorIn);
-    constructorDiv.appendChild(constructorIn2);
-    $("#mainDiv").append(constructorDiv);
-    drawConstructorSubmitButton(type);
-    if(thisStatus["page"]=="quiz"){
-        document.getElementById(divName).style.backgroundColor="rgba(0,0,0,0)";
-    }
+    window.ruleConstructor=[[-1,-1],[-1]];
+    drawConstructor2();
 }
 
 
-//function drawRule2(ruleNumber,constructor,ruleDivName,addToDiv,clickable,highlight){
+function setConstructor(args){
+    thisConstructor=JSON.parse(JSON.stringify(args[0]));
+    window.ruleConstructor=thisConstructor;
+    drawConstructor2();
+}
 
-function drawConstructor2(constructorDivName,constructorDivParent){
+
+//function drawRule2(constructor,ruleDivName,addToDiv,clickable,highlight){
+
+function drawConstructor2(){
 
     //Set constructor if not already set.
-    if(window.constructors[constructorDivName]==undefined){
-        window.constructors[constructorDivName]=[[-1,-1],[-1]];
+    if(window.ruleConstructor==undefined){
+        window.ruleConstructor=[[-1,-1],[-1]];
     }
 
     //Create entire Div
-    constructorDiv=createAndAddDiv(constructorDivName,constructorDivParent);
+    constructorDiv=createAndAddDiv("ruleConstructor","mainDiv");
     constructorDiv.className = "constructor";
-    thisConstructor=window.constructors[constructorDivName];
 
     //Create ConstructorIn div (so that you can scroll on long slider)
-    constructorIn2=createAndAddDiv(constructorDivName+"In2",constructorDivName)
-    constructorIn=createAndAddDiv(constructorDivName+"In",constructorDivName+"In2")
+    constructorIn2=createAndAddDiv("ruleConstructorIn2","ruleConstructor")
+    constructorIn=createAndAddDiv("ruleConstructorIn","ruleConstructorIn2")
     constructorIn2.className = "constructorIn2";
     constructorIn.className = "constructorIn";
 
-    if(thisConstructor.length*50>525){  
-        constructorIn.setAttribute("style","width:"+(thisConstructor.length+3)*50+"px");
+    if(window.ruleConstructor.length*50>525){  
+        constructorIn.setAttribute("style","width:"+(window.ruleConstructor.length+3)*50+"px");
         constructorIn.style.left="0px";
     }
     else{
-        constructorIn.setAttribute("style","width:"+(thisConstructor.length+1)*50+"px");        
-        constructorIn.style.left=((730-(thisConstructor.length+1)*50)/2)+"px";
+        constructorIn.setAttribute("style","width:"+(window.ruleConstructor.length+1)*50+"px");        
+        constructorIn.style.left=((730-(window.ruleConstructor.length+1)*50)/2)+"px";
     }
 
     //plus button
-    plusButton=createAndAddDiv("plusConstructorButton",constructorDivName+"In")
+    plusButton=createAndAddDiv("plusConstructorButton","ruleConstructorIn")
     plusButton.className="plusConstructorButton constructorButton";
     plusButton.style.transform="translate3d(0px,80px,0px)";
-    clickButton("many","plusConstructorButton",constructorPlusMinus,"+",-1,constructorDivName,constructorDivParent);
+    clickButton("many","plusConstructorButton",constructorPlusMinus,"+",-1);
 
 
 
 
-    for(col=0;col<thisConstructor.length;col++){
-        if(thisConstructor.length-col>2 && thisConstructor.length>2){
-            var minusButton = createAndAddDiv("minusConstructorButton_"+col,constructorDivName+"In");
+    for(col=0;col<window.ruleConstructor.length;col++){
+        if(window.ruleConstructor.length-col>2 && window.ruleConstructor.length>2){
+            var minusButton = createAndAddDiv("minusConstructorButton_"+col,"ruleConstructorIn");
             minusButton.className="minusConstructorButton constructorButton";
-            clickButton("many","minusConstructorButton_"+col,constructorPlusMinus,"-",col,constructorDivName,constructorDivParent);
+            clickButton("many","minusConstructorButton_"+col,constructorPlusMinus,"-",col);
             minusButton.style.transform="translate3d("+(col*50+60)+"px,0px,0px)";
         }
-        for(row=0;row<thisConstructor[col].length;row++){
-            action=actionFromInteger(thisConstructor[col][row]);
-            var s = createAndAddDiv("square_"+col+"_"+row,constructorDivName+"In")
-            clickButton("many","square_"+col+"_"+row,changeConstructorEntry,s.id,row,col,constructorDivName,constructorDivParent);
+        for(row=0;row<window.ruleConstructor[col].length;row++){
+            action=actionFromInteger(window.ruleConstructor[col][row]);
+            var s = createAndAddDiv("square_"+col+"_"+row,"ruleConstructorIn")
+            clickButton("many","square_"+col+"_"+row,changeConstructorEntry,s.id,row,col);
             s.className=action+"Square square";
             s.style.transform="translate3d("+(50+col*50)+"px,"+(50*row+50)+"px,0px)";
         }
     }
 
-    drawConstructorSubmitButton(constructorDivName);
+    drawConstructorSubmitButton();
     // if(thisStatus["page"]=="quiz"){
     //     document.getElementById(divName).style.backgroundColor="rgba(0,0,0,0)";
     // }
@@ -370,87 +218,58 @@ function drawConstructor2(constructorDivName,constructorDivParent){
 
 thisStatus=[]
 
-function drawDefault(type){
-    divName=type+"DefaultDiv";
-    defaultDiv=createDiv(divName);
+function drawDefault(){
+    placeTextNew({"divid":"setDefaultDiv","text":"","top":"899px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,1)","height":"125px"});
+    placeTextNew({"divid":"setDefaultTitle","text":"Default Rule","top":"0px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px","parentDiv":"setDefaultDiv"});
 
-    defaultRuleTitle=createDiv("defaultRuleTitle");
-    defaultRuleTitle.className="defaultDivTitle";
-    defaultRuleTitle.innerHTML="Default Rule"
-    defaultRuleTitle.style.transform="translate3d(0px,125px,0px)";
-    defaultDiv.appendChild(defaultRuleTitle);
-
-    firstPeriodRuleTitle=createDiv("firstPeriodRuleTitle");
-    firstPeriodRuleTitle.className="defaultDivTitle";
-    firstPeriodRuleTitle.innerHTML="First Period Rule"
-    firstPeriodRuleTitle.style.transform="translate3d(0px,0px,0px)";
-    defaultDiv.appendChild(firstPeriodRuleTitle);
-
-
-    //var defaultDivBottomEntry = document.createElement("div");
-    //defaultDivBottomEntry.className="defaultDivBottomEntry";
-
-    theseMessages=["chooseDefault0","chooseDefault1","chooseFirstPeriod0","chooseFirstPeriod1"]
-    if(window.state!=undefined){
-        if(window.state['page']=="defaultNotSet"){
-            theseMessages=["beginDefault0","beginDefault1","beginFirstPeriod0","beginFirstPeriod1"]
-        }
-    }
-    var s = createDiv("chooseDefault0");
-    var pf = partial(defaultButtonPressed,theseMessages[0],type);
-    s.addEventListener("click",pf);
+    var s = createAndAddDiv("chooseDefault0","setDefaultDiv");
+    clickButton("many","chooseDefault0",setDefault,"setDefault",0);
     s.className = "wSquare square";
-    s.style.transform="translate3d(35px,175px,0px)";
-    defaultDiv.appendChild(s);
+    s.style.transform="translate3d(-65px,50px,0px)";
 
-
-    var s = createDiv("chooseDefault1");
-    var pf = partial(defaultButtonPressed,theseMessages[1],type);
-    s.addEventListener("click",pf);
+    var s = createAndAddDiv("chooseDefault1","setDefaultDiv");
+    clickButton("many","chooseDefault1",setDefault,"setDefault",1);
     s.className = "ySquare square";
-    s.style.transform="translate3d(115px,175px,0px)";
-    defaultDiv.appendChild(s);
+    s.style.transform="translate3d(15px,50px,0px)";
 
 
-    var s = createDiv("chooseFirstPeriod0");
-    var pf = partial(defaultButtonPressed,theseMessages[2],type);
-    s.addEventListener("click",pf);
+    if(window.state['defaultRule']==0){
+        var thisLeft="33px";
+    }
+    else if(window.state['defaultRule']==1){
+        var thisLeft="113px";
+    }
+
+    if(thisLeft!=undefined){
+        placeTextNew({"divid":"defaultRuleHighlight","border":"5px solid green","top":"48px","left":thisLeft,"parentDiv":"setDefaultDiv","width":"54px","height":"54px"});
+    }
+}
+
+function drawFirstPeriod(){
+    placeTextNew({"divid":"setFirstPeriodDiv","text":"","top":"774px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,1)","height":"125px"});
+    placeTextNew({"divid":"setFirstPeriodTitle","text":"First Period Rule","top":"0px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px","parentDiv":"setFirstPeriodDiv"});
+
+    var s = createAndAddDiv("chooseFirstPeriod0","setFirstPeriodDiv");
+    clickButton("many","chooseFirstPeriod0",setDefault,"setFirstPeriod",0);
     s.className = "wSquare square";
-    s.style.transform="translate3d(35px,50px,0px)";
-    defaultDiv.appendChild(s);
+    s.style.transform="translate3d(-65px,50px,0px)";
 
-
-    var s = createDiv("chooseFirstPeriod1");
-    var pf = partial(defaultButtonPressed,theseMessages[3],type);
-    s.addEventListener("click",pf);
+    var s = createAndAddDiv("chooseFirstPeriod1","setFirstPeriodDiv");
+    clickButton("many","chooseFirstPeriod1",setDefault,"setFirstPeriod",1);
     s.className = "ySquare square";
-    s.style.transform="translate3d(115px,50px,0px)";
-    defaultDiv.appendChild(s);
+    s.style.transform="translate3d(15px,50px,0px)";
 
 
-    $("#mainDiv").append(defaultDiv);
-
-    window.defaultRule=-1;
-    if(window.ruleSets[type]!=undefined){
-        if(window.ruleSets[type].length>0){
-         window.defaultRule=window.ruleSets[type][0][0][0];
-        }
+    if(window.state['firstPeriodRule']==0){
+        var thisLeft="33px";
+    }
+    else if(window.state['firstPeriodRule']==1){
+        var thisLeft="113px";
     }
 
-    if(window.defaultRule==0){
-        document.getElementById('chooseDefault0').className += " defaultSelected";
+    if(thisLeft!=undefined){
+        placeTextNew({"divid":"firstPeriodRuleHighlight","border":"5px solid green","top":"48px","left":thisLeft,"parentDiv":"setFirstPeriodDiv","width":"54px","height":"54px"});
     }
-    else if(window.defaultRule==1){
-        document.getElementById('chooseDefault1').className += " defaultSelected";
-    }
-
-    if(window.firstPeriodRule[type]==0){
-        document.getElementById('chooseFirstPeriod0').className += " defaultSelected";
-    }
-    else if(window.firstPeriodRule[type]==1){
-        document.getElementById('chooseFirstPeriod1').className += " defaultSelected";
-    }
-
 }
 
 function drawPostMatch(){
@@ -540,9 +359,9 @@ function actionFromInteger(actionIN){
 
 function constructorButtons(){}
 
-function drawRule(type,constructor,clickable,ruleNumber,highlight){
+function drawRule(constructor,ruleNumber,highlight){
     //Create ConstructorIn div
-    var ruleDiv = createDiv(type+"_rule_"+ruleNumber)
+    var ruleDiv = createAndAddDiv("rule_"+ruleNumber,"");
     ruleDiv.className = "rule";
     ruleDiv.setAttribute("style","width:"+(constructor.length)*50+"px");        
     for(col=0;col<constructor.length;col++){
@@ -550,15 +369,15 @@ function drawRule(type,constructor,clickable,ruleNumber,highlight){
             high=""
             action=actionFromInteger(constructor[col][row]);
             if(highlight==1){high=" highlight";}
-            thisButton=makeConstructorButton(constructorButtons,action+"Square square"+high,"square_"+col+"_"+row+"_"+ruleNumber,clickable)
+            thisButton=createAndAddDiv("rule_"+ruleNumber+"_col_"+col+"_row_"+row,"rule_"+ruleNumber);
             thisButton.style.transform="translate3d("+(col*50)+"px,"+(row*50)+"px,0px)";
-            ruleDiv.appendChild(thisButton);
+            thisButton.className=action+"Square square"+high;
         }
     }
     return ruleDiv
 }
 
-function drawRule2(ruleNumber,constructor,ruleDivName,addToDiv,clickable,highlight){
+function drawRule2(constructor,ruleDivName,addToDiv,clickable,highlight){
     //Create ConstructorIn div
     var ruleDiv = createAndAddDiv(ruleDivName,addToDiv)
     ruleDiv.className = "rule";
@@ -595,147 +414,65 @@ function changeSquareType(squareID){
 }
 
 
+function drawListEntry(thisInfo){
+    //#each entry in the list should be like: [number,title,constructor,lastPlayed,totalPlayed]
+    var thisConstructor=thisInfo[2];
+    var lastPlayed=thisInfo[3];
+    var totalPlayed=thisInfo[4];
+    var title=thisInfo[1];
+    var ruleNumber=thisInfo[0];
 
-function drawFirstPeriodEntry(type){
-    var listEntry = createDiv(type+"_listEntry_firstPeriod")
+    var listEntry = createAndAddDiv("listEntry_"+ruleNumber,"ruleList");
     listEntry.className = "listEntry";
-    listEntry.setAttribute("style","width:"+(1+1.5)*50+"px"); 
-    ruleNumber=9999;       
-    if(type!="hyp"){
-        var listEntryButtons = document.createElement("div");
-        listEntryButtons.className = "listEntryNoButtons";
+    listEntry.setAttribute("style","width:"+(thisConstructor.length+1.5)*50+"px");        
+
+    //draw Buttons if needed, or add spacing
+    if(ruleNumber=="default0" || ruleNumber=="default1"){
+        var listEntryNoButtons = createDiv("listEntryNoButtons_"+ruleNumber,"listEntry_"+ruleNumber);
+        listEntryNoButtons.className = "listEntryNoButtons";
     }
-    else if(type=="hyp"){
-        listEntry.setAttribute("style","width:"+(3)*50+"px");        
-        var listEntryButton3=createDiv(type+"_listEntryMoveButton_"+ruleNumber);
-        listEntryButton3.className = "listEntryMoveButton listEntryButton";
-        listEntryButton3.innerHTML=String.fromCharCode(parseInt('2794',16));
-        thisNumber=window.firstPeriodRule['hyp'];
-        var pf = partial(defaultButtonPressed,"chooseFirstPeriod"+thisNumber,"regular");
-        listEntryButton3.addEventListener("click",pf);
-        listEntryButton3.style.transform="translate3d(10px,60px,0px)";
-        listEntry.appendChild(listEntryButton3);
-    }
-    constructor=[[window.firstPeriodRule[getRuleSet(type)]]];
-    thisRule=drawRule(type,constructor,0,ruleNumber,0);
-    if(type=="hyp"){
-        thisRule.style.transform="translate3d(60px,50px,0px)";
+    else if(ruleNumber=="firstPeriod0" || ruleNumber=="firstPeriod1"){
+        var listEntryNoButtons = createDiv("listEntryNoButtons_"+ruleNumber,"listEntry_"+ruleNumber);
+        listEntryNoButtons.className = "listEntryNoButtons";
     }
     else{
-        thisRule.style.transform="translate3d(37px,50px,0px)";
+        var listEntryCopyButton = createAndAddDiv("listEntryCopyButton_"+ruleNumber,"listEntry_"+ruleNumber);
+        listEntryCopyButton.className = "listEntryCopyButton listEntryButton";
+        listEntryCopyButton.style.transform="translate3d(15px,35px,0px)";
+        listEntryCopyButton.innerHTML=String.fromCharCode(parseInt('2398',16));
+        clickButton("many","listEntryCopyButton_"+ruleNumber,setConstructor,thisConstructor);
+
+
+        var listEntryDeleteButton = createAndAddDiv("listEntryDeleteButton_"+ruleNumber,"listEntry_"+ruleNumber);
+        listEntryDeleteButton.className = "listEntryDeleteButton listEntryButton";
+        listEntryDeleteButton.style.transform="translate3d(15px,85px,0px)";
+        listEntryDeleteButton.innerHTML=String.fromCharCode(parseInt('2718',16));
+        clickButton("many","listEntryDeleteButton_"+ruleNumber,deleteRule,thisConstructor);
     }
-    listEntry.appendChild(thisRule);
-    
-    var listEntryTitle = document.createElement("div");
+
+
+
+    //draw rule
+    drawRule2(thisConstructor,"rule_"+ruleNumber,"listEntry_"+ruleNumber,0,0);
+    if(ruleNumber=="default0" || ruleNumber=="default1"){
+        document.getElementById("rule_"+ruleNumber).style.transform="translate3d(37px,50px,0px)";
+    }
+    else if(ruleNumber=="firstPeriod0" || ruleNumber=="firstPeriod1"){
+        document.getElementById("rule_"+ruleNumber).style.transform="translate3d(37px,50px,0px)";
+    }
+    else{
+        document.getElementById("rule_"+ruleNumber).style.transform="translate3d(60px,25px,0px)";
+    }
+
+
+    var listEntryTitle = createAndAddDiv("listEntryTitle_"+ruleNumber,"listEntry_"+ruleNumber);
     listEntryTitle.className = "listEntryTitle";
-    listEntryTitle.id = "listEntryTitle_"+ruleNumber;
-    listEntryTitle.innerHTML = "First Period Rule";
+    listEntryTitle.innerHTML = title;
 
-
-    // var listEntryStats = document.createElement("div");
-    // listEntryStats.className = "listEntryStats";
-    // listEntryStats.id = type+"_listEntryStats_"+ruleNumber;
-    // listEntryStats.setAttribute("style","width:"+listEntry.width+"px");        
-    // listEntryStats.innerHTML = "Last: "+lastPlayed+"  Total: "+totalPlayed;
-
-
-    listEntry.appendChild(listEntryTitle);
-    //listEntry.appendChild(listEntryStats);
-
-    return listEntry
-}
-
-
-function drawListEntry(type,ruleIndex){
-    constructor=window.ruleSets[getRuleSet(type)][ruleIndex];
-    ruleNumber=window.ruleNumbers[getRuleSet(type)][ruleIndex];
-    lastPlayed=window.ruleLastUsed[getRuleSet(type)][ruleIndex];
-    totalPlayed=window.ruleFrequency[getRuleSet(type)][ruleIndex];
-
-    var listEntry = createDiv(type+"_listEntry_"+ruleNumber)
-    listEntry.className = "listEntry";
-    listEntry.setAttribute("style","width:"+(constructor.length+1.5)*50+"px");        
-    if(ruleNumber>1){
-        var listEntryButton1 = createDiv(type+"_listEntryCopyButton_"+ruleNumber)
-        listEntryButton1.className = "listEntryCopyButton listEntryButton";
-        listEntryButton1.style.transform="translate3d(15px,35px,0px)";
-        listEntryButton1.innerHTML=String.fromCharCode(parseInt('2398',16));
-        if(type=="hypActual"){
-            var pf = partial(setConstructor,constructor,"hyp");
-        }                    
-        else{
-            var pf = partial(setConstructor,constructor,type);
-        }
-        listEntryButton1.addEventListener("click",pf);
-        listEntry.appendChild(listEntryButton1);
-
-        var listEntryButton2 = createDiv(type+"_listEntryDeleteButton_"+ruleNumber)
-        listEntryButton2.style.transform="translate3d(15px,85px,0px)";
-        listEntryButton2.className = "listEntryDeleteButton listEntryButton";
-        listEntryButton2.innerHTML=String.fromCharCode(parseInt('2718',16));
-        var pf = partial(deleteRule,constructor,type);
-        listEntryButton2.addEventListener("click",pf);
-        listEntry.appendChild(listEntryButton2);
-
-        if(type=="hyp"){
-            var listEntryButton3 = createDiv(type+"_listEntryMoveButton_"+ruleNumber)
-            listEntryButton3.className = "listEntryMoveButton listEntryButton";
-            listEntryButton3.innerHTML=String.fromCharCode(parseInt('2794',16));
-            var pf = partial(addRuleFromHyp,"regular",constructor);
-            listEntryButton3.addEventListener("click",pf);
-            listEntry.appendChild(listEntryButton3);
-            listEntryButton1.style.transform="translate3d(15px,15px,0px)";
-            listEntryButton2.style.transform="translate3d(15px,55px,0px)";
-            listEntryButton3.style.transform="translate3d(15px,95px,0px)";
-
-        }
-    }
-    if(ruleNumber<2 && type!="hyp"){
-        var listEntryButtons = document.createElement("div");
-        listEntryButtons.className = "listEntryNoButtons";
-    }
-    else if(ruleNumber<2 && type=="hyp"){
-        listEntry.setAttribute("style","width:"+(3)*50+"px");        
-        var listEntryButton3=createDiv(type+"_listEntryMoveButton_"+ruleNumber);
-        listEntryButton3.className = "listEntryMoveButton listEntryButton";
-        listEntryButton3.innerHTML=String.fromCharCode(parseInt('2794',16));
-        thisNumber=window.ruleSets['hyp'][0][0][0];
-        var pf = partial(defaultButtonPressed,"chooseDefault"+thisNumber,"regular");
-        listEntryButton3.addEventListener("click",pf);
-        listEntryButton3.style.transform="translate3d(10px,60px,0px)";
-        listEntry.appendChild(listEntryButton3);
-    }
-
-    thisRule=drawRule(type,constructor,0,ruleNumber,0);
-    thisRule.style.transform="translate3d(60px,25px,0px)";
-    if(ruleIndex<1){
-        if(type=="hyp"){
-            thisRule.style.transform="translate3d(60px,50px,0px)";
-        }
-        else{
-            thisRule.style.transform="translate3d(37px,50px,0px)";
-        }
-    }
-    listEntry.appendChild(thisRule);
-    
-    var listEntryTitle = document.createElement("div");
-    listEntryTitle.className = "listEntryTitle";
-    listEntryTitle.id = "listEntryTitle_"+ruleNumber;    
-    if(ruleNumber>1){listEntryTitle.innerHTML = "Rule #"+ruleNumber;}
-    else if(ruleNumber<2){listEntryTitle.innerHTML = "Default Rule";}
-
-
-    var listEntryStats = document.createElement("div");
+    var listEntryStats = createAndAddDiv("listEntryStats_"+ruleNumber,"listEntry_"+ruleNumber);
     listEntryStats.className = "listEntryStats";
-    listEntryStats.id = type+"_listEntryStats_"+ruleNumber;
     listEntryStats.setAttribute("style","width:"+listEntry.width+"px");        
     listEntryStats.innerHTML = "Last: "+lastPlayed+"  Total: "+totalPlayed;
-
-
-    listEntry.appendChild(listEntryTitle);
-    listEntry.appendChild(listEntryStats);
-
-    return listEntry
 }
 
 
@@ -746,67 +483,22 @@ function updateRuleStats(type,ruleNumber,lastPlayed,totalPlayed){
 }
 
 
-function drawRules(type){
-    if(getRuleSet(type) in window.ruleSets){
-        // console.log(type);
-        // console.log(JSON.stringify(window.ruleSets[getRuleSet(type)]));
-        divName=type+"RuleList";
-        div=createDiv(divName);
-        var div2 = document.createElement("div");
-        div2.id = divName+"In";
-        div.appendChild(div2);
-        $("#mainDiv").append(div);
+function drawRules(){
+    // window.state['rules']
+    var ruleList=createAndAddDiv("ruleList","mainDiv");
+    var ruleListIn=createAndAddDiv("ruleListIn","ruleList");
 
-        thisRule=drawFirstPeriodEntry(type)
-        $("#"+divName+"In").append(thisRule);
-
-        for(i=0;i<window.ruleSets[getRuleSet(type)].length;i++){
-            var thisRule=window.ruleSets[getRuleSet(type)][i]
-            var thisRuleNumber=window.ruleNumbers[getRuleSet(type)][i]
-            thisRule=drawListEntry(type,i);
-            $("#"+divName+"In").append(thisRule);
-        }
+    for(var k=0;k<window.state['ruleInfo'].length;k++){
+        var thisInfo=window.state['ruleInfo'][k];
+        drawListEntry(thisInfo);
     }
-    if(type!="hypActual" && window.state['page']!="quiz"){
-        drawDefault(type);
+    if(window.state['nextChoiceInfo']!=undefined){
+        highlightRule();        
     }
 }
 
 
 
-function highlightHistory(type,ruleLength,currentPeriod){
-    var ruleHighlight = createDiv(type+"_historyRuleHighlight");
-    ruleHighlight.className="ruleHighlight";
-
-    width=ruleLength*50+50;
-    if(width>50){
-        var ruleHighlightTopleft = document.createElement("div");
-        ruleHighlightTopleft.className="ruleHighlightTopleft";
-        var ruleHighlightBottom = document.createElement("div");
-        ruleHighlightBottom.className="ruleHighlightBottom";
-        var ruleHighlightRight = document.createElement("div");
-        ruleHighlightRight.className="ruleHighlightRight";
-
-
-        borderWidth=4;
-        ruleHighlight.style.width=width+"px";
-        ruleHighlightTopleft.style.width=width+"px";
-        ruleHighlightBottom.style.width=(width-50)+"px";
-        ruleHighlightRight.style.left=(width-50-borderWidth)+"px";
-    
-        ruleHighlight.appendChild(ruleHighlightTopleft);
-        ruleHighlight.appendChild(ruleHighlightBottom);
-        ruleHighlight.appendChild(ruleHighlightRight);
-    }
-    else{
-        var ruleHighlightDefault = document.createElement("div");
-        ruleHighlightDefault.className="ruleHighlightDefault";
-        ruleHighlight.appendChild(ruleHighlightDefault);
-    }
-
-    ruleHighlight.style.transform="translate3d("+(50*currentPeriod-ruleLength*50)+"px,25px,0px)";
-    $('#'+type+'_historyIN').append(ruleHighlight);
-}
 
 
 function highlightGame(){
@@ -819,91 +511,96 @@ function highlightGame(){
     gameHighlight.className="gameHighlight";
     gameHighlight.id="gameHighlight";
     gameHighlight.style.left=200+"px"
-    $('#gameDiv').append(gameHighlight);
+    $('#gameTable').append(gameHighlight);
 }
 
-function highlightRule(ruleType,ruleNumber,ruleLength){
-    var ruleHighlight = createDiv(ruleType+"_ruleListRuleHighlight");
+
+function drawRuleHighlight(ruleWidth,divName,parentDiv){
+    console.log(ruleWidth,divName,parentDiv);
+    var ruleHighlight = createAndAddDiv(divName,parentDiv);
     ruleHighlight.className="ruleHighlight";
-    width=ruleLength*50+50;
-    if(width>50){
-        var ruleHighlightTopleft = document.createElement("div");
-        ruleHighlightTopleft.className="ruleHighlightTopleft";
-        var ruleHighlightBottom = document.createElement("div");
-        ruleHighlightBottom.className="ruleHighlightBottom";
-        var ruleHighlightRight = document.createElement("div");
-        ruleHighlightRight.className="ruleHighlightRight";
+    if(ruleWidth>50){
+        var TL = createAndAddDiv(divName+"_tl",divName);
+        var B = createAndAddDiv(divName+"_b",divName);
+        var R = createAndAddDiv(divName+"_r",divName);
+        TL.className="ruleHighlightTopleft";
+        B.className="ruleHighlightBottom";
+        R.className="ruleHighlightRight";
 
         borderWidth=4;
-        ruleHighlight.style.width=width+"px";
-        ruleHighlightTopleft.style.width=width+"px";
-        ruleHighlightBottom.style.width=(width-50)+"px";
-        ruleHighlightRight.style.left=(width-50-borderWidth)+"px";
-    
-        ruleHighlight.appendChild(ruleHighlightTopleft);
-        ruleHighlight.appendChild(ruleHighlightBottom);
-        ruleHighlight.appendChild(ruleHighlightRight);
-        ruleHighlight.style.left=(60)+"px"
-        ruleHighlight.style.top=(24)+"px"
-    }
-    else if(ruleType=="hyp" && ruleNumber<2){
-        var ruleHighlightDefault = document.createElement("div");
-        ruleHighlightDefault.className="ruleHighlightDefault";
-        ruleHighlight.appendChild(ruleHighlightDefault);
-        ruleHighlight.style.left=(60)+"px"
-        ruleHighlight.style.top=(49)+"px"        
+        ruleHighlight.style.width=ruleWidth+"px";
+        TL.style.width=ruleWidth+"px";
+        B.style.width=(ruleWidth-50)+"px";
+        R.style.left=(ruleWidth-50-borderWidth)+"px";
     }
     else{
-        var ruleHighlightDefault = document.createElement("div");
-        ruleHighlightDefault.className="ruleHighlightDefault";
-        ruleHighlight.appendChild(ruleHighlightDefault);
-        ruleHighlight.style.left=(37.5)+"px"
-        ruleHighlight.style.top=(49)+"px"
+        var DH = createAndAddDiv(divName+"_dh",divName);
+        DH.className="ruleHighlightDefault";
     }
-    if(ruleNumber==-1){
-        ruleNumber="firstPeriod";
-    }
-    $('#'+ruleType+'_listEntry_'+ruleNumber).append(ruleHighlight);
-    if(window.ruleNumbers[getRuleSet(ruleType)]!=undefined){
-        var M=window.ruleNumbers[getRuleSet(ruleType)].length;
-        thisElement=document.getElementById(ruleType+'_listEntry_firstPeriod');
-        thisElement.style.backgroundColor="rgba(255,255,255,1)";
-        for(j=0;j<M;j++){
-            thisElement=document.getElementById(ruleType+'_listEntry_'+window.ruleNumbers[getRuleSet(ruleType)][j]);
-            thisElement.style.backgroundColor="rgba(255,255,255,1)";
+
+}
+
+function highlightRule(){
+    var thisRuleDiv="listEntry_"+window.state['nextChoiceInfo']['number'];
+    console.log(doesDivExist(thisRuleDiv));
+    if(doesDivExist(thisRuleDiv)){
+        document.getElementById(thisRuleDiv).style.backgroundColor="rgba(0,255,0,.1)";
+        document.getElementById(thisRuleDiv).style.borderColor="rgba(0,255,0,1)";
+        var ruleWidth=window.state['nextChoiceInfo']['length']*50+50;
+        drawRuleHighlight(ruleWidth,"listRuleHighlight",thisRuleDiv);
+        if(ruleWidth>50){
+            document.getElementById("listRuleHighlight") .style.left="60px"
+            document.getElementById("listRuleHighlight") .style.top="24px"
         }
-        thisElement=document.getElementById(ruleType+'_listEntry_'+ruleNumber);
-        thisElement.style.transition="all .2s ease-out";
-        document.getElementById(ruleType+'_listEntry_'+ruleNumber).style.backgroundColor="rgba(235,255,235,1)";
+        else{
+            document.getElementById("listRuleHighlight") .style.left="37px"
+            document.getElementById("listRuleHighlight") .style.top="49px"
+        }   
     }
 }
 
 
-
-
-
-
-
-function highlightRuleInHistory(ruleLength,divName,addToDiv){
-    var ruleHighlight=createAndAddDiv(divName,addToDiv);
-
-    var ruleHighlightTopleft = createAndAddDiv(divName+"ruleHighlightTopleft",divName);
-    ruleHighlightTopleft.className="ruleHighlightTopleft";
-
-    var ruleHighlightBottom = createAndAddDiv(divName+"ruleHighlightBottom",divName);
-    ruleHighlightBottom.className="ruleHighlightBottom";
-
-    var ruleHighlightRight = createAndAddDiv(divName+"ruleHighlightRight",divName);
-    ruleHighlightRight.className="ruleHighlightRight";
-    width=ruleLength*50+50;
-
-    borderWidth=4;
-    ruleHighlight.style.width=width+"px";
-    ruleHighlightTopleft.style.width=width+"px";
-    ruleHighlightBottom.style.width=(width-50)+"px";
-    ruleHighlightRight.style.left=(width-50-borderWidth)+"px";
+function highlightHistory(){
+    var ruleWidth=window.state['nextChoiceInfo']['length']*50+50;
+    drawRuleHighlight(ruleWidth,"historyRuleHighlight","historyIN");
+    var translateAmount=(window.state['period']+2)*50-ruleWidth;
+    document.getElementById("historyRuleHighlight").style.transform="translate3d("+translateAmount+"px,25px,0px)";
 }
 
+
+// function highlightHistory(){
+//     var ruleHighlight = createAndAddDiv("historyRuleHighlight","historyIN");
+//     ruleHighlight.className="ruleHighlight";
+
+//     width=ruleLength*50+50;
+//     if(width>50){
+//         var ruleHighlightTopleft = document.createElement("div");
+//         ruleHighlightTopleft.className="ruleHighlightTopleft";
+//         var ruleHighlightBottom = document.createElement("div");
+//         ruleHighlightBottom.className="ruleHighlightBottom";
+//         var ruleHighlightRight = document.createElement("div");
+//         ruleHighlightRight.className="ruleHighlightRight";
+
+
+//         borderWidth=4;
+//         ruleHighlight.style.width=width+"px";
+//         ruleHighlightTopleft.style.width=width+"px";
+//         ruleHighlightBottom.style.width=(width-50)+"px";
+//         ruleHighlightRight.style.left=(width-50-borderWidth)+"px";
+    
+//         ruleHighlight.appendChild(ruleHighlightTopleft);
+//         ruleHighlight.appendChild(ruleHighlightBottom);
+//         ruleHighlight.appendChild(ruleHighlightRight);
+//     }
+//     else{
+//         var ruleHighlightDefault = document.createElement("div");
+//         ruleHighlightDefault.className="ruleHighlightDefault";
+//         ruleHighlight.appendChild(ruleHighlightDefault);
+//     }
+
+//     ruleHighlight.style.transform="translate3d("+(50*currentPeriod-ruleLength*50)+"px,25px,0px)";
+//     $('#'+type+'_historyIN').append(ruleHighlight);
+// }
 
 
 
@@ -920,49 +617,13 @@ function testConstructorComplete(constructor){
 }
 
 
-function defaultButtonPressed(elementID,type){
-    if(elementID=="chooseDefault0"){
-        window.selectedDefault=0;
-        var message={"type":"setDefault","thisRule":0,"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="chooseDefault1"){
-        window.selectedDefault=1;
-        var message={"type":"setDefault","thisRule":1,"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="chooseFirstPeriod0"){
-        window.selectedDefault=0;
-        var message={"type":"setFirstPeriod","thisRule":0,"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="chooseFirstPeriod1"){
-        window.selectedDefault=1;
-        var message={"type":"setFirstPeriod","thisRule":1,"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="beginDefault0"){
-        window.selectedDefault=0;
-        var message={"type":"setRulesBeginning","thisRule":["default",0],"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="beginDefault1"){
-        window.selectedDefault=1;
-        var message={"type":"setRulesBeginning","thisRule":["default",1],"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="beginFirstPeriod0"){
-        window.selectedDefault=0;
-        var message={"type":"setRulesBeginning","thisRule":["firstPeriod",0],"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
-    else if(elementID=="beginFirstPeriod1"){
-        window.selectedDefault=1;
-        var message={"type":"setRulesBeginning","thisRule":["firstPeriod",1],"rulesType":getRuleSet(type)};
-        sock.send(JSON.stringify(message));
-    }
+function setDefault(args){
+    console.log("sdfsdfsdf");
+    var defaultOrFirstPeriod=args[0];//setDefault or setFirstPeriod
+    var thisChoice=args[1];
+    var message={"type":"setDefault","thisRule":thisChoice,"defaultType":defaultOrFirstPeriod};
+    sock.send(JSON.stringify(message));
 }
-
 
 
 
@@ -970,17 +631,15 @@ function defaultButtonPressed(elementID,type){
 function constructorPlusMinus(args){
     changeType=args[0];
     column=args[1];
-    constructorDivName=args[2];
-    constructorParentDiv=args[3];
     if(changeType=="+"){
         var additional=[[-1,-1]];
-        var added=additional.concat(window.constructors[constructorDivName]);
-        window.constructors[constructorDivName]=added;
+        var added=additional.concat(window.ruleConstructor);
+        window.ruleConstructor=added;
     }    
     else if(changeType=="-"){
-        window.constructors[constructorDivName].splice(column,1);
+        window.ruleConstructor.splice(column,1);
     }
-    drawConstructor2(constructorDivName,constructorParentDiv);
+    drawConstructor2();
 }
 
 function changeConstructorEntry(args){
@@ -988,59 +647,58 @@ function changeConstructorEntry(args){
     squareId=args[0];
     row=args[1];
     column=args[2];
-    constructorDivName=args[3];
-    constructorParentDiv=args[4];
 
     var thisSquare=document.getElementById(squareId);
-    if(window.constructors[constructorDivName][column][row]==0){
-        window.constructors[constructorDivName][column][row]=1;
+    if(window.ruleConstructor[column][row]==0){
+        window.ruleConstructor[column][row]=1;
     }
-    else if(window.constructors[constructorDivName][column][row]==1){
-        window.constructors[constructorDivName][column][row]=0;
+    else if(window.ruleConstructor[column][row]==1){
+        window.ruleConstructor[column][row]=0;
     }
-    else if(window.constructors[constructorDivName][column][row]==-1){
-        window.constructors[constructorDivName][column][row]=Math.floor(Math.random()*2);
+    else if(window.ruleConstructor[column][row]==-1){
+        window.ruleConstructor[column][row]=Math.floor(Math.random()*2);
     }
 
-    if(window.constructors[constructorDivName][column][row]==0){
+    if(window.ruleConstructor[column][row]==0){
         thisSquare.className="wSquare square";        
     }
-    else if(window.constructors[constructorDivName][column][row]==1){
+    else if(window.ruleConstructor[column][row]==1){
         thisSquare.className="ySquare square";
     }
-    drawConstructorSubmitButton(constructorDivName);
+    drawConstructorSubmitButton();
 }
 
 
 
 function setConstructorEntry(squareId,row,column,entry){
     var thisSquare=document.getElementById(squareId);
-    window.constructors["regular"][column][row]=entry;
-    if(window.constructors["regular"][column][row]==0){
+    window.ruleConstructor[column][row]=entry;
+    if(window.ruleConstructor[column][row]==0){
         thisSquare.className="wSquare square";        
     }
-    else if(window.constructors["regular"][column][row]==1){
+    else if(window.ruleConstructor[column][row]==1){
         thisSquare.className="ySquare square";
     }
-    drawConstructorSubmitButton("regular");
-    //drawConstructor(constructorDivName);
+    drawConstructorSubmitButton();
 }
 
 
 
 
-function testConstructor(constructorDivName){
+function testConstructor(){
 // console.log(JSON.stringify(window.constructors[getRuleSet(type)]));
   var error=0;
-  if(testConstructorComplete(window.constructors[constructorDivName])==false){
+  if(testConstructorComplete(window.ruleConstructor)==false){
     var error=1;
   }
   else{
-    if(window.ruleSets[constructorDivName]!=undefined){
-        var M=window.ruleSets[constructorDivName].length;
+
+
+    if(window.state['ruleInfo']!=undefined){
+        var M=window.state['ruleInfo'].length;
         for(j=0;j<M;j++){
-          var rule1=window.constructors[constructorDivName];
-          var rule2=window.ruleSets[constructorDivName][j];
+          var rule1=window.ruleConstructor;
+          var rule2=window.state['ruleInfo'][j][2];
           var thisError=compareRuleAndRule(rule1,rule2);
           if(thisError>0){error=thisError+1;}
         }
@@ -1049,9 +707,12 @@ function testConstructor(constructorDivName){
   return error;
 }
 
-function drawConstructorSubmitButton(constructorDivName){
-    error=testConstructor(constructorDivName);
-    constructorSubmitButton=createAndAddDiv(constructorDivName+"_submitButton",constructorDivName);
+function drawConstructorSubmitButton(){
+    deleteDiv('constructorSwitchButton');
+    deleteDiv('constructorSubmitButton');
+
+    error=testConstructor();
+    constructorSubmitButton=createAndAddDiv("constructorSubmitButton","ruleConstructor");
     constructorSubmitButton.className="constructorSubmitButton";
     if(error==1){
         constructorSubmitButton.innerHTML="You must set an action in each box of the rule.";
@@ -1061,11 +722,11 @@ function drawConstructorSubmitButton(constructorDivName){
         constructorSubmitButton.innerHTML="Conflicting rule in set.";
         constructorSubmitButton.style.backgroundColor="rgba(255,0,0,.2)";
     
-        switchRulesButton=createAndAddDiv(constructorDivName+"_switchButton",constructorDivName)
+        switchRulesButton=createAndAddDiv("constructorSwitchButton","ruleConstructor")
         switchRulesButton.className="constructorSwitchButton";
         switchRulesButton.innerHTML="Switch Rules";
         switchRulesButton.style.backgroundColor="rgba(0,255,0,.2)";
-        clickButton("once",constructorDivName+"_switchButton",clickStatusBackButton,switchRules,constructorDivName,constructorParentDiv);
+        clickButton("once","constructorSwitchButton",switchRules);
     }
     else if(error==3){
         constructorSubmitButton.innerHTML="Rule already in set.";
@@ -1074,81 +735,119 @@ function drawConstructorSubmitButton(constructorDivName){
     else{
         constructorSubmitButton.innerHTML="Add Rule";
         constructorSubmitButton.style.backgroundColor="rgba(0,255,0,.2)";
-        clickButton("once",constructorDivName+"_submitButton",clickStatusBackButton,addRule,constructorDivName,constructorParentDiv);
+        clickButton("once","constructorSubmitButton",addRule);
     }
     constructorSubmitButton.style.fontSize="125%";
 }
 
 
 
-function drawHistory2(){
-    historyDiv=createAndAddDiv("history","mainDiv")
-    historyIN=createAndAddDiv("historyIN","history")
+function drawHistory(){
+    historyDiv=createAndAddDiv("history","mainDiv");
+    historyIN=createAndAddDiv("historyIN","history");
     historyDiv.className="history";
     drawHistoryLabels();
-
-    window.currentHistory=[[1,0],[1,1],[1,0],[0,1],[0,1],[0,0],[1,1],[1,0],[0,1],[1,0],[1,0],[1,1],[0,0],[0,0],[0,0],[1,0],[1,1],[0,1],[0,0],[1,0],[0,0],[0,1],[1,1],[1,0],[0,1],[0,0],[0,1],[0,0],[1,0],[1,1],[0,0],[0,1]]
-    window.currentPeriod=49;
-    for(k=0;k<window.currentHistory.length;k++){
-        period=window.currentPeriod-window.currentHistory.length+k+1;
-        if(isDivNotThere("regular_history_square_"+period+"_1")){
-            drawHistoryPeriodLabels(period);
-            drawHistoryPeriod(period,0);
-            drawHistoryPeriod(period,1);
-            fillHistory(period,0,actionFromInteger(window.currentHistory[k][0]));
-            fillHistory(period,1,actionFromInteger(window.currentHistory[k][1]));
-            //document.getElementById("regular_historyPayoffLabel_"+period).innerHTML=window.currentPayoffHistory[k][0];
+    for(var period=window.state['history'].length-30;period<window.state['history'].length;period++){
+        if(period>-1){
+            drawHistoryEntry(period+1,window.state['history'][period],window.state['payoffHistory'][period][0]);
         }
     }
-    document.getElementById("historyIN").style.transform="translateX(-"+(1270)+"px)";
+    document.getElementById("historyIN").style.transform="translateX("+(1150-window.state['period']*50)+"px)";
+
+    if(window.state['animate']=="yes"){
+        document.getElementById("historyIN").style.transform="translateX("+(1150-window.state['period']*50+50)+"px)";
+        setTimeout(function(){
+            document.getElementById("historyIN").style.transform="translateX("+(1150-window.state['period']*50)+"px)";
+            document.getElementById("historyIN").style.transition = "transform 0.25s ease";
+        },0);
+        setTimeout(function(){
+        highlightHistory();
+        },250);
+        drawNextAction();
+    }
+    else if(window.state['animate']=="no" || window.state['animate']==undefined){
+        drawNextAction();
+        highlightHistory();
+    }
+
+}
+
+
+function drawNextAction(){
+    var translateAmount=(window.state['period']+1)*50;
+    historyLabel=createAndAddDiv("historyPeriodLabel_"+(window.state['period']+1),"historyIN")
+    historyLabel.style.transform="translateX("+translateAmount+"px)";
+    historyLabel.innerHTML=Math.max(window.state['period'],1);//ensure that period 0 will never be displayed
+    historyLabel.className="historyPeriodLabel";
+
+
+    var divID='history_square_'+(window.state['period']+1)+'_0';
+    s=createAndAddDiv(divID,"historyIN")
+    if(window.state['confirmed']=="no"){
+        s.className =actionFromInteger(window.state['nextChoiceInfo']['action'])+"Square square proposed";
+        s.style.transform="translate3d("+translateAmount+"px,25px,0px)";
+        clickButton("once",divID,confirmChoice);
+    }
+    else if(window.state['confirmed']=="yes"){
+        s.className =actionFromInteger(window.state['nextChoiceInfo']['action'])+"Square square confirmed";
+        s.style.transform="translate3d("+translateAmount+"px,25px,0px)";
+        clickButton("many",divID,alreadySubmitted,"Already made choice");
+    }
+
+
+    // removeListeners(divID);
+    // nextActionSquare=document.getElementById(divID);
+    // if(nextActionSquare!=null){
+    //     if(window.state["page"]=="instructions"){
+    //         nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
+    //     }
+    //     else if(window.state["page"]=="game" && window.state["confirmed"]=="no"){
+    //         nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
+    //         nextActionSquare.addEventListener("click",function(e){
+    //             submitChoice(divID);
+    //             e.target.removeEventListener(e.type, arguments.callee);
+    //         });
+    //     }
+    //     else if(window.state["page"]=="game" && window.state["confirmed"]=="yes"){
+    //         nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square confirmed";
+    //         pf=partial(alreadySubmitted,"Already made choice");
+    //         nextActionSquare.addEventListener("click",pf);
+    //     }
+    //     // else if(window.state["page"]=="game" && window.state["confirmed"]=="no" && window.state["locked"]=="no"){
+    //     //     nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
+    //     //     pf=partial(alreadySubmitted,"Must lock rules.");
+    //     //     nextActionSquare.addEventListener("click",pf);
+    //     // }
+    //     highlightHistory(divName,window.nextPeriodRuleLength,window.currentPeriod);
+    // }
+    // $("#"+divID).off("click");
+
 }
 
 
 
-function drawHistory(type){
-    historyDiv=createDiv(type+"_history");
-    historyDiv.className="history";
-    historyDivIN=createDiv(type+"_historyIN");
-    historyDivIN.className="historyIN";
-    historyDiv.appendChild(historyDivIN);
-    $("#mainDiv").append(historyDiv);
-    drawHistoryLabels(type);
-
-    if(type=="hyp" || type=="hypActual"){
-        for(k=1;k<16;k++){
-            drawHistoryPeriod(type,k,0);
-            drawHistoryPeriod(type,k,1);
-            drawHistoryPeriodLabels(type,k);
-        }
-        drawHistoryPeriod(type,16,0);
-        drawHistoryPeriodLabels(type,16);
-        historyDivIN.style.transform="translateX(150px)";
-    }
-}
-
-
-function drawHistoryPeriodLabels(period){
-    //Add titles blocks
+function drawHistoryEntry(period,choices,payoff){
+    var translateAmount=(period)*50+50;
     historyLabel=createAndAddDiv("historyPeriodLabel_"+period,"historyIN")
-    historyLabel.style.transform="translateX("+((period-1)*50)+"px)";
+    historyLabel.style.transform="translateX("+translateAmount+"px)";
     historyLabel.innerHTML=period;
     historyLabel.className="historyPeriodLabel";
 
+    s=createAndAddDiv("history_square_"+period+"_0","historyIN")
+    s.className =actionFromInteger(choices[0])+"Square square";
+    s.style.transform="translate3d("+translateAmount+"px,25px,0px)";
+
+    s=createAndAddDiv("history_square_"+period+"_1","historyIN")
+    s.className =actionFromInteger(choices[1])+"Square square";
+    s.style.transform="translate3d("+translateAmount+"px,75px,0px)";
+
+
     payoffLabel=createAndAddDiv("historyPayoffLabel_"+period,"historyIN")
-    payoffLabel.style.transform="translate3d("+((period-1)*50)+"px,125px,0px)";
+    payoffLabel.style.transform="translate3d("+translateAmount+"px,125px,0px)";
     payoffLabel.className="historyPayoffLabel";
+    payoffLabel.innerHTML=payoff;
 }
 
-function drawHistoryPeriod(period,row){
-    s=createAndAddDiv("history_square_"+period+"_"+row,"historyIN")
-    s.className ="qSquare square";
-    s.style.transform="translate3d("+((period-1)*50)+"px,"+(row*50+25)+"px,0px)";
-}
-
-
-function fillHistory(period,row,action){
-    document.getElementById('history_square_'+period+'_'+row).className=action+"Square square";
-}
 
 function drawHistoryLabels(type){
     var historyLabelPeriod=createAndAddDiv("historyLabelPeriod","history");
@@ -1187,47 +886,6 @@ function deleteHistoryPeriod(type,period){
 }
 
 
-function fillHistoryOld(divName,historyIN,thisPeriod,updateType){
-    //console.log("fillHistory");
-    if(document.getElementById("slider")==null){
-        drawHistory("regular");
-        updateType="all";
-    }
-    target=200;
-    if(updateType=="all"){
-        for(k=1;k<=historyIN.length;k++){
-            period=thisPeriod+k-historyIN.length
-            for(j=0;j<2;j++){
-                document.getElementById(divName+'_history_square_'+(period)+'_'+j).className=actionFromInteger(historyIN[k-1][j])+"Square square";
-            }
-            document.getElementById(divName+'_historyPayoffEntry_'+(period)).innerHTML=window.currentPayoffHistory[k-1][0];
-        }
-        thisOffset=1280-target-thisPeriod.length*50;
-        allHistoryDiv=document.getElementById(divName+"_allHistoryDiv");
-        tn=thisPeriod*50;
-        allHistoryDiv.style.left=-tn+"px";
-        //fill all
-    }
-    else{
-        for(j=0;j<2;j++){
-            document.getElementById(divName+'_history_square_'+(thisPeriod)+'_'+j).className=actionFromInteger(historyIN[historyIN.length-1][j])+"Square square";
-        }
-        document.getElementById(divName+'_historyPayoffEntry_'+(thisPeriod)).innerHTML=window.currentPayoffHistory[historyIN.length-1][0];
-        allHistoryDiv=document.getElementById(divName+"_allHistoryDiv");
-        thisVal=parseInt(allHistoryDiv.style.left,10)+thisPeriod*50;
-        if(Math.abs(thisVal)>100){
-            tn=thisPeriod*50;
-            allHistoryDiv.style.left=-tn+"px";
-        }
-        else{
-            window.speed=window.speed*(1-.05*(thisVal/100));
-        }
-        window.speed=2;
-        //tn=thisPeriod*50;
-        //allHistoryDiv.style.left=-tn+"px";
-    }
-    changeSliderSpeed(divName);
-}
 
 function changeSliderSpeed(divName){
     newTime=1000000*window.speed;
@@ -1251,49 +909,16 @@ function removeListeners(divIN){
 }
 
 function alreadySubmitted(message){
-    thisDiv=createDiv("alreadySubmitted");
-    thisDiv.innerHTML=message;
-    document.getElementById("mainDiv").appendChild(thisDiv);
+    placeTextNew({"divid":"alreadySubmittedMessage","text":message,"border":"1px solid green","top":"125px","fontSize":"100%","color":"black","width":"150px","textAlign":"center","left":"1125px","backgroundColor":"rgba(225,255,225,1)","height":"50px"})
     setTimeout(function(){
-        document.getElementById("alreadySubmitted").classList.add('didLoad');
-    },10);
-    // thisDiv.style.transform="translateX(100px)";
-    // thisDiv.style.transition="all .15s ease";
-    // thisDiv.style.transitionDelay=".0015s";
+        document.getElementById('alreadySubmittedMessage').style.transform="translateX(300px)";
+        document.getElementById("alreadySubmittedMessage").style.transition="transform 1s linear";
+        document.getElementById("alreadySubmittedMessage").style.transitionDelay=".0015s";
+    },1000);
 }
 
-function drawNextAction(divName){
-    divID=divName+'_history_square_'+(window.currentPeriod+1)+'_0';
-    removeListeners(divID);
-    nextActionSquare=document.getElementById(divID);
-    if(nextActionSquare!=null){
-        if(window.state["page"]=="instructions"){
-            nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
-        }
-        else if(window.state["page"]=="game" && window.state["confirmed"]=="no"){
-            nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
-            nextActionSquare.addEventListener("click",function(e){
-                submitChoice(divID);
-                e.target.removeEventListener(e.type, arguments.callee);
-            });
-        }
-        else if(window.state["page"]=="game" && window.state["confirmed"]=="yes"){
-            nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square confirmed";
-            pf=partial(alreadySubmitted,"Already made choice");
-            nextActionSquare.addEventListener("click",pf);
-        }
-        // else if(window.state["page"]=="game" && window.state["confirmed"]=="no" && window.state["locked"]=="no"){
-        //     nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
-        //     pf=partial(alreadySubmitted,"Must lock rules.");
-        //     nextActionSquare.addEventListener("click",pf);
-        // }
-        highlightHistory(divName,window.nextPeriodRuleLength,window.currentPeriod);
-    }
-    $("#"+divID).off("click");
 
-}
-
-function submitChoice(e,divID){
+function confirmChoice(){
     console.log("submitingShoices");
     deleteWarning();
     var message={"type":"confirmChoice"};
@@ -1332,41 +957,6 @@ function moveSelfTimer(timerName){
 }
 
 
-
-// function changeSliderSpeedODL(divName){
-//     console.log("changeSliderSpeed");
-//     newTime=1000000*window.speed;
-// document.getElementById("slider_allHistoryDiv").style.transform="translate3d(19500px,0px,0px)";
-// document.getElementById("slider_allHistoryDiv").style.transition="all 100s linear";
-// setTimeout(function(){document.getElementById("slider_allHistoryDiv").style.transform="translate3d(19300px,0px,0px)";},20);
-
-//     // document.getElementById(divName+"_allHistoryDiv").style.transform="translate3d(-200px,0px,0px)";
-//     // document.getElementById(divName+"_allHistoryDiv").style.transition="all 5s linear";
-//     // setTimeout(function(){document.getElementById(divName+"_allHistoryDiv").style.transform="translate3d(-250px,0px,0px)";},2000);
-// }
-
-//drawSlider();
-// window.setTimeout(startSlider,10);
-// window.setInterval(changeSliderSpeed,500);
-
-
-// constructor=[["w","y"],["w","y"],["w","y"],["y","q"],["w","q"],["w","y"],["w","y"],["w","y"],["y","q"],["w","q"],["w","w"],["y","w"],["w","y"],["y","q"],["w","q"],["y"]]
-// constructor=[["w","w"],["y","w"],["w","y"],["y","q"],["w","q"],["y"]]
-// drawConstructor(constructor);
-// drawGame();
-
-// thispos=0;
-// timerSeconds=(new Date()).getTime()/1000;
-// for(k=0;k<100000;k++){
-//     if(1000*((new Date()).getTime()/1000-timerSeconds)>100){
-//         timerSeconds=(new Date()).getTime()/1000;
-//         thispos=thispos-10;
-//         document.getElementById('historyDiv').style.left=thispos+"px";
-//         document.getElementById('historyLabelsDiv').style.left=thispos+"px";
-//     }
-// }
-
-
 function parameters(incoming){
     //console.log("oparamersMEssage");
   speed=incoming['speed']
@@ -1389,24 +979,12 @@ function reconnecting(incoming){
 }
 
 
-function hypotheticalChoice(incoming){
-  // window.hypotheticalChoiceRuleNumber=incoming['ruleNumber'];
-  // window.hypotheticalChoiceRuleOutput=incoming['ruleOutput'];
-
-// hypRuleNumber']=hypRuleOut.number
-//       msg['hypRuleOutput']=hypRuleOut.output
-//       msg['hypRuleLength']=hypRuleOut.length
-//       msg['regularRuleNumber']=regularRuleOut.number
-//       msg['regularRuleOutput']=regularRuleOut.output
-//       msg['regularRuleLength
-    displayHypHistory(incoming)
-}
-
 
 
 
 
 function drawMessage(message,fontColorIN){
+    createAndAddDiv
     div=createDiv("inGameMessage")
     var div2 = document.createElement("div");
     div2.id = "inGameMessageInside";
@@ -1422,35 +1000,7 @@ function drawMessage(message,fontColorIN){
 }
 
 
-function getRuleSet(type){
-    if(type=="hypHyp"){
-        typeOut="hyp";
-    }
-    else if(type=="hypActual"){
-        typeOut="regular";
-    }
-    else if(type=="regular"){
-        typeOut="regular";
-    }
-    else{
-        typeOut=type;
-    }
-    return typeOut
-}
 
-
-
-
-
-
-
-
-
-
-function addHypHistory(){
-    var message={"type":"addHypHistory"};
-    sock.send(JSON.stringify(message));
-}
 
 
 window.ruleSets=[]
@@ -1461,123 +1011,25 @@ window.firstPeriodRule=[]
 window.constructors=[]
 
 
-function getHypHistory(number){
-    var message={"type":"getHypHistory","number":number};
-    sock.send(JSON.stringify(message));
-
-}
 
 
-function drawHypTabs(){
-    for(k=1;k<=window.hypHistories;k++){
-        var hypSliderButton = createDiv("hypSliderButton_"+k);
-        hypSliderButton.className="hypSliderSwitchButton";
-        hypSliderButton.style.left=(10+65*(k-1))+"px";
-        hypSliderButton.innerHTML="History "+k;
-        hypSliderButton.style.backgroundColor="rgba(225,225,225,1)";
-        hypSliderButton.style.border="1px solid rgba(255,0,0,.3)";
-        var pf = partial(getHypHistory,k);
-        hypSliderButton.addEventListener("click",pf);
-        $("#mainDiv").append(hypSliderButton);
+
+
+
+function drawWarningMessage(){
+    if(window.state['warning']=="yes"){
+        var thisDiv=createAndAddDiv("makeChoiceWarning","mainDiv");
+        thisDiv.className = "arrow_box arrow_box_right";
+        thisDiv.innerHTML = "Choice will be made automatically in <br> <time id='selfTimer'>1:00</time>";
+        thisDiv.style.left="975px";
+        thisDiv.style.top="50px";
+        thisDiv.style.opacity="0.85";
+        thisDiv.style.backgroundColor="white";
+
+        // placeTextNew({"divid":"clickStatusBackButton","text":"Choice will be made automatically in <br> <time id='selfTimer'>1:00</time>","top":"374px","fontSize":"200%","color":"green","width":"800px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,.1)","height":"50px"})
+        // document.getElementById("clickStatusBackButton").className = "arrow_box arrow_box_up";
+        moveSelfTimer("selfTimer");
     }
-
-    document.getElementById("hypSliderButton_"+window.hypTab).style.backgroundColor="rgba(255,255,255,1)";
-    document.getElementById("hypSliderButton_"+window.hypTab).style.border="1px solid red";
-
-    if(window.hypHistories<9){
-        var hypSliderButton = createDiv("hypSliderButton_Add");
-        hypSliderButton.className="hypSliderSwitchButton";
-        hypSliderButton.style.left=(10+65*(window.hypHistories))+"px";
-        hypSliderButton.innerHTML="New History";
-        hypSliderButton.addEventListener("click",addHypHistory);
-        $("#mainDiv").append(hypSliderButton);
-    }
-    // var hypSliderButton = createDiv("hypActualSliderButton_"+number);
-    // hypSliderButton.className="actualSliderSwitchButton";
-    // hypSliderButton.style.left=(650+65*(number-1))+"px";
-    // hypSliderButton.innerHTML="History "+number;
-    // var pf = partial(showHypHistory,number);
-    // hypSliderButton.addEventListener("click",pf);
-    // $("#mainDiv").append(hypSliderButton);
-}
-
-
-function showHypothetical(incoming){
-    window.hypHistoryList=incoming['hypHistory'];
-    window.hypHistories=incoming['totalHypHistories'];
-    window.hypTab=incoming['hypHistoryNumber'];
-}
-
-function hypHistory(incoming){
-    window.hypHistoryList=incoming['hypHistory'];
-    window.hypHistories=incoming['totalHypHistories'];
-    window.hypTab=incoming['hypHistoryNumber'];
-    window.hypHistoryListComplete=incoming['hypHistoryComplete'];
-    drawHistory("hyp");
-    drawHistory("hypActual");
-    drawHypTabs();
-    displayHypHistory({"nothing":"nothing"});
-}
-
-
-
-function deleteHypothetical(){
-    deleteDiv("hypLeft");
-    deleteDiv("hypRight");
-    deleteDiv("hypTitle");
-    deleteDiv("hypActualTitle");
-    deleteDiv("hypConstructorDiv");
-    deleteDiv("hypDefaultDiv");
-    deleteDiv("hypDefaultDiv");
-    deleteDiv("hypActualRuleList");
-    deleteDiv("hypRuleList");
-    deleteDiv("hypActual_history");
-    deleteDiv("hyp_history");
-}
-
-
-function drawHypothetical(){
-    clearAll();
-    hypLeft=createDiv("hypLeft");
-    $("#mainDiv").append(hypLeft);
-    hypRight=createDiv("hypRight");
-    $("#mainDiv").append(hypRight);
-
-    var div = createDiv("hypTitle");
-    div.innerHTML="Hypothetical Rules";
-    $("#mainDiv").append(div);
-
-    var div = createDiv("hypActualTitle");
-    div.innerHTML="Starting Rules";
-    $("#mainDiv").append(div);
-
-    drawGame("hyp");
-    drawRules("hyp");
-    drawRules("hypActual");
-    drawConstructor("hyp");
-    drawDefault("hyp");
-    getHypHistory(-1);
-
-
-    var topInfoLeft=createDiv("topInfoLeft");
-    var topInfoMiddle=createDiv("topInfoMiddle");
-    topInfoMiddle.innerHTML="The match will start in <time id='timer'>5:00</time>";
-    $("#mainDiv").append(topInfoLeft);
-    $("#mainDiv").append(topInfoMiddle);
-
-}
-
-
-
-
-
-function warningMessage(incoming){
-    thisDiv=createDiv("makeChoiceWarning");
-    thisDiv.className = "arrow-box-up";
-    thisDiv.innerHTML = "Choice will be made automatically in <br> <time id='warningTimer'>1:00</time>";
-    document.getElementById("mainDiv").appendChild(thisDiv);
-    moveSelfTimer("warningTimer");
-    setTimeout(deleteWarningMessage,incoming['waitingTime']-200);
 }
 
 function deleteWarning(){
@@ -1617,11 +1069,20 @@ function placeTextNew(incoming){
         incoming['lineHeight']=incoming['height'];
     }
     if(incoming['backgroundColor']==undefined){
-        incoming['backgroundColor']="rgba(255,0,0,0)";
+        incoming['backgroundColor']="transparent";
+    }
+    if(incoming['border']==undefined){
+        incoming['border']="0px solid black";
+    }
+    if(incoming['parentDiv']==undefined){
+        incoming['parentDiv']="mainDiv";
+    }
+    if(incoming['text']==undefined){
+        incoming['text']="";
     }
 
 
-    var textDiv=createAndAddDiv(incoming["divid"],"mainDiv")
+    var textDiv=createAndAddDiv(incoming["divid"],incoming['parentDiv']);
     textDiv.innerHTML=incoming['text'];
     textDiv.style.opacity="1";
     textDiv.style.top=incoming['top'];
@@ -1633,6 +1094,7 @@ function placeTextNew(incoming){
     textDiv.style.textAlign=incoming["textAlign"];
     textDiv.style.color=incoming["color"];
     textDiv.style.position="absolute";
+    textDiv.style.border=incoming['border'];
     textDiv.style.backgroundColor=incoming['backgroundColor'];
     // setTimeout(function(){
     //     document.getElementById(incoming["divid"]).style.opacity = "1";
@@ -1697,7 +1159,7 @@ function instructionsRules(){
     clearAll();
     drawBackAndForwardButtons();
     //placeText("gameTableTitle","Game Table",50,200,"red",1);
-    //function drawRule2(ruleNumber,constructor,ruleDivName,addToDiv,clickable,highlight){
+    //function drawRule2(constructor,ruleDivName,addToDiv,clickable,highlight){
 
     if(window.state['stage']>=1){
         placeTextNew({"text":"","top":"0px","fontSize":"300%","backgroundColor":"rgba(255,0,0,.1)","height":"150px"})
@@ -1706,18 +1168,18 @@ function instructionsRules(){
     }
 
     if(window.state['stage']>=2){
-        drawRule2(23,[[0,1],[1,1],[0]],"testRule","mainDiv",0,0)
+        drawRule2([[0,1],[1,1],[0]],"testRule","mainDiv",0,0)
         document.getElementById("testRule").style.transform="translate3d(565px,225px,0px) scale(2)";
     }
 
     if(window.state['stage']>=3){
         placeTextNew({"divid":"ruleHasTwoParts","text":"A rule consists of two parts: the input sequence and the output action. ","top":"400px","fontSize":"300%","color":"black","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
         placeTextNew({"divid":"inputSequenceText","text":"Input Sequence","top":"725px","fontSize":"300%","color":"black","width":"400px","textAlign":"center","left":"290px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawRule2(25,[[0,1],[1,1]],"testRuleInput","mainDiv",1,0)
+        drawRule2([[0,1],[1,1]],"testRuleInput","mainDiv",1,0)
         document.getElementById("testRuleInput").style.transform="translate3d(440px,475px,0px) scale(2)";
 
         placeTextNew({"divid":"outputSequenceText","text":"Output Action","top":"725px","fontSize":"300%","color":"black","width":"400px","textAlign":"center","left":"660px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawRule2(256,[[0]],"testRuleOutput","mainDiv",0,0)
+        drawRule2([[0]],"testRuleOutput","mainDiv",0,0)
         document.getElementById("testRuleOutput").style.transform="translate3d(840px,375px,0px) scale(2)";
     }
 
@@ -1758,7 +1220,7 @@ function fitTheHistoryInstructions(){
     }
     if(window.state['stage']>=2){
         placeTextNew({"divid":"div1","text":"Suppose the history looks like this:","top":"150px","fontSize":"300%","color":"black","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawHistory2();        
+        drawHistory();        
         document.getElementById("history").style.transform="translate3d(0px,250px,0px) scale(1)";
     }
     if(window.state['stage']>=3 && window.state['stage']<=4){
@@ -1767,17 +1229,17 @@ function fitTheHistoryInstructions(){
         var statement2="is the same as the actions played at the end of the history (periods 48 and 49):"
         placeTextNew({"divid":"fitRuleText","text":statement,"top":"675px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"40px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
         placeTextNew({"divid":"fitRuleText2","text":statement2,"top":"800px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"40px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
-        drawRule2(23,[[0,0],[0,1]],"fitruleinput","fitRuleText",0,0)
+        drawRule2([[0,0],[0,1]],"fitruleinput","fitRuleText",0,0)
         document.getElementById("fitruleinput").style.fontSize="50%";
         document.getElementById("fitruleinput").style.transform="translate3d(370px,-50px,0px) scale(.5)";
 
-        drawRule2(23,[[0,0],[0,1]],"fitrulehistory","fitRuleText2",0,0)
+        drawRule2([[0,0],[0,1]],"fitrulehistory","fitRuleText2",0,0)
         document.getElementById("fitrulehistory").style.fontSize="50%";
         document.getElementById("fitrulehistory").style.transform="translate3d(370px,-50px,0px) scale(.5)";
 
 
 
-        drawRule2(23,[[0,0],[0,1],[1]],"testRule","mainDiv",0,0)
+        drawRule2([[0,0],[0,1],[1]],"testRule","mainDiv",0,0)
         document.getElementById("testRule").style.transform="translate3d(225px,350px,0px) scale(2)";
 
 
@@ -1790,42 +1252,42 @@ function fitTheHistoryInstructions(){
         placeTextNew({"divid":"div222","text":statement,"top":"675px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"690px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
 
         placeTextNew({"divid":"div2222","text":statement2,"top":"800px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"690px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
-        drawRule2(23,[[0,1],[1,1]],"testRule22","div222",0,0)
+        drawRule2([[0,1],[1,1]],"testRule22","div222",0,0)
         document.getElementById("testRule22").style.fontSize="50%";
         document.getElementById("testRule22").style.transform="translate3d(370px,-50px,0px) scale(.5)";
 
-        drawRule2(23,[[0,0],[0,1]],"testRule223","div222",0,0)
+        drawRule2([[0,0],[0,1]],"testRule223","div222",0,0)
         document.getElementById("testRule223").style.fontSize="50%";
         document.getElementById("testRule223").style.transform="translate3d(370px,-25px,0px) scale(.5)";
 
 
 
-        drawRule2(23,[[0,1],[1,1],[1]],"testRule2","mainDiv",0,0)
+        drawRule2([[0,1],[1,1],[1]],"testRule2","mainDiv",0,0)
         document.getElementById("testRule2").style.transform="translate3d(865px,250px,0px) scale(2)";
     }
 
 
     if(window.state['stage']==5){
         placeTextNew({"divid":"div32","text":"Some rules that DO fit the history:","top":"400px","fontSize":"200%","color":"black","width":"640px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawRule2(23,[[0,1],[0]],"fits1","mainDiv",0,0)
+        drawRule2([[0,1],[0]],"fits1","mainDiv",0,0)
         document.getElementById("fits1").style.fontSize="100%";
         document.getElementById("fits1").style.transform="translate3d(50px,350px,0px)";
-        drawRule2(23,[[0,1],[1]],"fits2","mainDiv",0,0)
+        drawRule2([[0,1],[1]],"fits2","mainDiv",0,0)
         document.getElementById("fits2").style.fontSize="100%";
         document.getElementById("fits2").style.transform="translate3d(200px,250px,0px)";
 
-        drawRule2(23,[[0,0],[0,1],[0]],"fits3","mainDiv",0,0)
+        drawRule2([[0,0],[0,1],[0]],"fits3","mainDiv",0,0)
         document.getElementById("fits3").style.fontSize="100%";
         document.getElementById("fits3").style.transform="translate3d(350px,150px,0px)";
-        drawRule2(23,[[0,0],[0,1],[1]],"fits4","mainDiv",0,0)
+        drawRule2([[0,0],[0,1],[1]],"fits4","mainDiv",0,0)
         document.getElementById("fits4").style.fontSize="100%";
         document.getElementById("fits4").style.transform="translate3d(50px,175px,0px)";
 
-        drawRule2(23,[[1,1],[0,0],[0,1],[0]],"fits5","mainDiv",0,0)
+        drawRule2([[1,1],[0,0],[0,1],[0]],"fits5","mainDiv",0,0)
         document.getElementById("fits5").style.fontSize="100%";
         document.getElementById("fits5").style.transform="translate3d(250px,75px,0px)";
 
-        drawRule2(23,[[0,0],[0,1],[0,0],[1,0],[1,1],[0,0],[0,1],[1]],"fits6","mainDiv",0,0)
+        drawRule2([[0,0],[0,1],[0,0],[1,0],[1,1],[0,0],[0,1],[1]],"fits6","mainDiv",0,0)
         document.getElementById("fits6").style.fontSize="100%";
         document.getElementById("fits6").style.transform="translate3d(50px,100px,0px)";
 
@@ -1833,25 +1295,25 @@ function fitTheHistoryInstructions(){
         placeTextNew({"divid":"div312","text":"Some rules that DO NOT fit the history:","top":"400px","fontSize":"200%","color":"black","width":"640px","textAlign":"center","left":"640px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
 
 
-        drawRule2(23,[[0,0],[1]],"fits11","mainDiv",0,0)
+        drawRule2([[0,0],[1]],"fits11","mainDiv",0,0)
         document.getElementById("fits11").style.fontSize="100%";
         document.getElementById("fits11").style.transform="translate3d(690px,-250px,0px)";
-        drawRule2(25,[[1,0],[0]],"fits12","mainDiv",0,0)
+        drawRule2([[1,0],[0]],"fits12","mainDiv",0,0)
         document.getElementById("fits12").style.fontSize="100%";
         document.getElementById("fits12").style.transform="translate3d(840px,-350px,0px)";
 
-        drawRule2(26,[[0,0],[1,0],[1]],"fits13","mainDiv",0,0)
+        drawRule2([[0,0],[1,0],[1]],"fits13","mainDiv",0,0)
         document.getElementById("fits13").style.fontSize="100%";
         document.getElementById("fits13").style.transform="translate3d(990px,-450px,0px)";
-        drawRule2(27,[[1,0],[0,1],[0]],"fits14","mainDiv",0,0)
+        drawRule2([[1,0],[0,1],[0]],"fits14","mainDiv",0,0)
         document.getElementById("fits14").style.fontSize="100%";
         document.getElementById("fits14").style.transform="translate3d(690px,-425px,0px)";
 
-        drawRule2(23,[[1,0],[0,0],[0,1],[1]],"fits15","mainDiv",0,0)
+        drawRule2([[1,0],[0,0],[0,1],[1]],"fits15","mainDiv",0,0)
         document.getElementById("fits15").style.fontSize="100%";
         document.getElementById("fits15").style.transform="translate3d(890px,-525px,0px)";
 
-        drawRule2(23,[[0,0],[1,1],[0,0],[1,0],[1,1],[0,0],[0,1],[0]],"fits16","mainDiv",0,0)
+        drawRule2([[0,0],[1,1],[0,0],[1,0],[1,1],[0,0],[0,1],[0]],"fits16","mainDiv",0,0)
         document.getElementById("fits16").style.fontSize="100%";
         document.getElementById("fits16").style.transform="translate3d(690px,-500px,0px)";
 
@@ -1859,7 +1321,7 @@ function fitTheHistoryInstructions(){
     }
 
     if(window.state['stage']==6){
-        drawConstructor2("testConstructor","mainDiv");
+        drawConstructor2();
     }
 
 
@@ -1909,13 +1371,13 @@ function instructionsHistory(){
         clickButton("once","continueButton",makeSelection,[["stage","showHistory"]]);
     }   
     else if(window.state['stage']=="showHistory"){
-        drawHistory2();        
+        drawHistory();        
         document.getElementById("history").style.transform="translate3d(0px,100px,0px) scale(1)";
         placeTextNew({"divid":"continueButton","text":"Click Here to Explain History","top":"425px","fontSize":"300%","color":"green","width":"600px","textAlign":"center","left":"340px","backgroundColor":"rgba(0,255,0,.1)","height":"100px"})
         clickButton("once","continueButton",makeSelection,[["stage","explainHistory"],['clickedRows',[0,0,0,0,1]],['currentRow',-1],['allRowClicked','False']]);
     }
     else if(window.state['stage']=="explainHistory"){
-        drawHistory2();        
+        drawHistory();        
         document.getElementById("history").style.transform="translate3d(0px,100px,0px) scale(1)";
 
         var rows=["historyLabelPeriod","historyLabelMyChoice","historyLabelOtherChoice","historyLabelPayoff"];
@@ -1956,7 +1418,7 @@ function instructionsHistory(){
         }
     }
     else if(window.state['stage']=="showHistoryExample"){
-        drawHistory2();        
+        drawHistory();        
         document.getElementById("history").style.transform="translate3d(0px,100px,0px) scale(1)";
         placeTextNew({"text":"Example","top":"300px","fontSize":"400%","textAlign":"center","height":"100px"});
         placeTextNew({"text":"In period <div class='square' style='margin-left:25px;font-size:50%;background-color:white;'>36</div>","top":"450px","fontSize":"300%","textAlign":"right","width":"1000px","left":"0px","height":"50px"});
@@ -1969,7 +1431,7 @@ function instructionsHistory(){
 
     }
     else if(window.state['stage']=="showHistoryQuiz4"){
-        drawHistory2();        
+        drawHistory();        
         document.getElementById("history").style.transform="translate3d(0px,100px,0px) scale(1)";
 
         placeTextNew({"text":"","color":"red","top":"300px","fontSize":"400%","textAlign":"center","height":"100px","backgroundColor":"rgba(255,0,0,.1)","width":"1080px","left":"100px","height":"400px"});
@@ -2002,7 +1464,7 @@ function instructionsHistory(){
         }
     }
     else if(window.state['stage']=="showHistoryQuiz5"){
-        drawHistory2();        
+        drawHistory();        
         document.getElementById("history").style.transform="translate3d(0px,100px,0px) scale(1)";
 
         placeTextNew({"text":"","color":"red","top":"300px","fontSize":"400%","textAlign":"center","height":"100px","backgroundColor":"rgba(255,0,0,.1)","width":"1080px","left":"100px","height":"400px"});
@@ -2056,14 +1518,14 @@ function instructionsPayoffTable(){
         clickButton("once","continueButton",makeSelection,[["stage","showTable"]]);
     }   
     else if(window.state['stage']=="showTable"){
-        drawGame2();        
-        document.getElementById("gameDiv").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(2)";
+        drawGame();        
+        document.getElementById("gameTable").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(2)";
         placeTextNew({"divid":"continueButton","text":"Click Here to Explain Payoff Table","top":"725px","fontSize":"300%","color":"green","width":"600px","textAlign":"center","left":"340px","backgroundColor":"rgba(0,255,0,.1)","height":"100px"})
         clickButton("once","continueButton",makeSelection,[["stage","explainPayoffTable"],['clickedRows',[0,0,0,0,0]],['currentRow',-1],['allRowClicked','False']]);
     }
     else if(window.state['stage']=="explainPayoffTable"){
-        drawGame2();        
-        document.getElementById("gameDiv").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(2)";
+        drawGame();        
+        document.getElementById("gameTable").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(2)";
 
         clickButton("many","gameTable_0_0",clickPayoffTableRow,0);
         clickButton("many","gameTable_1_0",clickPayoffTableRow,1);
@@ -2114,8 +1576,8 @@ function instructionsPayoffTable(){
     else if(window.state['stage']=="showPayoffTableExample"){
         var x=280;
         var y=0;
-        drawGame2();        
-        document.getElementById("gameDiv").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
+        drawGame();        
+        document.getElementById("gameTable").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
         placeTextNew({"text":"Example","top":"400px","fontSize":"400%","textAlign":"center","height":"100px"});
         placeTextNew({"text":"In a given period, if you choose <div class='wSquare square' style='margin-left:25px;font-size:50%'></div>","top":"525px","fontSize":"300%","textAlign":"right","width":"1000px","left":"0px","height":"50px"});
         placeTextNew({"text":"and the subject you are matched with chooses <div class='ySquare square' style='margin-left:25px;font-size:50%'></div>","top":"600px","fontSize":"300%","textAlign":"right","width":"1000px","left":"0px","height":"50px"});
@@ -2131,8 +1593,8 @@ function instructionsPayoffTable(){
     else if(window.state['stage']=="showPayoffTableQuiz1"){
         var x=280;
         var y=0;
-        drawGame2();        
-        document.getElementById("gameDiv").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
+        drawGame();        
+        document.getElementById("gameTable").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
         placeTextNew({"text":"","color":"red","top":"400px","height":"525px","fontSize":"400%","textAlign":"center","backgroundColor":"rgba(255,0,0,.1)","width":"1080px","left":"100px"});
         placeTextNew({"text":"Quiz Question #1","color":"red","top":"400px","fontSize":"400%","textAlign":"center","height":"100px"});
         placeTextNew({"text":"In a given period, suppose that you choose <div class='ySquare square' style='margin-left:25px;font-size:50%'></div>","top":"525px","fontSize":"300%","textAlign":"right","width":"1000px","left":"0px","height":"50px"});
@@ -2163,8 +1625,8 @@ function instructionsPayoffTable(){
     else if(window.state['stage']=="showPayoffTableQuiz2"){
         var x=280;
         var y=0;
-        drawGame2();        
-        document.getElementById("gameDiv").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
+        drawGame();        
+        document.getElementById("gameTable").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
         placeTextNew({"text":"","color":"red","top":"400px","height":"525px","fontSize":"400%","textAlign":"center","backgroundColor":"rgba(255,0,0,.1)","width":"1080px","left":"100px"});
         placeTextNew({"text":"Quiz Question #2","color":"red","top":"400px","fontSize":"400%","textAlign":"center","height":"100px"});
         placeTextNew({"text":"In a given period, suppose that you choose <div class='ySquare square' style='margin-left:25px;font-size:50%'></div>","top":"525px","fontSize":"300%","textAlign":"right","width":"1000px","left":"0px","height":"50px"});
@@ -2195,8 +1657,8 @@ function instructionsPayoffTable(){
     else if(window.state['stage']=="showPayoffTableQuiz3"){
         var x=280;
         var y=0;
-        drawGame2();        
-        document.getElementById("gameDiv").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
+        drawGame();        
+        document.getElementById("gameTable").style.transform="translate3d("+(x-755)+"px,"+(-649+y)+"px,0px) scale(1)";
         placeTextNew({"text":"","color":"red","top":"400px","height":"525px","fontSize":"400%","textAlign":"center","backgroundColor":"rgba(255,0,0,.1)","width":"1080px","left":"100px"});
         placeTextNew({"text":"Quiz Question #3","color":"red","top":"400px","fontSize":"400%","textAlign":"center","height":"100px"});
         placeTextNew({"text":"In a given period, suppose that you choose <div class='wSquare square' style='margin-left:25px;font-size:50%'></div>","top":"525px","fontSize":"300%","textAlign":"right","width":"1000px","left":"0px","height":"50px"});
@@ -2250,158 +1712,204 @@ function clickPayoffTableRow(args){
 }
 
 
+
+function payoffsOnly(){
+    clearAll();
+    placeTextNew({"divid":"payoffsOnly1","text":"Please take this time to review the payoff table.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    placeTextNew({"divid":"payoffsOnly2","text":"You will be able to make rules in <time id='timer'>1:00</time>","top":"100px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    moveTimer("timer");
+    drawGame();
+    document.getElementById("gameTable").style.transform="translate(-115px,-50px) scale(3)";
+    document.getElementById("gameTable").style.transformOrigin="bottom right";
+}
+
+
+function setFirstPeriodRulePage(){
+    clearAll();
+    placeTextNew({"divid":"setFirstPeriod2","text":"The match will start in <time id='timer'>1:00</time>.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    moveTimer("timer");
+    drawGame();
+    drawFirstPeriod();
+    document.getElementById("setFirstPeriodDiv").style.transform="scale(4) translate3d(60px,-160px,0px)";
+    document.getElementById("setFirstPeriodDiv").style.transformOrigin="top left";
+
+    if(window.state['firstPeriodRule']==undefined){
+        placeTextNew({"divid":"mustSetFirstPeriod","text":"Before you can make rules, set your first period rule.","top":"650px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    }
+    else{
+        placeTextNew({"divid":"mustSetFirstPeriod","text":"Click here to continue to set default rule.","top":"654px","fontSize":"200%","color":"green","textAlign":"center","height":"100px","backgroundColor":"rgba(0,255,0,.1)","width":"600px","left":"340px"})
+        clickButton("once","mustSetFirstPeriod",makeSelection,[["page","setDefaultRulePage"]]);
+    }
+}
+
+
+
+function setDefaultRulePage(){
+    clearAll();
+    // placeTextNew({"divid":"setFirstPeriod1","text":"Next, set your default rule.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    placeTextNew({"divid":"setFirstPeriod2","text":"The first match will start in <time id='timer'>1:00</time>.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    moveTimer("timer");
+    drawGame();
+    drawDefault();
+    document.getElementById("setDefaultDiv").style.transform="scale(4) translate3d(60px,-192px,0px)";
+    document.getElementById("setDefaultDiv").style.transformOrigin="top left";
+
+    if(window.state['defaultRule']==undefined){
+        placeTextNew({"divid":"mustSetDefault","text":"Before you can make rules, set your default rule.","top":"650px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
+    }
+    else{
+        placeTextNew({"divid":"mustSetDefault","text":"Click here to continue to construct more rules.","top":"654px","fontSize":"200%","color":"green","textAlign":"center","height":"100px","backgroundColor":"rgba(0,255,0,.1)","width":"600px","left":"340px"})
+        clickButton("once","mustSetDefault",makeSelection,[["page","preMatch"]]);
+    }
+
+    drawFirstPeriod();
+}
+
+
+function preMatch(){
+    clearAll();
+    //deleteHypothetical();
+    drawGame();
+    drawFirstPeriod();
+    drawDefault();
+    drawConstructor2();
+    drawHistory();
+    drawRules();    
+    drawInfo();
+    placeTextNew({"divid":"timerMessage","text":"The next match will start in <time id='timer'>1:00</time>.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"150px"})
+    moveTimer("timer");
+}
+
+
+function postMatch(){
+    clearAll();
+    drawGame();
+    drawFirstPeriod();
+    drawDefault();
+    drawConstructor2();
+    drawHistory();
+    drawRules();    
+    drawInfo();
+    if(window.state['stage']=="wait"){
+        placeTextNew({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
+        placeTextNew({"divid":"matchOverMessage2","text":"Please wait for other subjects to finish their matches.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
+    }
+    else if(window.state['stage']=="timer"){
+        placeTextNew({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
+        placeTextNew({"divid":"matchOverMessage2","text":"This match will end in  <time id='timer'>1:00</time>.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
+        moveTimer("timer");
+    }
+}
+
+
 function statusManager(){
   thisStatus=window.state;
   console.log(thisStatus);
-  if(thisStatus[0]==-1){
-    message="Loading...";
-    genericScreen(message);
-  }
-  else if(thisStatus["page"]=="generic"){
-    clearAll();
-    genericScreen(thisStatus["message"]);
-  }
-  else if(thisStatus["page"]=="instructionsPayoffTable"){
-    instructionsPayoffTable();
-  }
-  else if(thisStatus["page"]=="instructionsHistory"){
-    instructionsHistory();
-  }
-  else if(thisStatus["page"]=="instructionsRules"){
-    instructionsRules();
-  }
-  else if(thisStatus["page"]=="instructionsRulesFirst"){
-    instructionsRulesFirst();
-  }
-  else if(thisStatus["page"]=="fitTheHistoryInstructions"){
-    fitTheHistoryInstructions();
-  }
-  else if(thisStatus["page"]=="fitTheHistoryExamplesInstructions"){
-    fitTheHistoryExamplesInstructions();
-  }
-  else if(thisStatus["page"]=="quiz"){//quiz
-    clearAll();
-    drawRules("regular");
-    window.speed=100;
-    drawHistory("regular");
-
-    for(k=0;k<window.currentHistory.length;k++){
-        period=28-window.currentHistory.length+k+1;
-        if(isDivNotThere("regular_history_square_"+period+"_1")){
-            drawHistoryPeriodLabels('regular',period);
-            drawHistoryPeriod('regular',period,0);
-            drawHistoryPeriod('regular',period,1);
-            fillHistory('regular',period,0,actionFromInteger(window.currentHistory[k][0]));
-            fillHistory('regular',period,1,actionFromInteger(window.currentHistory[k][1]));
-            //document.getElementById("regular_historyPayoffLabel_"+period).innerHTML=window.currentPayoffHistory[k][0];
-        }
-    }
-    document.getElementById("regular_historyIN").style.transform="translateX("+(-200)+"px)";
-
-    // fillHistory("slider",window.currentHistory,28,"all");
-    drawGame("regular");
-    if(thisStatus["stage"]=="question"){
-      displayQuestion();
-      if(window.questionType==3 || window.questionType==5){
-        drawConstructor("regular");
+  if(runFunctionFromString(thisStatus["page"])==false){
+      if(thisStatus[0]==-1){
+        message="Loading...";
+        genericScreen(message);
       }
-    }
-    else if(thisStatus["stage"]!="question"){
-      displaySolution();
-    }
-  }
-  else if(thisStatus["page"]=="quizSummary"){
-    message="Please wait for others finish the quiz. <br> You earned "+window.state["summary"]+".";
-    genericScreen(message);
-  }
-  else if(thisStatus["page"]=="payoffsOnly"){//Show only payoff table for a bit
-    clearAll();
-    $("#genericScreen").hide();
+      else if(thisStatus["page"]=="generic"){
+        clearAll();
+        genericScreen(thisStatus["message"]);
+      }
+      else if(thisStatus["page"]=="instructionsPayoffTable"){
+        instructionsPayoffTable();
+      }
+      else if(thisStatus["page"]=="instructionsHistory"){
+        instructionsHistory();
+      }
+      else if(thisStatus["page"]=="instructionsRules"){
+        instructionsRules();
+      }
+      else if(thisStatus["page"]=="instructionsRulesFirst"){
+        instructionsRulesFirst();
+      }
+      else if(thisStatus["page"]=="fitTheHistoryInstructions"){
+        fitTheHistoryInstructions();
+      }
+      else if(thisStatus["page"]=="fitTheHistoryExamplesInstructions"){
+        fitTheHistoryExamplesInstructions();
+      }
+      else if(thisStatus["page"]=="quiz"){//quiz
+        clearAll();
+        drawRules("regular");
+        window.speed=100;
 
-    // window.timerMessage="You will be able to make rules in "
-    // window.timerLocation=[0,125,1280,75]
-    window.actionProfileFrequencies=[0,0,0,0];
-    // window.stop=0;
-    //drawMessage("Please take this time to review the payoff table.","#FF0000");
-    drawMessage("Please take this time to review the payoff table. <br> You will be able to make rules in <time id='timer'>1:00</time>","#FF0000");
-    moveTimer("timer");
-
-    drawGame("regular");
-    document.getElementById("gameDiv").style.transform="scale(3)";
-    document.getElementById("gameDiv").style.transformOrigin="bottom right";
-  }
-  else if(thisStatus["page"]=="defaultNotSet"){//default Rule Not Set yet
-    window.ruleSets=[];
-    window.ruleNumbers=[];
-    window.ruleLastUsed=[];
-    window.ruleFrequency=[];
-    window.firstPeriodRule=[];
-    deleteDiv("genericScreen");
-    deleteDiv("regularRuleList");
-    drawIfNeeded("gameDiv");
-    document.getElementById("gameDiv").style.transform="scale(1)";
-    document.getElementById("gameDiv").style.transition="all .5s ease-out";
-    drawIfNeeded("regularDefaultDiv");
-    document.getElementById("regularDefaultDiv").style.transform="scale(3)";
-    document.getElementById("regularDefaultDiv").style.transformOrigin="bottom left";
-    document.getElementById("regularDefaultDiv").style.transition="all .5s ease-out";
-    drawInfo();
-    drawMessage("Match will start in <time id='timer'>1:00</time><br>You must set your default rule before play can begin.","#FF0000");
-    moveTimer("timer");
-  }
-  else if(thisStatus["page"]=="hypothetical"){
-    console.log(thisStatus);
-    clearAll();
-    drawIfNeeded("hypothetical");
-    moveTimer("timer");
-  }
-  else if(thisStatus["page"]=="preMatch"){//prematch
-    clearAll();
-    //deleteHypothetical();
-    drawIfNeeded("gameDiv");
-    drawIfNeeded("defaultDiv");
-    drawIfNeeded("regularConstructorDiv");
-    drawIfNeeded("regularRuleList");
-    drawInfo();
-    drawMessage("Match will start in <time id='timer'>1:00</time>","#FF0000");
-    moveTimer("timer");
-  }
-  else if(thisStatus["page"]=="game"){
-    drawIfNeeded("gameDiv");
-    drawIfNeeded("defaultDiv");
-    drawIfNeeded("regularConstructorDiv");
-    drawIfNeeded("regularRuleList");
-    drawIfNeeded("regular_history");
-    drawInfo();
-    if(thisStatus["locked"]=="no"){
-        if(thisStatus["animate"]=="yes"){
-            doCostAnimation();
+        for(k=0;k<window.currentHistory.length;k++){
+            period=28-window.currentHistory.length+k+1;
+            if(isDivNotThere("regular_history_square_"+period+"_1")){
+                drawHistoryPeriodLabels('regular',period);
+                drawHistoryPeriod('regular',period,0);
+                drawHistoryPeriod('regular',period,1);
+                fillHistory('regular',period,0,actionFromInteger(window.currentHistory[k][0]));
+                fillHistory('regular',period,1,actionFromInteger(window.currentHistory[k][1]));
+                //document.getElementById("regular_historyPayoffLabel_"+period).innerHTML=window.currentPayoffHistory[k][0];
+            }
         }
-        deleteDiv("rulesLocked");
-        deleteDiv("noButtonOverlay");
-        deleteDiv("inGameMessage");
-        drawLockButton();
-        window.rulesUnlocked=1;
-        //updateUnlockTime();
-    }
-    else if(thisStatus["locked"]=="yes"){
-        drawLock();
-        drawUnlockButton();
-    }
-    drawNextAction("regular");
-  }
-  else if(thisStatus["page"]=="postMatch"){//MatchOver
-    drawIfNeeded("gameDiv");
-    // drawIfNeeded("defaultDiv");
-    // drawIfNeeded("regularConstructorDiv");
-    drawIfNeeded("regularRuleList");
-    drawIfNeeded("regular_history");
-    // deleteDiv("rulesLocked");
-    // deleteDiv("noButtonOverlay");
-    // deleteDiv("inGameMessage");
-    // deleteDiv("lockRulesButton");
-    drawInfo();
-    drawPostMatch();
+        document.getElementById("regular_historyIN").style.transform="translateX("+(-200)+"px)";
+
+        // fillHistory("slider",window.currentHistory,28,"all");
+        drawGame();
+        if(thisStatus["stage"]=="question"){
+          displayQuestion();
+          if(window.questionType==3 || window.questionType==5){
+            drawConstructor("regular");
+          }
+        }
+        else if(thisStatus["stage"]!="question"){
+          displaySolution();
+        }
+      }
+      else if(thisStatus["page"]=="quizSummary"){
+        message="Please wait for others finish the quiz. <br> You earned "+window.state["summary"]+".";
+        genericScreen(message);
+      }
+      else if(thisStatus["page"]=="defaultNotSet"){//default Rule Not Set yet
+        window.ruleSets=[];
+        window.ruleNumbers=[];
+        window.ruleLastUsed=[];
+        window.ruleFrequency=[];
+        window.firstPeriodRule=[];
+        deleteDiv("genericScreen");
+        deleteDiv("regularRuleList");
+        drawGame();
+        document.getElementById("gameTable").style.transform="scale(1)";
+        document.getElementById("gameTable").style.transition="all .5s ease-out";
+        drawIfNeeded("regularDefaultDiv");
+        document.getElementById("regularDefaultDiv").style.transform="scale(3)";
+        document.getElementById("regularDefaultDiv").style.transformOrigin="bottom left";
+        document.getElementById("regularDefaultDiv").style.transition="all .5s ease-out";
+        drawInfo();
+        drawMessage("Match will start in <time id='timer'>1:00</time><br>You must set your default rule before play can begin.","#FF0000");
+        moveTimer("timer");
+      }
+      else if(thisStatus["page"]=="hypothetical"){
+        console.log(thisStatus);
+        clearAll();
+        drawIfNeeded("hypothetical");
+        moveTimer("timer");
+      }
+      else if(thisStatus["page"]=="testing"){
+        clearAll();
+        drawGame();
+        drawDefault();
+        drawConstructor2();
+        drawHistory();    
+        drawRules();    
+      }
+      else if(thisStatus["page"]=="game"){
+        clearAll();
+        drawGame();
+        drawFirstPeriod();
+        drawDefault();
+        drawConstructor2();
+        drawHistory();    
+        drawRules();  
+        drawInfo();  
+        drawWarningMessage();
+      }
   }
 }
 
@@ -2447,48 +1955,6 @@ function beginRules(incoming){
 
 }
 
-
-function updateRules(incoming){
-    //console.log("updateRulesMessage",incoming['ruleType'],getRuleSet(incoming['ruleType']),getRuleSet(incoming['ruleType']) in window.ruleSets);
-    ruleType=getRuleSet(incoming['ruleType']);
-    window.ruleSets[ruleType]=eval(JSON.parse(JSON.stringify(incoming['currentRules'])));
-    //console.log('updateRulesMessage',ruleType,incoming['ruleType']);
-    window.ruleNumbers[ruleType]=eval(JSON.parse(JSON.stringify(incoming['currentRuleNumbers'])));
-    window.ruleLastUsed[ruleType]=eval(JSON.parse(JSON.stringify(incoming['lastUsed'])));
-    window.ruleFrequency[ruleType]=eval(JSON.parse(JSON.stringify(incoming['ruleFrequency'])));
-    window.firstPeriodRule[ruleType]=eval(JSON.parse(JSON.stringify(incoming['firstPeriodRule'])));
-    if(incoming['updateType']=="everything"){
-        if(thisStatus["page"]=="hypothetical"){
-            drawRules("hyp");            
-            drawRules("hypActual");    
-            if(window.hypHistoryList!=undefined){updateHypHistoryOnServer();}
-        }  
-        else{
-            drawRules("regular");            
-            drawInfo();
-        }
-    }
-    else{
-        window.nextPeriodPlay=incoming['nextPeriodPlay'];
-        window.nextPeriodRule=incoming['nextPeriodRule'];
-        window.nextPeriodRuleLength=incoming['nextPeriodRuleLength'];
-        updateRuleStats(ruleType,incoming['lastRuleNumber'],incoming['lastRuleLastUsed'],incoming['lastRuleFrequency']);
-    }
-  window.nextPeriodPlay=incoming['nextPeriodPlay'];
-  window.nextPeriodRule=incoming['nextPeriodRule'];
-  window.nextPeriodRuleLength=incoming['nextPeriodRuleLength'];
-
-  if(ruleType=="regular" && window.state['page']=="game"){
-      drawNextAction("regular");
-      type=incoming['ruleType'];
-      highlightRule(ruleType,incoming['nextPeriodRule'],incoming['nextPeriodRuleLength']);
-  }
-
-    if(thisStatus["page"]=="game" && thisStatus["stage"]=="defaultNotSet"){
-        statusManager();
-    }
-
-}
 
 
 function quizQuestion(incoming){
@@ -2772,119 +2238,6 @@ function displaySolution(){
     $('#mainDiv').append(quizAnswerDiv);
     $('#quizAnswerDiv').append(quizAnswerDivButton);
 }
-//     quizQuestionDiv=createDiv("quizQuestionDiv");
-
-
-
-
-
-//   if(window.answerMessage['solution']=="correct"){
-//     var x=0;
-//     var y=255;
-//     thisText="Next Question";
-//   }
-//   else if(window.answerMessage['solution']=="incorrect"){
-//     var x=255;
-//     var y=0;
-//     thisText="Try Again";
-//   }
-
-
-
-//   var myRectangle={
-//     start:[0,774],
-//     end:[930,1024],
-//     text:"",
-//     context:window.context3,
-//     borderWidth:4,
-//     backgroundColor:"white",
-//     borderColor:"rgba("+x+","+y+",0,1)",
-//     fontType:"40px Proxima Nova"
-//   };
-//   drawRectangle2(myRectangle);
-
-//   var myRectangle={
-//     start:[0,774],
-//     end:[930,824],
-//     text:window.answerMessage['solutionText'],
-//     context:window.context3,
-//     borderWidth:4,
-//     backgroundColor:"transparent",
-//     borderColor:"transparent",
-//     fontType:"26px Proxima Nova"
-//   };
-//   drawRectangle2(myRectangle);
-
-//   var myRectangle={
-//     start:[730,974],
-//     end:[930,1024],
-//     text:thisText,
-//     context:window.context3,
-//     borderWidth:4,
-//     backgroundColor:"rgba("+x+","+y+",0,.2)",
-//     borderColor:"rgba("+x+","+y+",0,1)",
-//     fontType:"16px Proxima Nova"
-//   };
-//   drawRectangle2(myRectangle);
-
-//   window.buttons['solution']=[]
-//   if(window.answerMessage['solution']=="correct"){
-//     fontStyle = {};
-//     fontStyle['font'] = "24px Proxima Nova";
-//     fontStyle['color'] = '#008800';
-//     wrapText(window.context3,window.answerStatement,465,874,465,30,fontStyle);
-//     window.buttons['solution'].push([730,924,200,100,["nextQuestion"]])
-//   }
-//   else if(window.tries>1 && window.answerMessage['solution']=="incorrect"){
-//     fontStyle = {};
-//     fontStyle['font'] = "24px Proxima Nova";
-//     fontStyle['color'] = '#008800';
-//     wrapText(window.context3,window.answerStatement,465,874,465,30,fontStyle);
-//     window.buttons['solution'].push([730,924,200,100,["tryAgain"]])
-//   }
-//   else{
-//     window.buttons['solution'].push([730,924,200,100,["tryAgain"]])    
-//   }
-
-//   // var myRectangle={x:615,y:175,action:window.answerMessage['buttonText'],context:window.context3,borderWidth:1,borderColor:color,h:30,w:150};
-//   // drawRectangle(myRectangle);
-// }
-
-// drawTopInfo();
-// historySequence=[["y","w"],["w","y"]]
-// drawHistory(historySequence,5);
-// document.getElementById('history_square_2_0').className="ySquare square";
-// highlightHistory(1,3,6);
-
-//document.getElementById('historyDiv').classList.add('horizTranslate');
-
-// window.setInterval(addHistory,4000);
-// addHistory();
-// function addHistory(){
-//     historySequence.push(['w','w']);
-//     drawHistory(historySequence,3);
-// }
-
-
-//window.setInterval(testing,10);
-// testing();
-// function testing(){
-//     thispos=thispos-.125;
-//     document.getElementById('historyLabelsDiv').style.left=thispos+"px"
-//     document.getElementById('historyDiv').style.left=thispos+"px"
-// }
-
-
-
-// var testDiv = document.createElement("div");
-// testDiv.className = "testDiv";
-// $("body").append(testDiv);
-
-
-// testDiv.style.transition = "all .5s ease-out";
-// testDiv.style.transform = "translate(100px,0px)";
-
-//drawInstructionDemo(0
 
 
 function newPeriodTest(){

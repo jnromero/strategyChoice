@@ -29,63 +29,38 @@ class experimentClass():
   
 
    def setParameters(self):
-
       self.nonPickleData={}
       print("setPreliminaries")
-      self.data['stopTick']=0
-      self.data['elapsed']=0
-      #currentTime,startTime,totalTime,jsTime
-      self.data['timer']=[0,0,0,0]
-      self.data['payoffs']=[[0,0],[0,0],[0,0],[0,0]]
-      self.data['choices']=["1","2"]
-      self.data['instructionsRunning']=0
-      self.data['videoRunning']=0
       self.data['defaultOnlyMatches']=-10
-      self.data['ruleLockFixedCost']=250
-      self.data['ruleLockMarginalCost']=0
-      self.data['currentMatch']=-1
-      self.data['matchStartTime']=0
 
       self.data['totalMatches']=5
       self.data['exchangeRate']=float(1)/1250
       self.data['showPayoffTime']=60
-      self.data['hypotheticalPeriodLength']=600
+      self.data['postMatchTime']=10
+
 
       self.data['preStageLengths']=[60,60,120,120,120,120,120,120,120,120,120]
-      self.data['freeStageLengths']=[20,22, 6, 6, 45, 16, 3, 24, 18, 12, 48]
+      self.data['periodsPerMatch']=[20,22, 6, 6, 45, 16, 3, 24, 18, 12, 48]
 
       #testing
-      self.data['showPayoffTime']=6
-      self.data['hypotheticalPeriodLength']=600
+      self.data['showPayoffTime']=3
       self.data['totalMatches']=10#not including practice
-      self.data['preStageLengths']=[20,60,60,60,60,60,60,60,60,60,60,60]
-      self.data['freeStageLengths']=[30]+[46, 36, 52, 85, 60, 7, 68, 41, 44, 42]
+      self.data['preStageLengths']=[20,10,60,60,60,60,60,60,60,60,60,60]
+      self.data['periodsPerMatch']=[30]+[46, 36, 52, 85, 60, 7, 68, 41, 44, 42]
+      self.data['periodsPerMatch']=[30]+[4, 36, 52, 85, 60, 7, 68, 41, 44, 42]
 
 
-      # #testing
-      # self.data['showPayoffTime']=1
-      # self.data['hypotheticalPeriodLength']=1
-      # self.data['totalMatches']=10#not including practice
-      # self.data['preStageLengths']=[20,10,60,60,60,60,60,60,60,60,60,60]
-      # self.data['freeStageLengths']=[30]+[46, 36, 52, 85, 60, 7, 68, 41, 44, 42]
+      self.data['currentMatch']=0
+
+      #payoffs
+      self.data['matchType']="regular"
+      self.data['choices']=["W","Y"]
+      # self.data['payoffs']=[[3,3],[1,5],[4,1],[2,2]]
+      # self.data['payoffs']=[[1,5],[2,6],[3,7],[4,8]]
+      # self.data['payoffs']=[[48,48],[12,50],[50,12],[25,25]]
+      self.data['payoffs']=[[38,38],[12,50],[50,12],[25,25]]
 
 
-      #testing
-      # self.data['showPayoffTime']=3
-      # self.data['preStageLengths']=[10,20,20,20,20,20,20,20,20,10,10,10,10,10,10,10]
-      # self.data['freeStageLengths']=[15,15,15,15,15,15,15,15, 70, 177, 132, 320, 15, 63, 135, 106]
-      # self.data['lockStageLengths']=[2,11, 76, 0, 106, 0, 443, 0, 29, 161, 129, 269, 0, 47, 102, 0] 
-      # self.data['postStageLengths']=[2,10,10,10,10,10,10,5,5,5,5,5,5,5,5,5]
-      # self.data['totalMatches']=60
-      # self.data['preStageLengths']=[60, 120, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10]
-      # self.data['freeStageLengths']=[60,2, 6, 5, 10, 16, 9, 13, 5, 2, 12, 1, 3, 5, 1, 9, 12, 1, 7, 2, 2, 3, 2, 2, 3, 6, 4, 1, 3, 4, 4, 13, 2, 3, 1, 5, 11, 3, 2, 5, 2, 5, 3, 10, 4, 6, 3, 6, 1, 2, 9, 5, 1, 7, 4, 7, 4, 5, 2, 3, 4]
-      # self.data['lockStageLengths']=[60,0, 7, 0, 2, 0, 8, 0, 12, 0, 9, 0, 0, 6, 0, 0, 5, 0, 0, 0, 14, 18, 29, 0, 0, 0, 0, 10, 0, 0, 32, 0, 8, 2, 15, 0, 15, 31, 0, 0, 0, 1, 0, 0, 0, 7, 0, 4, 3, 0, 11, 0, 4, 0, 0, 3, 0, 0, 0, 0, 0]
-      # self.data['postStageLengths']=[10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
-
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+'files/quiz.pickle'
-      file = open(filename,'rb')
-      self.data['quizQuestions']=pickle.load(file)
-      file.close() 
 
    def reversePays(self,p):
       paysOut=[[p[0][1],p[0][0]],[p[2][1],p[2][0]],[p[1][1],p[1][0]],[p[3][1],p[3][0]]]
@@ -117,14 +92,16 @@ class experimentClass():
          self.data[sub2].gameTable[self.data['currentMatch']]=self.reversePays(self.data['payoffs'])
 
 
-   def setMatchings(self):
-      print("setMatchings - do nothing")
-
+   def notAcceptingClientsAnymore(self):
+      for sid in self.data['subjectIDs']:
+         self.data[sid].status['payoffs']=self.data['payoffs']
+         self.data[sid].status['choices']=self.data['choices']
+      self.setMatchingsByQuiz()
    def setMatchingsByQuiz(self):
       goodQuiz=[]
       badQuiz=[]
       for sid in self.data['subjectIDs']:
-         if self.data[sid].quizEarnings>0:
+         if self.data[sid].quizEarnings>-100:
             goodQuiz.append(sid)
          else:
             badQuiz.append(sid)
@@ -144,7 +121,7 @@ class experimentClass():
       for sid in self.data['groups'][0]:
          self.data[sid].group="high"
          self.data[sid].timePerQuestion=60
-         self.data[sid].timeUntilWarning=50
+         self.data[sid].timeUntilWarning=5
       for sid in self.data['groups'][1]:
          self.data[sid].group="low"
          self.data[sid].timePerQuestion=4
@@ -188,69 +165,84 @@ class experimentClass():
          self.updateStatus(sid)
 
 
+   def startExperiment(self,message,client):
+      self.taskDone(message)
+      self.showPayoffs()
+
+   def showPayoffs(self):
+      self.initializeTimer("all",self.data['showPayoffTime'],self.startPreMatch)
+      # #self.initializeTimer(sid,5,self.pleaseMakeChoice,sid)
+      for sid in self.data['subjectIDs']:
+         self.data[sid].status["page"]="payoffsOnly"
+         self.updateStatus(sid)
+
+   # def setFirstPeriodPage(self):
+   #    self.initializeTimer("all",30,self.startMatch)
+   #    self.data['currentMatch']=0
+   #    for sid in self.data['subjectIDs']:
+   #       self.data[sid].newMatch(self.data['currentMatch'])
+   #       self.data[sid].status["page"]="setFirstPeriodRulePage"
+   #       self.updateStatus(sid)
 
 
    def startPreMatch(self):
-      self.data['matchStartTime']=time.time()
       self.data['currentMatch']=self.data['currentMatch']+1
       if self.data['currentMatch']>self.data['totalMatches']:
          self.gameOver()#game over
       else:
-         self.data['timer']=[time.time(),time.time(),self.data['preStageLengths'][self.data['currentMatch']]]
+         self.initializeTimer("all",self.data['preStageLengths'][self.data['currentMatch']],self.startMatch)
          self.makeMatching()
          for sid in self.data['subjectIDs']:
-            self.sendParameters(sid)
             self.data[sid].newMatch(self.data['currentMatch'])
-            if self.data['matchType']=="trial":
-               self.data[sid].status={"page":"defaultNotSet","match":self.data['currentMatch']}
+            if len(self.data[sid].rules['current']['firstPeriod'])==0:
+               self.data[sid].status['page']="setFirstPeriodRulePage"
+               self.updateStatus(sid)      
             else:
-               self.data[sid].status={"page":"preMatch","match":self.data['currentMatch']}
-            self.updateStatus(sid)
-            self.updateRules(sid,"everything","regular")      
-      if self.data['matchType']=="trial":
-         self.nextPeriodCall=reactor.callLater(self.data['timer'][2],self.startMatch)
-      else:
-         self.nextPeriodCall=reactor.callLater(self.data['timer'][2],self.startMatch)
-         #self.startMatch()
+               self.data[sid].status['page']="preMatch"
+               self.updateRules(sid)      
 
-
-
-   def startMatch(self):
+   def checkToSeeIfAllDefaultsHaveBeenSet(self):
       allDefaultRulesSet=1
       for sid in self.data['subjectIDs']:
-         if len(self.data[sid].currentRules)==0 or len(self.data[sid].firstPeriodRules)==0:
+         if len(self.data[sid].rules['current']['firstPeriod'])==0 or len(self.data[sid].rules['current']['default'])==0:
             allDefaultRulesSet=0
       if allDefaultRulesSet==0:
          print("not all default Rules Set")
-         self.nextPeriodCall=reactor.callLater(2,self.startMatch)
+         self.initializeTimer("all",10,self.startMatch)
+         for sid in self.data['subjectIDs']:
+            self.updateStatus(sid)      
+         # self.nextPeriodCall=reactor.callLater(2,self.startMatch)
+         return False
       else:
+         return True
+
+   def startMatch(self):
+      if self.checkToSeeIfAllDefaultsHaveBeenSet():
          self.data['startTime']=time.time()
          for sid in self.data['subjectIDs']:
-            if self.data['matchType']=="trial":
-               self.data[sid].status={"page":"game","confirmed":"no","locked":"yes","match":self.data['currentMatch']}
-            else:
-               self.data[sid].status={"page":"game","confirmed":"no","locked":"yes","match":self.data['currentMatch']}
+            self.data[sid].status['page']="game"
             self.data[sid].matchRunning=1
+            self.data[sid].currentPeriod=1
             self.initializePeriodTimer(sid)
-            self.updateStatus(sid)
-            self.sendChoices(sid,'regular')
+            self.updateRules(sid)
+            # self.sendChoices(sid,'regular')
             #self.data[sid].freeLock=1
             #self.unlockRules({},self.clientsById[sid])
             #self.sendChoices(sid,'regular')
 
-         #print "start Play Tick"
-         #self.tick()
 
 
-   def initializePeriodTimer(self,subjectID):
-      thisTime=self.data[subjectID].timePerQuestion
-      warningTime=self.data[subjectID].timeUntilWarning
-      self.data[subjectID].status['timer']=[time.time(),time.time(),thisTime]
-      if subjectID not in self.nonPickleData:
-         self.nonPickleData[subjectID]={}
-      self.nonPickleData[subjectID]['makeChoiceAutomatic']=reactor.callLater(thisTime,self.confirmChoice,{},self.clientsById[subjectID])
-      self.nonPickleData[subjectID]['sendAutomaticWarning']=reactor.callLater(warningTime,self.sendWarning,subjectID)
+   def initializePeriodTimer(self,sid):
+      warningTime=self.data[sid].timeUntilWarning
+      self.initializeTimer(sid,warningTime,self.showWarning,sid)
+      self.data[sid].status['warning']="no"
+      self.updateStatus(sid)
 
+   def showWarning(self,sid):
+      remainingTime=self.data[sid].timePerQuestion-self.data[sid].timeUntilWarning
+      self.initializeTimer(sid,remainingTime,self.confirmChoiceFromPython,sid)
+      self.data[sid].status['warning']="yes"
+      self.updateStatus(sid)
 
 
    def getClientHistory(self,subjectID):
@@ -290,49 +282,25 @@ class experimentClass():
          else:
             self.startPreMatch()
 
+
+   def confirmChoiceFromPython(self,sid):
+      self.data[sid].status['warning']="no"
+      self.cancelTimerFunction(sid)
+      self.data[sid].getLastPlayInfo()
+      self.updateStatus(sid)
+      self.checkPartner(sid)
+
    def confirmChoice(self,message,client):
       #print "Confi Choice",client.subjectID
-      subjectID=client.subjectID
-      if self.data[subjectID].status['locked']=="no":
-         self.data[subjectID].status['animate']="no";
-         self.data[subjectID].status['locked']="yes";
-         self.lockRules(message,client)
-
-
-      if subjectID in self.nonPickleData:
-         if 'makeChoiceAutomatic' in self.nonPickleData[subjectID]:
-            if self.nonPickleData[subjectID]['makeChoiceAutomatic'].cancelled==0 and self.nonPickleData[subjectID]['makeChoiceAutomatic'].called==0:
-               self.nonPickleData[subjectID]['makeChoiceAutomatic'].cancel()
-         if 'sendAutomaticWarning' in self.nonPickleData[subjectID]:
-            if self.nonPickleData[subjectID]['sendAutomaticWarning'].cancelled==0 and self.nonPickleData[subjectID]['sendAutomaticWarning'].called==0:
-               self.nonPickleData[subjectID]['sendAutomaticWarning'].cancel()
-      self.data[subjectID].currentPeriod=len(self.data[subjectID].history[self.data['currentMatch']])
-      if self.data[subjectID].currentPeriod==0:
-         #use first period rule
-         self.data[subjectID].history[self.data['currentMatch']].append(self.data[subjectID].firstPeriodRules[-1][0])
-         self.data[subjectID].lastRule=-1
-         self.data[subjectID].lastRuleLength=0
-      else:
-         #use other rule
-         myRule=self.makeMyChoice(subjectID)
-         myRule.ruleUsed(self.data['currentMatch'],self.data[subjectID].currentPeriod)
-         self.data[subjectID].history[self.data['currentMatch']].append(myRule.output)
-         self.data[subjectID].lastRule=myRule.number
-         self.data[subjectID].lastRuleLength=myRule.length
-         self.data[subjectID].currentPeriod=len(self.data[subjectID].history[self.data['currentMatch']])
-      self.data[subjectID].status["confirmed"]="yes"
-      self.updateStatus(subjectID)
-      self.checkPartner(subjectID)
-
+      sid=client.subjectID
+      self.confirmChoiceFromPython(sid)
 
    def checkPartner(self,subjectID):
       myPartner=self.data[subjectID].partners[self.data['currentMatch']]
       if myPartner=="randomPlayer":
          self.finishPeriod(subjectID)
       else:
-         myHistory=self.data[subjectID].history[self.data['currentMatch']]
-         thierHistory=self.data[myPartner].history[self.data['currentMatch']]
-         if len(myHistory)==len(thierHistory):
+         if self.data[myPartner].status['confirmed']=="yes":
             self.finishPeriod(subjectID)
             self.finishPeriod(myPartner)
          else:
@@ -341,47 +309,58 @@ class experimentClass():
 
    def finishPeriod(self,subjectID):
       #Get opponents choices and payoffs
-      myPartner=self.data[subjectID].partners[self.data['currentMatch']]
-      myChoice=self.data[subjectID].history[self.data['currentMatch']][-1]
-      if myPartner=="randomPlayer":
-         theirChoice=random.choice([0,1])
-      else:
-         theirChoice=self.data[myPartner].history[self.data['currentMatch']][-1]
-      self.data[subjectID].opponentHistory[self.data['currentMatch']].append(theirChoice)
-      index=2*myChoice+theirChoice
-      thisPayoff=self.data[subjectID].gameTable[self.data['currentMatch']][index]
-      print("Finish PEriod Choice %s,%s,%s,%s"%(subjectID,self.data[subjectID].currentPeriod,[myChoice,theirChoice],thisPayoff))
-      if self.data['matchType']=="regular" or self.data['matchType']=="regularDemo":
-         self.data[subjectID].matchPayoffs[self.data['currentMatch']]=[x+y for x,y in zip(self.data[subjectID].matchPayoffs[self.data['currentMatch']],thisPayoff)]
-         self.data[subjectID].totalPayoffs=[x+y for x,y in zip(self.data[subjectID].totalPayoffs,thisPayoff)]
-      self.data[subjectID].actionProfileFrequencies[self.data['currentMatch']][index]=self.data[subjectID].actionProfileFrequencies[self.data['currentMatch']][index]+1
-      self.data[subjectID].lastPlay=index
+      subject1=subjectID
+      subject2=self.data[subjectID].partners[self.data['currentMatch']]
 
-      #print "HERE",self.data[subjectID].currentPeriod,self.data['freeStageLengths'][self.data['currentMatch']]
-      if self.data[subjectID].currentPeriod<self.data['freeStageLengths'][self.data['currentMatch']]:
+      self.data[subject1].currentPeriod+=1
+
+      choice1=self.data[subject1].history[self.data['currentMatch']][-1]
+
+      if subject2=="randomPlayer":
+         choice2=random.choice([0,1])
+      else:
+         choice2=self.data[subject2].history[self.data['currentMatch']][-1]
+
+      self.data[subject1].opponentHistory[self.data['currentMatch']].append(choice2)
+      index1=2*choice1+choice2
+      payoff1=self.data[subject1].gameTable[self.data['currentMatch']][index1][0]
+      payoff2=self.data[subject1].gameTable[self.data['currentMatch']][index1][1]
+
+      if self.data['matchType']=="regular" or self.data['matchType']=="regularDemo":
+         self.data[subject1].matchPayoffs[self.data['currentMatch']][0]+=payoff1
+         self.data[subject1].matchPayoffs[self.data['currentMatch']][1]+=payoff2
+         self.data[subject1].totalPayoffs+=payoff1
+
+      self.data[subject1].actionProfileFrequencies[self.data['currentMatch']][index1]+=1
+      self.data[subject1].status['previousPayoffIndex']=index1
+
+      if self.data[subject1].currentPeriod<=self.data['periodsPerMatch'][self.data['currentMatch']]:
          #start next period
-         self.data[subjectID].status["confirmed"]="no"
-         self.data[subjectID].status["animate"]="no"
-         self.sendChoices(subjectID,'regular')
-         #MOVE FORWARD HERE
-         self.initializePeriodTimer(subjectID)
-         #self.data[subjectID].status["locked"]="yes"
-         self.updateStatus(subjectID)
+         self.data[subject1].status["confirmed"]="no"
+         self.initializePeriodTimer(subject1)
+         self.data[subject1].status["animate"]="yes"
+         self.updateRules(subject1)
+         self.data[subject1].status["animate"]="no"
       else:
          #end of match
-         # if len(self.data[subjectID].lockPeriods)>0:
-         #    if self.data[sid].lockPeriods[-1][1]==-1:
-         #       self.lockRules("",self.clientsById[sid])
-         self.data[subjectID].status["page"]="postMatch"
-         self.updateStatus(subjectID)
-         self.sendChoices(subjectID,'regular')
-      self.monitorMessage()
+         self.data[subject1].status["page"]="postMatch"
+         self.data[subject1].status["stage"]="wait"
+         self.data[subject1].status["animate"]="yes"
+         self.updateRules(subject1)
+         self.data[subject1].status["animate"]="no"
 
-   def sendWarning(self,subjectID):
-      msg={}
-      msg['type']="warningMessage"
-      msg['waitingTime']=1000*(self.data[subjectID].timePerQuestion-self.data[subjectID].timeUntilWarning)
-      self.customMessage(subjectID,msg)
+         #check if everyone is done
+         allDone=1
+         for sid in self.data['subjectIDs']:
+            if self.data[sid].status["page"]!="postMatch":
+               allDone=0
+         if allDone==1:
+            self.initializeTimer("all",self.data['postMatchTime'],self.startPreMatch)
+            for sid in self.data['subjectIDs']:
+               self.data[sid].status["stage"]="timer"
+               self.updateStatus(sid)
+
+      self.monitorMessage()
 
    def sendChoices(self,sid,sendType):     
       msg={}
@@ -398,7 +377,6 @@ class experimentClass():
       msg['unlockCosts']=self.data[sid].lockCosts
       msg['totalPayoff']=self.data[sid].totalPayoffs[0]
       msg['lockCosts']=self.data[sid].lockCosts
-      msg['elapsed']=self.data['elapsed']
       msg['actionProfileFrequencies']=self.data[sid].actionProfileFrequencies[self.data['currentMatch']]
       msg['lastRule']=self.data[sid].lastRule
       msg['lastRuleLength']=self.data[sid].lastRuleLength
@@ -416,17 +394,9 @@ class experimentClass():
       #self.preMatch()
       self.startPreMatch()
 
-   def startExperiment(self,message,client):
-      self.taskDone(message)
-      self.data['currentMatch']=0
-      self.data['matchType']="regular"
-      self.data['choices']=["W","Y"]
-      self.data['payoffs']=[[3,3],[1,5],[4,1],[2,2]]
-      self.data['payoffs']=[[1,5],[2,6],[3,7],[4,8]]
-      self.data['payoffs']=[[48,48],[12,50],[50,12],[25,25]]
-      self.data['payoffs']=[[38,38],[12,50],[50,12],[25,25]]
-      self.showPayoffs()
-      #reactor.callLater(.1,self.tester)
+
+
+
 
    def tester(self):
       msg={}
@@ -439,143 +409,9 @@ class experimentClass():
          #self.setFirstPeriod(msg,thisClient)
 
 
-   def addHypHistory(self,message,client):
-      message={}
-      message['number']=len(self.data[client.subjectID].hypHistories)+1
-      self.data[client.subjectID].hypHistories[message['number']]=[[-1,-1] for x in range(17)]
-      self.getHypHistory(message,client)
-
-   def getHypHistory(self,message,client):
-      subjectID=client.subjectID
-      msg={}
-      msg['type']="hypHistory"
-      thisNumber=message['number']
-      if thisNumber==-1:
-         thisNumber=1
-      #self.data[subjectID].currentHypotheticalHistoryNumber=thisNumber
-
-      if len(self.data[subjectID].hypHistories)==0:
-         self.data[subjectID].hypHistories[1]=[[-1,-1] for x in range(17)]
-         thisNumber=1
-
-      msg['hypHistory']=self.data[subjectID].hypHistories[thisNumber]
-      msg['totalHypHistories']=len(self.data[subjectID].hypHistories)
-      msg['hypHistoryNumber']=thisNumber
-      hypHistoryComplete=1
-      for k in range(15):
-         if self.data[subjectID].hypHistories[thisNumber][k][0]==-1:
-            hypHistoryComplete=0
-            break
-         if self.data[subjectID].hypHistories[thisNumber][k][1]==-1:
-            hypHistoryComplete=0
-            break
-      msg['hypHistoryComplete']=hypHistoryComplete
-      self.customMessage(subjectID,msg)
-      self.makeHypotheticalChoice(thisNumber,subjectID)
-
-   def hypotheticalHistory(self,message,client):
-      subjectID=client.subjectID
-      historyNumber=message['historyNumber']
-      history=message['history']
-      self.data[subjectID].hypHistories[historyNumber]=history
-      self.makeHypotheticalChoice(historyNumber,subjectID)
-
-   def makeHypotheticalChoice(self,historyNumber,subjectID):
-
-      msg={}
-      msg['type']="hypotheticalChoice"
-      history=self.data[subjectID].hypHistories[historyNumber]
-
-      longestHypRule=max([x.length for x in self.data[subjectID].currentHypRules])
-      complete=1
-      for k in range(15-longestHypRule+1,15):
-         if history[k][0]==-1 or history[k][1]==-1:
-            complete=0
-            break
-      if complete>-1:
-         hypRuleOut=self.data[subjectID].pickRule("hyp",history[0:15])
-         msg['hypRuleNumber']=hypRuleOut.number
-         msg['hypRuleOutput']=hypRuleOut.output
-         msg['hypRuleLength']=hypRuleOut.length
-
-
-      longestRegRule=max([x.length for x in self.data[subjectID].currentRules])
-      for k in range(15-longestRegRule+1,15):
-         if history[k][0]==-1 or history[k][1]==-1:
-            complete=0
-            break
-      if complete>-1:
-         regularRuleOut=self.data[subjectID].pickRule("regular",history[0:15])
-         msg['regularRuleNumber']=regularRuleOut.number
-         msg['regularRuleOutput']=regularRuleOut.output
-         msg['regularRuleLength']=regularRuleOut.length
-      
-      if len(msg)>2:
-         msg['hypHistories']=self.data[subjectID].hypHistories
-         self.customMessage(subjectID,msg)
-
-
-
-   def showPayoffs(self):
-      self.initializeTimer("all",self.data['showPayoffTime'],self.startPreMatch)
-      # #self.initializeTimer(sid,5,self.pleaseMakeChoice,sid)
-      for sid in self.data['subjectIDs']:
-         self.sendParameters(sid)
-         self.data[sid].status={"page":"payoffsOnly"}
-         self.updateStatus(sid)
-
-
-
-   def showHypothetical(self):
-      self.data['timer']=[time.time(),time.time(),self.data['hypotheticalPeriodLength']]
-      for sid in self.data['subjectIDs']:
-         self.data[sid].status={"page":"defaultNotSet","match":1}
-         self.updateStatus(sid)
-      print("call reactor later to start play")
-      self.nextPeriodCall=reactor.callLater(self.data['hypotheticalPeriodLength'],self.startPreMatch)
-
-
-   def unlockRules(self,message,client):
-      sid=client.subjectID
-      self.data[sid].status['locked']="no";
-      self.data[sid].status['animate']="no";
-      self.data[sid].lockPeriods.append([time.time(),-1,self.data['currentMatch']])
-      if self.data[sid].freeLock==0:
-         if self.data['matchType']=="trial":
-            self.data[sid].lockCosts=self.data[sid].lockCosts+0
-         else:
-            self.data[sid].lockCosts=self.data[sid].lockCosts+self.data['ruleLockFixedCost']
-         self.data[sid].status['animate']="yes";
-      self.data[sid].freeLock=0
-      self.sendChoices(sid,'regular')
-      self.updateStatus(sid)
-
-   def lockRules(self,message,client):
-      sid=client.subjectID
-      self.data[sid].lockPeriods[-1][1]=time.time()
-      unlockedSeconds=self.data[sid].lockPeriods[-1][1]-self.data[sid].lockPeriods[-1][0]
-      self.sendChoices(sid,'regular')
-      self.data[sid].status['locked']="yes";
-      self.updateStatus(sid)
-
-
-
    def startNewGame(self,message,client):
       #unregister all clients
       self.setPreliminaries()
-
-   def sendParameters(self,subjectID):
-      msg={}
-      msg['type']="parameters"
-      msg['ruleLockFixedCost']=self.data['ruleLockFixedCost']
-      msg['ruleLockMarginalCost']=self.data['ruleLockMarginalCost']
-      this=self.data['payoffs']
-      if self.data['currentMatch'] in self.data[subjectID].roles:
-         if self.data[subjectID].roles[self.data['currentMatch']]==1:
-            this=self.reversePays(this)
-      msg['payoffs']=this
-      msg['choices']=self.data['choices']
-      self.customMessage(subjectID,msg)
 
 
    def reconnectServer(self):
@@ -603,7 +439,6 @@ class experimentClass():
       self.data['payoffs']=[[8,7],[6,5],[4,3],[2,1]]
       self.data['choices']=["W","Y"]
       for sid in self.data['subjectIDs']:
-         self.sendParameters(sid)
          #[quizNow,QuestionNumber,0 question and 1 solution,tryNumber]
          # if restart==0:
          self.data[sid].status={"page":"quiz","questionNumber":1,"stage":"question","tries":0}
@@ -698,31 +533,7 @@ class experimentClass():
 
    def reconnectingClient(self,client):
       sid=client.subjectID
-      self.sendParameters(sid)
-      msg={}
-      msg['type']='reconnecting'
-      msg['currentUnlockedTime']=0
-      if len(self.data[sid].lockPeriods)>0:
-         if self.data[sid].lockPeriods[-1][1]==-1:
-            msg['currentUnlockedTime']=time.time()-self.data[sid].lockPeriods[-1][0]
-      self.customMessage(sid,msg)
-
-      if self.data[sid].status["page"] in ["game","postMatch"]:
-         self.sendChoices(sid,'regular')
-         self.updateRules(sid,"everything","regular")
-      elif self.data[sid].status["page"]=="hypothetical":
-         self.updateRules(sid,"everything","hyp")
-         self.updateRules(sid,"everything","regular")
-      elif self.data[sid].status["page"]=="quiz":
-         self.sendQuizQuestion(sid)
-         if self.data[sid].status["stage"] in ["correct","incorrect"]:
-            self.getAnswerText(sid)
-
-
-      if self.data['videoRunning']==1:
-         self.reconnectVideo(client)
-      if self.data['instructionsRunning']==1:
-         self.reconnectInstructions(client)
+      self.updateStatus(sid)
 
    def checkForDefaultAndFirstPeriod(self,subjectID):
       if len(self.data[subjectID].firstPeriodRules)>0 and len(self.data[subjectID].currentRules)>0:
@@ -730,62 +541,31 @@ class experimentClass():
       else:
          return False
 
-   def updateRules(self,subjectID,updateType,ruleType):
-      #print "updating rules "+ruleType
+   def updateRules(self,sid):
+      self.data[sid].updateRuleStats()
 
-      allRules=self.data[subjectID].allRules
-      msg={}
-      msg['type']='updateRules'
-      msg['ruleType']=ruleType
-      msg['updateType']=updateType
-      if ruleType=="regular":
-         msg['currentRules']=[x.rule for x in self.data[subjectID].currentRules]
-         msg['currentRuleNumbers']=[x.number for x in self.data[subjectID].currentRules]
-         msg['lastUsed']=[x.lastUsed[self.data['currentMatch']] if self.data['currentMatch'] in x.lastUsed else -1 for x in self.data[subjectID].currentRules]
-         msg['ruleFrequency']=[x.frequency[self.data['currentMatch']] if self.data['currentMatch'] in x.frequency else 0 for x in self.data[subjectID].currentRules]
-         if len(self.data[subjectID].firstPeriodRules)>0:
-            firstPeriod=self.data[subjectID].firstPeriodRules[-1][0]
-         else:
-            firstPeriod=-1
-         msg['firstPeriodRule']=firstPeriod
-      elif ruleType=="hyp":
-         msg['currentRules']=[x.rule for x in self.data[subjectID].currentHypRules]
-         msg['currentRuleNumbers']=[x.number for x in self.data[subjectID].currentHypRules]
-         msg['lastUsed']=[x.lastUsed[self.data['currentMatch']] if self.data['currentMatch'] in x.lastUsed else -1 for x in self.data[subjectID].currentHypRules]
-         msg['ruleFrequency']=[x.frequency[self.data['currentMatch']] if self.data['currentMatch'] in x.frequency else 0 for x in self.data[subjectID].currentHypRules]
-         if len(self.data[subjectID].firstPeriodRulesHyp)>0:
-            firstPeriod=self.data[subjectID].firstPeriodRulesHyp[-1][0]
-         else:
-            firstPeriod=-1
-         msg['firstPeriodRule']=firstPeriod
-      msg['lastRuleNumber']=self.data[subjectID].lastRule
-      if self.data[subjectID].lastRule==-1:
-         msg['lastRuleLastUsed']=0
-         msg['lastRuleFrequency']=0
-      else:
-         msg['lastRuleLastUsed']=self.data[subjectID].allRules[self.data[subjectID].lastRule].lastUsed[self.data['currentMatch']]
-         msg['lastRuleFrequency']=self.data[subjectID].allRules[self.data[subjectID].lastRule].frequency[self.data['currentMatch']]
+      self.data[sid].status['history']=self.getClientHistory(sid)
+      self.data[sid].status['payoffHistory']=self.getClientPayoffHistory(sid)
+      self.data[sid].status['period']=self.data[sid].currentPeriod
+      self.data[sid].status['lastPlay']=self.data[sid].lastPlay
+      # myRule=self.makeMyChoice(sid)
+      # msg['nextPeriodPlay']=myRule.output
+      # msg['period']=len(thisHistory)
+      # msg['lastPlay']=self.data[sid].lastPlay
+      self.data[sid].status['matchPayoff']=self.data[sid].matchPayoffs[self.data['currentMatch']]
+      self.data[sid].status['totalPayoff']=self.data[sid].totalPayoffs
+      self.data[sid].status['actionProfileFrequencies']=self.data[sid].actionProfileFrequencies[self.data['currentMatch']]
+      # msg['lastRule']=self.data[sid].lastRule
+      # msg['lastRuleLength']=self.data[sid].lastRuleLength
+      # self.customMessage(sid,msg)
+      # self.updateRules(sid,"onlyStats","regular")
 
-      if len(self.data[subjectID].currentRules)==0 or self.data[subjectID].status['page']=="hypothetical":
-         msg['nextPeriodPlay']=0
-         msg['nextPeriodRule']=0
-         msg['nextPeriodRuleLength']=0
-      else:
-         myRule=self.makeMyChoice(subjectID)
-         msg['nextPeriodPlay']=myRule.output
-         msg['nextPeriodRule']=myRule.number
-         msg['nextPeriodRuleLength']=myRule.length
-         if 'confirmed' in self.data[subjectID].status:
-            if self.data[subjectID].status['confirmed']=="yes":
-               #print "CONFIRMED"
-               msg['nextPeriodPlay']=self.data[subjectID].history[self.data['currentMatch']][-1]
-               msg['nextPeriodRule']=self.data[subjectID].lastRule
-               msg['nextPeriodRuleLength']=self.data[subjectID].lastRuleLength
+
+      self.updateStatus(sid)
 
 
 
 
-      self.customMessage(subjectID,msg)
 
 
    def findRuleClassByList(self,ruleIN,subjectID):
@@ -799,70 +579,31 @@ class experimentClass():
    def switchRuleOutput(self,message,client):
       subjectID=client.subjectID
       newRuleList=message['thisRule']
-      rulesType=message['rulesType']
-      self.data[subjectID].switchRules(newRuleList,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-      self.updateRules(subjectID,"everything",rulesType)
+      self.data[subjectID].switchRules(newRuleList)
+      self.updateRules(subjectID)
 
    def addRule(self,message,client):
       subjectID=client.subjectID
       thisRule=message['thisRule']
-      rulesType=message['rulesType']
-      self.data[subjectID].addRule(thisRule,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-      self.updateRules(subjectID,"everything",rulesType)
-
-   def setRulesBeginning(self,message,client):
-      sid=client.subjectID
-      ruleType=message['thisRule'][0]
-      thisRule=message['thisRule'][1]
-      if ruleType=="firstPeriod":
-         for rulesType in ["hyp","regular"]:
-            self.data[sid].setFirstPeriodRule(thisRule,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-      elif ruleType=="default":
-         for rulesType in ["hyp","regular"]:
-            self.data[sid].setDefaultRule(thisRule,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-
-      if self.checkForDefaultAndFirstPeriod(sid):
-         if self.data['matchType']=="trial":
-            self.data[sid].status={"page":"preMatch","match":self.data['currentMatch']}
-            self.updateRules(sid,"everything","regular")
-         else:
-            self.data[sid].status["page"]="hypothetical"
-            self.updateRules(sid,"everything","hyp")
-            self.updateRules(sid,"everything","regular")
-         self.updateStatus(sid)
-      else:
-         msg={}
-         msg['type']="beginRules"
-         msg['defaultRule']=-1  
-         msg['firstPeriodRule']=-1
-         if len(self.data[sid].firstPeriodRules)>0:
-            msg['firstPeriodRule']=self.data[sid].firstPeriodRules[-1][0]
-         if len(self.data[sid].currentRules)>0:
-            msg['defaultRule']=self.data[sid].currentRules[-1].rule[0][0]
-         self.customMessage(sid,msg)
-
+      self.data[subjectID].addRule(thisRule)
+      self.updateRules(subjectID)
 
    def setDefault(self,message,client):
       subjectID=client.subjectID
       thisRule=message['thisRule']#either 0 or 1
-      rulesType=message['rulesType']
-      self.data[subjectID].setDefaultRule(thisRule,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-      self.updateRules(subjectID,"everything",rulesType)
+      defaultType=message['defaultType']#either "setDefault" or "setFirstPeriod"
+      if defaultType=="setDefault":
+         self.data[subjectID].setDefaultRule(thisRule)
+      elif defaultType=="setFirstPeriod":
+         self.data[subjectID].setFirstPeriodRule(thisRule)
+      self.updateRules(subjectID)
 
-
-   def setFirstPeriod(self,message,client):
-      subjectID=client.subjectID
-      thisRule=message['thisRule']#either 0 or 1
-      rulesType=message['rulesType']
-      self.data[subjectID].setFirstPeriodRule(thisRule,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-      self.updateRules(subjectID,"everything",rulesType)
 
    def deleteRule(self,message,client):
       subjectID=client.subjectID
       ruleList=message['rule']
-      rulesType=message['rulesType']
-      self.data[subjectID].deleteRule(ruleList,self.data['currentMatch'],time.time()-self.data['matchStartTime'],rulesType)
-      self.updateRules(subjectID,"everything",rulesType)
+      self.data[subjectID].deleteRule(ruleList)
+      self.updateRules(subjectID)
 
 
    def displayDemo(self,viewType,subjectID):
@@ -880,15 +621,6 @@ class experimentClass():
          msg['status']=''
          msg['index']=0
          self.startTrial(msg,{})
-      elif viewType=="hypothetical":
-         # msg={}
-         # msg['type']='startExperiment'
-         # msg['title']='Practice'
-         # msg['status']=''
-         # msg['index']=0
-         # self.startExperiment(msg,{})
-         self.data['matchType']="regular"
-         self.showHypothetical()
       elif viewType=="firstMatch" or viewType=="regular":
          self.data['matchType']="regularDemo"
          thisClient=self.clientsById[subjectID]
@@ -970,37 +702,32 @@ class experimentClass():
 
 class subjectClass():
    def __init__(self):
-      #self.status={"page":"generic","message":["Loading..."],"stage":"initializing"}
-      self.status={"stage":1,"page":"instructionsRulesFirst","message":["Plsdfsdfease read, sign, and date your consent form. <br> You may read over the instructions as we wait to begin."]}
+      self.status={"page":"generic","message":["Loading..."],"stage":"initializing"}
+      # self.status={"stage":1,"page":"instructionsRulesFirst","message":["Plsdfsdfease read, sign, and date your consent form. <br> You may read over the instructions as we wait to begin."]}
       self.statusHistory=[copy.deepcopy(self.status)]
       self.statusHistoryIndex=0
       self.history={}
-      self.hypHistories={}
       self.opponentHistory={}
       self.actionProfileFrequencies={}
-      self.allRules=[]
-      self.firstPeriodRules=[]
-      self.firstPeriodRulesHyp=[]
-      self.currentRules=[]
-      self.currentHypRules=[]
-      self.lockPeriods=[]
-      self.lockCosts=0
       self.gameTable={}
       self.partners={}
       self.roles={}
       self.matchPayoffs={}#Me,You
-      self.totalPayoffs=[0,0]#Me,You
+      self.totalPayoffs=0#Me,You
       self.quizEarnings=0
       self.quizAnswers={}
       # self.quizAnswers=[]
-      self.lastPlay=-1
-      self.lastRule=-1
-      self.lastRuleLength=-1
+      self.lastInfo={}
+      self.lastInfo['play']=-1
+      self.lastInfo['rule']=-1
+      self.lastInfo['ruleLength']=-1
+      self.currentPeriod=0
+      self.currentMatch=0
       self.freeLock=0
       self.oldRules=[]
       self.resetAllRules()
-      self.timePerQuestion=60
-      self.timeUntilWarning=50
+      self.timePerQuestion=20
+      self.timeUntilWarning=5
 
 
    def appendStatus(self):
@@ -1026,18 +753,18 @@ class subjectClass():
 
 
    def resetAllRules(self):
-      self.oldRules.append(self.allRules)
-      self.oldRules.append(self.firstPeriodRules)
-      self.oldRules.append(self.firstPeriodRulesHyp)
-      self.allRules=[]
-      self.currentRules=[]
-      self.currentHypRules=[]
-      self.firstPeriodRules=[]
-      self.firstPeriodRulesHyp=[]
-      allC=Rule([[0]],0)
-      self.allRules.append(allC)
-      allD=Rule([[1]],1)
-      self.allRules.append(allD)
+      # self.oldRules.append(self.rules)
+      self.rules={}
+      self.rules['all']={}
+      self.rules['current']={}
+
+      self.rules['all']['default']=[Rule([[0]],"default0"),Rule([[1]],"default1")]
+      self.rules['all']['firstPeriod']=[Rule([[0]],"firstPeriod0"),Rule([[1]],"firstPeriod1")]
+      self.rules['all']['regular']=[]
+
+      self.rules['current']['default']=[]
+      self.rules['current']['firstPeriod']=[]
+      self.rules['current']['regular']=[]
 
    def newMatch(self,match):
       self.lastPlay=-1
@@ -1046,13 +773,13 @@ class subjectClass():
       self.actionProfileFrequencies[match]=[0,0,0,0]
       self.matchPayoffs[match]=[0,0]
       self.currentPeriod=0
+      self.currentMatch=match
       self.matchRunning=0
-      for rule in self.allRules:
-         rule.lastUsed[match]=-1
-         rule.frequency[match]=0
+      self.status['confirmed']="no"
+      self.status['match']=match
 
    def getRuleByList(self,ruleList):
-      thisRule=[x for x in self.allRules if x.rule==ruleList]
+      thisRule=[x for x in self.rules['all']['regular'] if x.rule==ruleList]
       if len(thisRule)==0:
          out=-1
       elif len(thisRule)==1:
@@ -1061,83 +788,94 @@ class subjectClass():
          print("something weird is happening.  Apparently there are two of the same rules in the set?!?!?!?!?!?!?!?!")
       return out
 
-   def deleteRule(self,ruleList,match,time,updateType):
+   def deleteRule(self,ruleList):
       thisRule=self.getRuleByList(ruleList)
-      if updateType=="regular":
-         if thisRule in self.currentRules:
-            self.currentRules.remove(thisRule)
-            thisRule.deletedTimes.append([match,time])
-         else:
-            print("TRYING TO DELETE RULE NOT IN LIST!!!!!!!!!")
-      elif updateType=="hyp":
-         if thisRule in self.currentHypRules:
-            self.currentHypRules.remove(thisRule)
-            thisRule.hypDeletedTimes.append([match,time])
-         else:
-            print("TRYING TO DELETE RULE NOT IN LIST!!!!!!!!!")
+      if thisRule in self.rules['current']['regular']:
+         self.rules['current']['regular'].remove(thisRule)
+         thisRule.deletedTimes.append(self.changeInfo())
+      else:
+         print("TRYING TO DELETE RULE NOT IN LIST!!!!!!!!!")
 
-   def addRule(self,ruleList,match,time,updateType):
+   def changeInfo(self):
+      return [self.currentMatch,self.currentPeriod,self.status['confirmed'],time.time()]
+
+   def addRule(self,ruleList):
       thisRule=self.getRuleByList(ruleList)
       if thisRule==-1:
-         newRule=Rule(ruleList,len(self.allRules))
-         self.allRules.append(newRule)
+         newRule=Rule(ruleList,len(self.rules['all']['regular'])+1)
+         self.rules['all']['regular'].append(newRule)
       else:
          newRule=thisRule
 
-      if updateType=="regular":
-         if newRule not in self.currentRules:
-            newRule.addedTimes.append([match,time])
-            self.currentRules.append(newRule)
-         else:
-            print("TRYING TO ADD RULE ALREADY IN LIST!!!!!!!!!")
-      elif updateType=="hyp":
-         if newRule not in self.currentHypRules:
-            newRule.hypAddedTimes.append([match,time])
-            self.currentHypRules.append(newRule)
-         else:
-            print("TRYING TO ADD RULE ALREADY IN LIST!!!!!!!!!")
+      if newRule not in self.rules['current']['regular']:
+         newRule.addedTimes.append(self.changeInfo())
+         self.rules['current']['regular'].append(newRule)
+      else:
+         print("TRYING TO ADD RULE ALREADY IN LIST!!!!!!!!!")
 
-   def setDefaultRule(self,rule,match,time,updateType):
-      thisRule=self.getRuleByList([[rule]])#either 0 or 1
-      if updateType=="regular":
-         thisRule.addedTimes.append([match,time])
-         if len(self.currentRules)>0:
-            self.currentRules[0]=thisRule
-         else:
-            self.currentRules.append(thisRule)
-      elif updateType=="hyp":
-         thisRule.hypAddedTimes.append([match,time])
-         if len(self.currentHypRules)>0:
-            self.currentHypRules[0]=thisRule
-         else:
-            self.currentHypRules.append(thisRule)
 
-   def setFirstPeriodRule(self,rule,match,time,updateType):
-      if updateType=="regular":
-         self.firstPeriodRules.append([rule,match,time])
-      if updateType=="hyp":
-         self.firstPeriodRulesHyp.append([rule,match,time])
+   def setDefaultRule(self,rule):
+      self.status['defaultRule']=rule
+      thisRule=self.rules['all']['default'][rule]
+      thisRule.addedTimes.append(self.changeInfo())
+      self.rules['current']['default']=[thisRule]
 
-   def switchRules(self,newRuleList,match,time,updateType):
+   def setFirstPeriodRule(self,rule):
+      self.status['firstPeriodRule']=rule
+      thisRule=self.rules['all']['firstPeriod'][rule]
+      thisRule.addedTimes.append(self.changeInfo())
+      self.rules['current']['firstPeriod']=[thisRule]
+
+   def switchRules(self,newRuleList):
       oldRule=[x if len(x)>1 else [1-x[0]] for x in newRuleList]
       newRule=[x if len(x)>1 else [x[0]] for x in newRuleList]
-      self.addRule(newRule,match,time,updateType)
-      self.deleteRule(oldRule,match,time,updateType)
+      self.addRule(newRule)
+      self.deleteRule(oldRule)
 
-   def pickRule(self,ruleListType,history):
-      rulesThatFit=[]
-      if ruleListType=="regular":
-         for k in self.currentRules:
+   def updateRuleStats(self):
+      self.status["ruleInfo"]=[]
+      for t in ["firstPeriod","default","regular"]:
+         for r in self.rules['current'][t]:
+            self.status["ruleInfo"].append(r.getRuleInfo())
+      if 'confirmed' in self.status:
+         if self.status['confirmed']=="no":
+            self.getNextPlayInfo()
+   def getNextPlayInfo(self):
+      history=[[x,y] for x,y in zip(self.history[self.currentMatch],self.opponentHistory[self.currentMatch])]
+      thisRule=self.pickRule(history)
+      self.status['nextChoiceInfo']={}
+      try:
+         self.status['nextChoiceInfo']['action']=thisRule.output
+         self.status['nextChoiceInfo']['number']=thisRule.number
+         self.status['nextChoiceInfo']['length']=thisRule.length
+      except:
+         self.status['nextChoiceInfo']['action']=-1
+         self.status['nextChoiceInfo']['number']=-1
+         self.status['nextChoiceInfo']['length']=-1
+      print(self.status['nextChoiceInfo'])
+
+
+
+   def getLastPlayInfo(self):
+      self.status['lastChoiceInfo']={}
+      self.status['lastChoiceInfo']['action']=self.status['nextChoiceInfo']['action']
+      self.status['lastChoiceInfo']['number']=self.status['nextChoiceInfo']['number']
+      self.status['lastChoiceInfo']['length']=self.status['nextChoiceInfo']['length']
+      self.history[self.currentMatch].append(self.status['nextChoiceInfo']['action'])
+      self.status['confirmed']="yes"
+
+   def pickRule(self,history):
+      if len(history)==0:
+         ruleOut=self.rules['current']['firstPeriod'][0]
+      elif len(history)>0:
+         rulesThatFit=[]
+         for k in self.rules['current']['regular']:
             if k.fitHistory(history):
                rulesThatFit.append(k)
-      elif ruleListType=="hyp":
-         for k in self.currentHypRules:
-            if k.fitHistory(history):
-               rulesThatFit.append(k)
-      if len(rulesThatFit)>0:
-         ruleOut=max(rulesThatFit,key= lambda x: x.length)
-      else:
-         ruleOut=self.allRules[0]
+         if len(rulesThatFit)>0:
+            ruleOut=max(rulesThatFit,key= lambda x: x.length)
+         else:
+            ruleOut=self.rules['current']['default'][0]
       return ruleOut
 
 
@@ -1147,15 +885,11 @@ class Rule:
       self.input=rule[:-1]
       self.length=len(self.input)
       self.output=rule[-1][0]
-      self.number=number
-      self.lastUsed={}
-      self.frequency={}
+      self.number="%s"%(number)
+      self.lastUsed="Never"
+      self.frequency=0
       self.addedTimes=[]
       self.deletedTimes=[]
-
-      self.hypAddedTimes=[]
-      self.hypDeletedTimes=[]
-
       self.periodsUsed={}
 
 
@@ -1172,104 +906,19 @@ class Rule:
 
    def ruleUsed(self,match,period):
       if match not in self.periodsUsed:
-         self.frequency[match]=0
-         self.lastUsed[match]=-1
          self.periodsUsed[match]=[]
-      self.frequency[match]=self.frequency[match]+1
-      self.lastUsed[match]=period+1
+      self.frequency+=1
+      self.lastUsed="M%sP%s"%(match,period+1)
       self.periodsUsed[match].append(period)
 
-
-
-
-class monitorClass():
-   def __init__(self):
-      "do init stuff"
-      self.monitorTasks()
-
-   def getMonitorTable(self):
-      table=[]
-      titles=['#','subjectID','Rejoin',"Connection","Status","Quiz","Choices","Total"]
-      try:
-         for subjectID in self.data['subjectIDs']:
-            this=[]
-            refreshLink="<a href='javascript:void(0)' onclick='refreshClient(\"%s\");'>%s</a>"%(subjectID,subjectID)
-            this.append(refreshLink)
-            this.append("<a href='game.html?subjectID=%s'>Rejoin</a>"%(subjectID))
-            this.append(self.data[subjectID].connectionStatus)
-            this.append("%s"%(self.data[subjectID].status))
-            this.append("$%.02f"%(self.data[subjectID].quizEarnings))
-            this.append("%s"%(self.data[subjectID].totalPayoffs[0]))
-            totalPoints=self.data[subjectID].totalPayoffs[0]
-            totalPay=totalPoints*self.data['exchangeRate']+self.data[subjectID].quizEarnings
-            this.append("$%.02f"%(totalPay))
-            table.append(this)
-      except Exception as thisExept: 
-         print("can't get table at this time because:")
-         print(thisExept)
-      return table,titles
-   
-   def monitorTasks(self):
-      taskList=[]
-
-      msg={}
-      msg['type']='loadInstructions'
-      msg['title']='Load Instructions'
-      msg['source']=self.config['domain']+self.config['currentExperiment']+self.config['instructionsFolder']+"/audio/output.m4a"
-      msg['status']=''
-      taskList.append(msg)
-
-      filename=self.config['webServerRoot']+self.config['currentExperiment']+self.config['instructionsFolder']+"/audio/output.duration"
-      file = open(filename,'r')
-      fileData=file.read()
-      file.close() 
-
-      msg={}
-      msg['type']='startInstructions'
-      msg['title']='Start Instructions'
-      msg['totalTime']=float(fileData)
-      msg['status']=''
-      taskList.append(msg)
-
-
-      msg={}
-      msg['type']='startTrial'
-      msg['title']='Practice'
-      msg['status']=''
-      taskList.append(msg)
-
-      msg={}
-      msg['type']='endTrial'
-      msg['title']='End Trial'
-      msg['status']=''
-      taskList.append(msg)
-
-      msg={}
-      msg['type']='startQuizOLD'
-      msg['title']='Start Quiz'
-      msg['status']=''
-      taskList.append(msg)
-
-      msg={}
-      msg['type']='finishQuiz'
-      msg['title']='Finish Quiz'
-      msg['status']=''
-      taskList.append(msg)
-
-      msg={}
-      msg['type']='startExperiment'
-      msg['title']='Start Experiment'
-      msg['status']=''
-      taskList.append(msg)
-
-      for k in range(len(taskList)):
-         taskList[k]['index']=k
-
-      self.data['monitorTasks']=taskList
-
-
-if __name__ == "__main__":
-   # stuff only to run when not called via 'import' here
-   "main()"
+   def getRuleInfo(self):
+      #each entry in the list should be like: [number,title,constructor,lastPlayed,totalPlayed]
+      if self.number.find("default")>-1:
+         title="Default Rule"
+      elif self.number.find("firstPeriod")>-1:
+         title="First Period Rule"
+      else:
+         title="Rule #%s"%(self.number)
+      return [self.number,title,self.rule,self.lastUsed,self.frequency]
 
 
