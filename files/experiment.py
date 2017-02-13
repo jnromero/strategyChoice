@@ -36,7 +36,7 @@ class experimentClass():
       self.data['totalMatches']=5
       self.data['exchangeRate']=float(1)/1250
       self.data['showPayoffTime']=60
-      self.data['postMatchTime']=10
+      self.data['postMatchTime']=100000
 
 
       self.data['preStageLengths']=[60,60,120,120,120,120,120,120,120,120,120]

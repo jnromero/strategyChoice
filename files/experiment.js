@@ -3,6 +3,41 @@ mainDiv.style.width="1280px";
 mainDiv.style.height="1024px";
 
 
+//Constructor testing stuff.
+
+function testConstructorComplete(constructor){
+    specified=true;
+    for(k=0;k<constructor.length;k++){
+        for(j=0;j<constructor[k].length;j++){
+            if(constructor[k][j]==-1){
+                specified=false;
+            }
+        }
+    }
+    return specified
+}
+
+function testConstructor(){
+  var error=0;
+  if(testConstructorComplete(window.ruleConstructor)==false){
+    var error=1;
+  }
+  else{
+
+
+    if(window.state['ruleInfo']!=undefined){
+        var M=window.state['ruleInfo'].length;
+        for(j=0;j<M;j++){
+          var rule1=window.ruleConstructor;
+          var rule2=window.state['ruleInfo'][j][2];
+          var thisError=compareRuleAndRule(rule1,rule2);
+          if(thisError>0){error=thisError+1;}
+        }
+    }
+  }
+  return error;
+}
+
 function compareRuleAndRule(rule1,rule2){
     var error=1;//Same except output
     if(rule1.length!=rule2.length){
@@ -18,58 +53,16 @@ function compareRuleAndRule(rule1,rule2){
       }
     }
     return error;
-
 }
 
 
 //CONSTRUCTOR STUFF HERE
-function makeConstructorButton(functionIN,buttonClass,buttonID,clickable){
-    if(clickable==1){
-        var s = document.createElement("a");
-        var pf = partial(functionIN,buttonID);
-        s.addEventListener("click",pf);
-    }
-    else{
-        var s = document.createElement("div");        
-    }
-    s.href="#a";
-    s.className = buttonClass;
-    s.id=buttonID;
-    s.title="click to do something"
-    return s
-}
-
 
 function drawInfo(){
     placeTextNew({"divid":"topInfo1","text":"Match #"+window.state["match"],"top":"0px","fontSize":"150%","color":"red","width":"400px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
     placeTextNew({"divid":"topInfo2","text":"Payoff this match: "+window.state["matchPayoff"],"top":"0px","fontSize":"150%","color":"black","width":"480px","textAlign":"center","left":"400px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
     placeTextNew({"divid":"topInfo3","text":"Total Earned Today: "+window.state["totalPayoff"],"top":"0px","fontSize":"150%","color":"green","width":"400px","textAlign":"center","left":"880px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
-
-    // var topInfoLeft=createDiv("topInfoLeft");
-    // topInfoLeft.innerHTML="Match #"+window.state["match"];
-    // if(window.state['page']=="instructions"){topInfoLeft.innerHTML="Match #: Instructions";}
-    // else if(window.state["match"]==0){topInfoLeft.innerHTML="Match #: Practice";}
-    // $("#mainDiv").append(topInfoLeft);
-
-    // var topInfoMiddle=createDiv("topInfoMiddle");
-    // if(window.matchPayoff!=undefined){
-    //     topInfoMiddle.innerHTML="Payoff this match: "+window.matchPayoff[0];//You: "+window.matchPayoff[0];//+"  Other: "+window.matchPayoff[1];
-    // }
-    // else{
-    //     topInfoMiddle.innerHTML="Payoff this match: 0";//You: 0";//  Other: 0";
-    // }
-    // $("#mainDiv").append(topInfoMiddle);
-
-    // var topInfoRight=createDiv("topInfoRight");
-    // if(window.totalPayoff!=undefined){
-    //     topInfoRight.innerHTML="Total Earned Today: <span style='color:#008800'>"+window.totalPayoff+"</span> - <span style='color:#FF0000'>"+parseInt(window.unlockCosts)+"</span> = "+(window.totalPayoff-parseInt(window.unlockCosts));
-    // }
-    // else{
-    //     topInfoRight.innerHTML="Total Earned Today: 0";
-    // }
-    // $("#mainDiv").append(topInfoRight);
 }
-
 
 function drawGame(){
     //Create Game div
@@ -119,48 +112,33 @@ function drawGame(){
 
 function deleteRule(args){
     var thisConstructor=args[0];
-    if(thisStatus["page"]=="quiz" && window.questionType==4 && thisStatus["stage"]=="question"){
-        var confirmation=confirmAction("Are you sure you want to delete this rule as your answer??");
-        if(confirmation){
-            var message={"type":"quizAnswer","answer":thisConstructor,"questionType":4};
-            sock.send(JSON.stringify(message));
-        }
-    }
-    else if(thisStatus["page"]=="quiz"){
-        var confirmation=confirmAction("You can't delete rules right now.");
-    }
-    else{
-        var message={"type":"deleteRule","rule":thisConstructor};
-        sock.send(JSON.stringify(message));
-    }
+    var message={"type":"deleteRule","rule":thisConstructor};
+    sock.send(JSON.stringify(message));
 }
 
 function switchRules(){
     var message={"type":"switchRuleOutput","thisRule":window.ruleConstructor};
     sock.send(JSON.stringify(message));
     window.ruleConstructor=[[-1,-1],[-1]];
-    drawConstructor2();
+    drawConstructor();
 }
 
 function addRule(){
     var message={"type":"addRule","thisRule":window.ruleConstructor};
     sock.send(JSON.stringify(message));
     window.ruleConstructor=[[-1,-1],[-1]];
-    drawConstructor2();
+    drawConstructor();
 }
 
 
 function setConstructor(args){
     thisConstructor=JSON.parse(JSON.stringify(args[0]));
     window.ruleConstructor=thisConstructor;
-    drawConstructor2();
+    drawConstructor();
 }
 
 
-//function drawRule2(constructor,ruleDivName,addToDiv,clickable,highlight){
-
-function drawConstructor2(){
-
+function drawConstructor(){
     //Set constructor if not already set.
     if(window.ruleConstructor==undefined){
         window.ruleConstructor=[[-1,-1],[-1]];
@@ -192,8 +170,6 @@ function drawConstructor2(){
     clickButton("many","plusConstructorButton",constructorPlusMinus,"+",-1);
 
 
-
-
     for(col=0;col<window.ruleConstructor.length;col++){
         if(window.ruleConstructor.length-col>2 && window.ruleConstructor.length>2){
             var minusButton = createAndAddDiv("minusConstructorButton_"+col,"ruleConstructorIn");
@@ -211,10 +187,22 @@ function drawConstructor2(){
     }
 
     drawConstructorSubmitButton();
-    // if(thisStatus["page"]=="quiz"){
-    //     document.getElementById(divName).style.backgroundColor="rgba(0,0,0,0)";
-    // }
 }
+
+function constructorPlusMinus(args){
+    changeType=args[0];
+    column=args[1];
+    if(changeType=="+"){
+        var additional=[[-1,-1]];
+        var added=additional.concat(window.ruleConstructor);
+        window.ruleConstructor=added;
+    }    
+    else if(changeType=="-"){
+        window.ruleConstructor.splice(column,1);
+    }
+    drawConstructor();
+}
+
 
 thisStatus=[]
 
@@ -272,83 +260,6 @@ function drawFirstPeriod(){
     }
 }
 
-function drawPostMatch(){
-    var noButtonOverlay = createDiv("noButtonOverlay");
-    $("#mainDiv").append(noButtonOverlay);
-    rulesLockedDiv=createDiv("rulesLocked");
-    rulesLockedINDiv=createDiv("rulesLockedIN");
-    rulesLockedDiv.appendChild(rulesLockedINDiv)
-    $("#mainDiv").append(rulesLockedDiv);
-    rulesLockedINDiv.innerHTML="Match Finished <br><br> Click Here To Continue";
-    rulesLockedDiv.addEventListener("click",function(e){
-        e.target.removeEventListener(e.type, arguments.callee);
-        moveToNextMatch();
-    });
-}
-
-function moveToNextMatch(){
-    var message={"type":"confirmedMatchOver"};
-    sock.send(JSON.stringify(message));
-    document.getElementById("rulesLockedIN").innerHTML="Match Finished <br><br> Please Wait For Other Participants to Finish";
-}
-
-
-function drawLock(){
-    var noButtonOverlay = createDiv("noButtonOverlay");
-    $("#mainDiv").append(noButtonOverlay);
-    rulesLockedDiv=createDiv("rulesLocked");
-    rulesLockedINDiv=createDiv("rulesLockedIN");
-    rulesLockedDiv.appendChild(rulesLockedINDiv)
-    $("#mainDiv").append(rulesLockedDiv);
-    rulesLockedINDiv.innerHTML="Rules are Locked";
-    // var pf = partial(unlockRules);
-    // rulesLockedDiv.addEventListener("click",pf);
-}
-
-
-function drawLockButton(){
-    lockRulesButton=createDiv("lockRulesButton");
-    $("#mainDiv").append(lockRulesButton);
-    //lockRulesButton.innerHTML="Click Here Lock Rules <br> Time Unlocked: <time id='unlockTimer'>0:00</time><br> Cost: <a id='unlockCosts'>0</a>";
-    lockRulesButton.innerHTML="<br>Click Here to Lock Rules";// <br> Cost: <a id='unlockCosts'>"+window.ruleLockFixedCost+"</a>";
-    var pf = partial(lockRules);
-    lockRulesButton.addEventListener("click",pf);
-}
-
-function drawUnlockButton(){
-    lockRulesButton=createDiv("lockRulesButton");
-    $("#mainDiv").append(lockRulesButton);
-    lockRulesButton.innerHTML="Click Here to <br>Unlock Rules<br> Cost: "+window.ruleLockFixedCost;
-    var pf = partial(unlockRules);
-    lockRulesButton.addEventListener("click",pf);
-}
-
-
-function updateUnlockTime(){
-    if(window.rulesUnlocked==1){
-        document.getElementById('unlockTimer').innerHTML=makeTimePretty(window.currentUnlockedTime+((new Date()).getTime()-window.unlockedTimeUpdate)/1000);
-        document.getElementById('unlockCosts').innerHTML=window.ruleLockFixedCost+" + "+window.ruleLockMarginalCost*parseInt(window.currentUnlockedTime+((new Date()).getTime()-window.unlockedTimeUpdate)/1000);
-        setTimeout(updateUnlockTime,1000);
-    }
-}
-    window.rulesUnlocked=0;
-
-
-function unlockRules(){
-    //document.getElementById('topInfoRight').style.transform="scale(.75)"
-    window.rulesUnlocked=1;
-    //setTimeout(updateUnlockTime,1000);
-    window.currentUnlockedTime=0;
-    window.unlockedTimeUpdate=(new Date()).getTime();
-    var message={"type":"unlockRules"};
-    sock.send(JSON.stringify(message));
-}
-
-function lockRules(){
-    window.rulesUnlocked=0;
-    var message={"type":"lockRules"};
-    sock.send(JSON.stringify(message));
-}
 
 function actionFromInteger(actionIN){
     if(actionIN==0){action="w";}
@@ -357,27 +268,7 @@ function actionFromInteger(actionIN){
     return action
 }
 
-function constructorButtons(){}
-
-function drawRule(constructor,ruleNumber,highlight){
-    //Create ConstructorIn div
-    var ruleDiv = createAndAddDiv("rule_"+ruleNumber,"");
-    ruleDiv.className = "rule";
-    ruleDiv.setAttribute("style","width:"+(constructor.length)*50+"px");        
-    for(col=0;col<constructor.length;col++){
-        for(row=0;row<constructor[col].length;row++){
-            high=""
-            action=actionFromInteger(constructor[col][row]);
-            if(highlight==1){high=" highlight";}
-            thisButton=createAndAddDiv("rule_"+ruleNumber+"_col_"+col+"_row_"+row,"rule_"+ruleNumber);
-            thisButton.style.transform="translate3d("+(col*50)+"px,"+(row*50)+"px,0px)";
-            thisButton.className=action+"Square square"+high;
-        }
-    }
-    return ruleDiv
-}
-
-function drawRule2(constructor,ruleDivName,addToDiv,clickable,highlight){
+function drawRule(constructor,ruleDivName,addToDiv,clickable,highlight){
     //Create ConstructorIn div
     var ruleDiv = createAndAddDiv(ruleDivName,addToDiv)
     ruleDiv.className = "rule";
@@ -453,7 +344,7 @@ function drawListEntry(thisInfo){
 
 
     //draw rule
-    drawRule2(thisConstructor,"rule_"+ruleNumber,"listEntry_"+ruleNumber,0,0);
+    drawRule(thisConstructor,"rule_"+ruleNumber,"listEntry_"+ruleNumber,0,0);
     if(ruleNumber=="default0" || ruleNumber=="default1"){
         document.getElementById("rule_"+ruleNumber).style.transform="translate3d(37px,50px,0px)";
     }
@@ -476,13 +367,6 @@ function drawListEntry(thisInfo){
 }
 
 
-function updateRuleStats(type,ruleNumber,lastPlayed,totalPlayed){
-    if(document.getElementById(type+"_listEntryStats_"+ruleNumber)!=null){
-        document.getElementById(type+"_listEntryStats_"+ruleNumber).innerHTML = "Last: "+lastPlayed+"  Total: "+totalPlayed;
-    }
-}
-
-
 function drawRules(){
     // window.state['rules']
     var ruleList=createAndAddDiv("ruleList","mainDiv");
@@ -496,9 +380,6 @@ function drawRules(){
         highlightRule();        
     }
 }
-
-
-
 
 
 function highlightGame(){
@@ -568,57 +449,8 @@ function highlightHistory(){
 }
 
 
-// function highlightHistory(){
-//     var ruleHighlight = createAndAddDiv("historyRuleHighlight","historyIN");
-//     ruleHighlight.className="ruleHighlight";
-
-//     width=ruleLength*50+50;
-//     if(width>50){
-//         var ruleHighlightTopleft = document.createElement("div");
-//         ruleHighlightTopleft.className="ruleHighlightTopleft";
-//         var ruleHighlightBottom = document.createElement("div");
-//         ruleHighlightBottom.className="ruleHighlightBottom";
-//         var ruleHighlightRight = document.createElement("div");
-//         ruleHighlightRight.className="ruleHighlightRight";
-
-
-//         borderWidth=4;
-//         ruleHighlight.style.width=width+"px";
-//         ruleHighlightTopleft.style.width=width+"px";
-//         ruleHighlightBottom.style.width=(width-50)+"px";
-//         ruleHighlightRight.style.left=(width-50-borderWidth)+"px";
-    
-//         ruleHighlight.appendChild(ruleHighlightTopleft);
-//         ruleHighlight.appendChild(ruleHighlightBottom);
-//         ruleHighlight.appendChild(ruleHighlightRight);
-//     }
-//     else{
-//         var ruleHighlightDefault = document.createElement("div");
-//         ruleHighlightDefault.className="ruleHighlightDefault";
-//         ruleHighlight.appendChild(ruleHighlightDefault);
-//     }
-
-//     ruleHighlight.style.transform="translate3d("+(50*currentPeriod-ruleLength*50)+"px,25px,0px)";
-//     $('#'+type+'_historyIN').append(ruleHighlight);
-// }
-
-
-
-function testConstructorComplete(constructor){
-    specified=true;
-    for(k=0;k<constructor.length;k++){
-        for(j=0;j<constructor[k].length;j++){
-            if(constructor[k][j]==-1){
-                specified=false;
-            }
-        }
-    }
-    return specified
-}
-
 
 function setDefault(args){
-    console.log("sdfsdfsdf");
     var defaultOrFirstPeriod=args[0];//setDefault or setFirstPeriod
     var thisChoice=args[1];
     var message={"type":"setDefault","thisRule":thisChoice,"defaultType":defaultOrFirstPeriod};
@@ -626,21 +458,6 @@ function setDefault(args){
 }
 
 
-
-
-function constructorPlusMinus(args){
-    changeType=args[0];
-    column=args[1];
-    if(changeType=="+"){
-        var additional=[[-1,-1]];
-        var added=additional.concat(window.ruleConstructor);
-        window.ruleConstructor=added;
-    }    
-    else if(changeType=="-"){
-        window.ruleConstructor.splice(column,1);
-    }
-    drawConstructor2();
-}
 
 function changeConstructorEntry(args){
 
@@ -668,44 +485,6 @@ function changeConstructorEntry(args){
     drawConstructorSubmitButton();
 }
 
-
-
-function setConstructorEntry(squareId,row,column,entry){
-    var thisSquare=document.getElementById(squareId);
-    window.ruleConstructor[column][row]=entry;
-    if(window.ruleConstructor[column][row]==0){
-        thisSquare.className="wSquare square";        
-    }
-    else if(window.ruleConstructor[column][row]==1){
-        thisSquare.className="ySquare square";
-    }
-    drawConstructorSubmitButton();
-}
-
-
-
-
-function testConstructor(){
-// console.log(JSON.stringify(window.constructors[getRuleSet(type)]));
-  var error=0;
-  if(testConstructorComplete(window.ruleConstructor)==false){
-    var error=1;
-  }
-  else{
-
-
-    if(window.state['ruleInfo']!=undefined){
-        var M=window.state['ruleInfo'].length;
-        for(j=0;j<M;j++){
-          var rule1=window.ruleConstructor;
-          var rule2=window.state['ruleInfo'][j][2];
-          var thisError=compareRuleAndRule(rule1,rule2);
-          if(thisError>0){error=thisError+1;}
-        }
-    }
-  }
-  return error;
-}
 
 function drawConstructorSubmitButton(){
     deleteDiv('constructorSwitchButton');
@@ -793,35 +572,6 @@ function drawNextAction(){
         s.style.transform="translate3d("+translateAmount+"px,25px,0px)";
         clickButton("many",divID,alreadySubmitted,"Already made choice");
     }
-
-
-    // removeListeners(divID);
-    // nextActionSquare=document.getElementById(divID);
-    // if(nextActionSquare!=null){
-    //     if(window.state["page"]=="instructions"){
-    //         nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
-    //     }
-    //     else if(window.state["page"]=="game" && window.state["confirmed"]=="no"){
-    //         nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
-    //         nextActionSquare.addEventListener("click",function(e){
-    //             submitChoice(divID);
-    //             e.target.removeEventListener(e.type, arguments.callee);
-    //         });
-    //     }
-    //     else if(window.state["page"]=="game" && window.state["confirmed"]=="yes"){
-    //         nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square confirmed";
-    //         pf=partial(alreadySubmitted,"Already made choice");
-    //         nextActionSquare.addEventListener("click",pf);
-    //     }
-    //     // else if(window.state["page"]=="game" && window.state["confirmed"]=="no" && window.state["locked"]=="no"){
-    //     //     nextActionSquare.className=actionFromInteger(window.nextPeriodPlay)+"Square square proposed";
-    //     //     pf=partial(alreadySubmitted,"Must lock rules.");
-    //     //     nextActionSquare.addEventListener("click",pf);
-    //     // }
-    //     highlightHistory(divName,window.nextPeriodRuleLength,window.currentPeriod);
-    // }
-    // $("#"+divID).off("click");
-
 }
 
 
@@ -868,46 +618,6 @@ function drawHistoryLabels(type){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-function deleteHistoryPeriod(type,period){
-    deleteDiv(type+'_historyPayoffLabel_'+period);
-    deleteDiv(type+'_historyPeriodLabel_'+period);
-    deleteDiv(type+'_history_square_'+period+'_0');
-    deleteDiv(type+'_history_square_'+period+'_1');
-}
-
-
-
-function changeSliderSpeed(divName){
-    newTime=1000000*window.speed;
-    $("#"+divName+"_allHistoryDiv").stop();
-    if(window.speed<100){
-        $("#"+divName+"_allHistoryDiv").animate({left:"-50000px"},newTime,"linear");
-    }
-}
-
-
-function testAlert(stringIN){
-    alert(stringIN);
-}
-
-function removeListeners(divIN){
-    if(isDivNotThere(divIN)==false){
-        var old_element = document.getElementById(divIN);
-        var new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-    }
-}
-
 function alreadySubmitted(message){
     placeTextNew({"divid":"alreadySubmittedMessage","text":message,"border":"1px solid green","top":"125px","fontSize":"100%","color":"black","width":"150px","textAlign":"center","left":"1125px","backgroundColor":"rgba(225,255,225,1)","height":"50px"})
     setTimeout(function(){
@@ -919,102 +629,10 @@ function alreadySubmitted(message){
 
 
 function confirmChoice(){
-    console.log("submitingShoices");
     deleteWarning();
     var message={"type":"confirmChoice"};
     sock.send(JSON.stringify(message));
 }
-
-function moveTimer(timerName){
-    timerSeconds=window.timer-((new Date()).getTime()-window.timerCheck)/1000;
-    if(timerSeconds>0){
-        var pretty = makeTimePretty(timerSeconds);
-        if(document.getElementById(timerName)!=null){document.getElementById(timerName).innerHTML=pretty;}
-        var pf = partial(moveTimer,timerName);
-        setTimeout(pf,1000);
-    }
-    else{
-        if(document.getElementById(timerName)!=null){
-            document.getElementById(timerName).innerHTML="0:00";
-        }
-    }
-}
-
-
-function moveSelfTimer(timerName){
-    timerSeconds=window.selfTimer-((new Date()).getTime()-window.timerCheck)/1000;
-    if(timerSeconds>0){
-        var pretty = makeTimePretty(timerSeconds);
-        if(document.getElementById(timerName)!=null){document.getElementById(timerName).innerHTML=pretty;}
-        var pf = partial(moveSelfTimer,timerName);
-        setTimeout(pf,1000);
-    }
-    else{
-        if(document.getElementById(timerName)!=null){
-            document.getElementById(timerName).innerHTML="0:00";
-        }
-    }
-}
-
-
-function parameters(incoming){
-    //console.log("oparamersMEssage");
-  speed=incoming['speed']
-  payoffs=incoming['payoffs']
-  choices=incoming['choices']
-  window.speed=incoming['speed'];
-  window.ruleLockFixedCost=incoming['ruleLockFixedCost'];
-  window.ruleLockMarginalCost=incoming['ruleLockMarginalCost'];
-  window.actions=choices;
-  window.payoffs=payoffs;
-  window.constructorChoices=choices;
-}
-
-function reconnecting(incoming){
-  //console.log("reconnectingMessage");
-  window.state=incoming['status'];
-  window.currentUnlockedTime=incoming['currentUnlockedTime'];
-  window.unlockedTimeUpdate=(new Date()).getTime();
-  statusManager();
-}
-
-
-
-
-
-
-function drawMessage(message,fontColorIN){
-    createAndAddDiv
-    div=createDiv("inGameMessage")
-    var div2 = document.createElement("div");
-    div2.id = "inGameMessageInside";
-    var div3 = document.createElement("div");
-    div3.id = "inGameMessageText";
-    div3.innerHTML=message;
-    div3.style.color=fontColorIN;
-
-    div2.appendChild(div3);
-    div.appendChild(div2);
-    // mainDiv.appendChild(div);
-    document.getElementById("mainDiv").appendChild(div);
-}
-
-
-
-
-
-window.ruleSets=[]
-window.ruleNumbers=[]
-window.ruleLastUsed=[]
-window.ruleFrequency=[]
-window.firstPeriodRule=[]
-window.constructors=[]
-
-
-
-
-
-
 
 function drawWarningMessage(){
     if(window.state['warning']=="yes"){
@@ -1025,10 +643,7 @@ function drawWarningMessage(){
         thisDiv.style.top="50px";
         thisDiv.style.opacity="0.85";
         thisDiv.style.backgroundColor="white";
-
-        // placeTextNew({"divid":"clickStatusBackButton","text":"Choice will be made automatically in <br> <time id='selfTimer'>1:00</time>","top":"374px","fontSize":"200%","color":"green","width":"800px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,.1)","height":"50px"})
-        // document.getElementById("clickStatusBackButton").className = "arrow_box arrow_box_up";
-        moveSelfTimer("selfTimer");
+        moveTimer("selfTimer");
     }
 }
 
@@ -1159,7 +774,7 @@ function instructionsRules(){
     clearAll();
     drawBackAndForwardButtons();
     //placeText("gameTableTitle","Game Table",50,200,"red",1);
-    //function drawRule2(constructor,ruleDivName,addToDiv,clickable,highlight){
+    //function drawRule(constructor,ruleDivName,addToDiv,clickable,highlight){
 
     if(window.state['stage']>=1){
         placeTextNew({"text":"","top":"0px","fontSize":"300%","backgroundColor":"rgba(255,0,0,.1)","height":"150px"})
@@ -1168,18 +783,18 @@ function instructionsRules(){
     }
 
     if(window.state['stage']>=2){
-        drawRule2([[0,1],[1,1],[0]],"testRule","mainDiv",0,0)
+        drawRule([[0,1],[1,1],[0]],"testRule","mainDiv",0,0)
         document.getElementById("testRule").style.transform="translate3d(565px,225px,0px) scale(2)";
     }
 
     if(window.state['stage']>=3){
         placeTextNew({"divid":"ruleHasTwoParts","text":"A rule consists of two parts: the input sequence and the output action. ","top":"400px","fontSize":"300%","color":"black","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
         placeTextNew({"divid":"inputSequenceText","text":"Input Sequence","top":"725px","fontSize":"300%","color":"black","width":"400px","textAlign":"center","left":"290px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawRule2([[0,1],[1,1]],"testRuleInput","mainDiv",1,0)
+        drawRule([[0,1],[1,1]],"testRuleInput","mainDiv",1,0)
         document.getElementById("testRuleInput").style.transform="translate3d(440px,475px,0px) scale(2)";
 
         placeTextNew({"divid":"outputSequenceText","text":"Output Action","top":"725px","fontSize":"300%","color":"black","width":"400px","textAlign":"center","left":"660px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawRule2([[0]],"testRuleOutput","mainDiv",0,0)
+        drawRule([[0]],"testRuleOutput","mainDiv",0,0)
         document.getElementById("testRuleOutput").style.transform="translate3d(840px,375px,0px) scale(2)";
     }
 
@@ -1229,17 +844,17 @@ function fitTheHistoryInstructions(){
         var statement2="is the same as the actions played at the end of the history (periods 48 and 49):"
         placeTextNew({"divid":"fitRuleText","text":statement,"top":"675px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"40px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
         placeTextNew({"divid":"fitRuleText2","text":statement2,"top":"800px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"40px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
-        drawRule2([[0,0],[0,1]],"fitruleinput","fitRuleText",0,0)
+        drawRule([[0,0],[0,1]],"fitruleinput","fitRuleText",0,0)
         document.getElementById("fitruleinput").style.fontSize="50%";
         document.getElementById("fitruleinput").style.transform="translate3d(370px,-50px,0px) scale(.5)";
 
-        drawRule2([[0,0],[0,1]],"fitrulehistory","fitRuleText2",0,0)
+        drawRule([[0,0],[0,1]],"fitrulehistory","fitRuleText2",0,0)
         document.getElementById("fitrulehistory").style.fontSize="50%";
         document.getElementById("fitrulehistory").style.transform="translate3d(370px,-50px,0px) scale(.5)";
 
 
 
-        drawRule2([[0,0],[0,1],[1]],"testRule","mainDiv",0,0)
+        drawRule([[0,0],[0,1],[1]],"testRule","mainDiv",0,0)
         document.getElementById("testRule").style.transform="translate3d(225px,350px,0px) scale(2)";
 
 
@@ -1252,42 +867,42 @@ function fitTheHistoryInstructions(){
         placeTextNew({"divid":"div222","text":statement,"top":"675px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"690px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
 
         placeTextNew({"divid":"div2222","text":statement2,"top":"800px","fontSize":"200%","color":"black","width":"540px","textAlign":"left","left":"690px","backgroundColor":"rgba(0,0,0,0)","height":"35px"})
-        drawRule2([[0,1],[1,1]],"testRule22","div222",0,0)
+        drawRule([[0,1],[1,1]],"testRule22","div222",0,0)
         document.getElementById("testRule22").style.fontSize="50%";
         document.getElementById("testRule22").style.transform="translate3d(370px,-50px,0px) scale(.5)";
 
-        drawRule2([[0,0],[0,1]],"testRule223","div222",0,0)
+        drawRule([[0,0],[0,1]],"testRule223","div222",0,0)
         document.getElementById("testRule223").style.fontSize="50%";
         document.getElementById("testRule223").style.transform="translate3d(370px,-25px,0px) scale(.5)";
 
 
 
-        drawRule2([[0,1],[1,1],[1]],"testRule2","mainDiv",0,0)
+        drawRule([[0,1],[1,1],[1]],"testRule2","mainDiv",0,0)
         document.getElementById("testRule2").style.transform="translate3d(865px,250px,0px) scale(2)";
     }
 
 
     if(window.state['stage']==5){
         placeTextNew({"divid":"div32","text":"Some rules that DO fit the history:","top":"400px","fontSize":"200%","color":"black","width":"640px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
-        drawRule2([[0,1],[0]],"fits1","mainDiv",0,0)
+        drawRule([[0,1],[0]],"fits1","mainDiv",0,0)
         document.getElementById("fits1").style.fontSize="100%";
         document.getElementById("fits1").style.transform="translate3d(50px,350px,0px)";
-        drawRule2([[0,1],[1]],"fits2","mainDiv",0,0)
+        drawRule([[0,1],[1]],"fits2","mainDiv",0,0)
         document.getElementById("fits2").style.fontSize="100%";
         document.getElementById("fits2").style.transform="translate3d(200px,250px,0px)";
 
-        drawRule2([[0,0],[0,1],[0]],"fits3","mainDiv",0,0)
+        drawRule([[0,0],[0,1],[0]],"fits3","mainDiv",0,0)
         document.getElementById("fits3").style.fontSize="100%";
         document.getElementById("fits3").style.transform="translate3d(350px,150px,0px)";
-        drawRule2([[0,0],[0,1],[1]],"fits4","mainDiv",0,0)
+        drawRule([[0,0],[0,1],[1]],"fits4","mainDiv",0,0)
         document.getElementById("fits4").style.fontSize="100%";
         document.getElementById("fits4").style.transform="translate3d(50px,175px,0px)";
 
-        drawRule2([[1,1],[0,0],[0,1],[0]],"fits5","mainDiv",0,0)
+        drawRule([[1,1],[0,0],[0,1],[0]],"fits5","mainDiv",0,0)
         document.getElementById("fits5").style.fontSize="100%";
         document.getElementById("fits5").style.transform="translate3d(250px,75px,0px)";
 
-        drawRule2([[0,0],[0,1],[0,0],[1,0],[1,1],[0,0],[0,1],[1]],"fits6","mainDiv",0,0)
+        drawRule([[0,0],[0,1],[0,0],[1,0],[1,1],[0,0],[0,1],[1]],"fits6","mainDiv",0,0)
         document.getElementById("fits6").style.fontSize="100%";
         document.getElementById("fits6").style.transform="translate3d(50px,100px,0px)";
 
@@ -1295,25 +910,25 @@ function fitTheHistoryInstructions(){
         placeTextNew({"divid":"div312","text":"Some rules that DO NOT fit the history:","top":"400px","fontSize":"200%","color":"black","width":"640px","textAlign":"center","left":"640px","backgroundColor":"rgba(0,0,0,0)","height":"100px"})
 
 
-        drawRule2([[0,0],[1]],"fits11","mainDiv",0,0)
+        drawRule([[0,0],[1]],"fits11","mainDiv",0,0)
         document.getElementById("fits11").style.fontSize="100%";
         document.getElementById("fits11").style.transform="translate3d(690px,-250px,0px)";
-        drawRule2([[1,0],[0]],"fits12","mainDiv",0,0)
+        drawRule([[1,0],[0]],"fits12","mainDiv",0,0)
         document.getElementById("fits12").style.fontSize="100%";
         document.getElementById("fits12").style.transform="translate3d(840px,-350px,0px)";
 
-        drawRule2([[0,0],[1,0],[1]],"fits13","mainDiv",0,0)
+        drawRule([[0,0],[1,0],[1]],"fits13","mainDiv",0,0)
         document.getElementById("fits13").style.fontSize="100%";
         document.getElementById("fits13").style.transform="translate3d(990px,-450px,0px)";
-        drawRule2([[1,0],[0,1],[0]],"fits14","mainDiv",0,0)
+        drawRule([[1,0],[0,1],[0]],"fits14","mainDiv",0,0)
         document.getElementById("fits14").style.fontSize="100%";
         document.getElementById("fits14").style.transform="translate3d(690px,-425px,0px)";
 
-        drawRule2([[1,0],[0,0],[0,1],[1]],"fits15","mainDiv",0,0)
+        drawRule([[1,0],[0,0],[0,1],[1]],"fits15","mainDiv",0,0)
         document.getElementById("fits15").style.fontSize="100%";
         document.getElementById("fits15").style.transform="translate3d(890px,-525px,0px)";
 
-        drawRule2([[0,0],[1,1],[0,0],[1,0],[1,1],[0,0],[0,1],[0]],"fits16","mainDiv",0,0)
+        drawRule([[0,0],[1,1],[0,0],[1,0],[1,1],[0,0],[0,1],[0]],"fits16","mainDiv",0,0)
         document.getElementById("fits16").style.fontSize="100%";
         document.getElementById("fits16").style.transform="translate3d(690px,-500px,0px)";
 
@@ -1321,7 +936,7 @@ function fitTheHistoryInstructions(){
     }
 
     if(window.state['stage']==6){
-        drawConstructor2();
+        drawConstructor();
     }
 
 
@@ -1772,7 +1387,7 @@ function preMatch(){
     drawGame();
     drawFirstPeriod();
     drawDefault();
-    drawConstructor2();
+    drawConstructor();
     drawHistory();
     drawRules();    
     drawInfo();
@@ -1786,7 +1401,7 @@ function postMatch(){
     drawGame();
     drawFirstPeriod();
     drawDefault();
-    drawConstructor2();
+    drawConstructor();
     drawHistory();
     drawRules();    
     drawInfo();
@@ -1814,97 +1429,12 @@ function statusManager(){
         clearAll();
         genericScreen(thisStatus["message"]);
       }
-      else if(thisStatus["page"]=="instructionsPayoffTable"){
-        instructionsPayoffTable();
-      }
-      else if(thisStatus["page"]=="instructionsHistory"){
-        instructionsHistory();
-      }
-      else if(thisStatus["page"]=="instructionsRules"){
-        instructionsRules();
-      }
-      else if(thisStatus["page"]=="instructionsRulesFirst"){
-        instructionsRulesFirst();
-      }
-      else if(thisStatus["page"]=="fitTheHistoryInstructions"){
-        fitTheHistoryInstructions();
-      }
-      else if(thisStatus["page"]=="fitTheHistoryExamplesInstructions"){
-        fitTheHistoryExamplesInstructions();
-      }
-      else if(thisStatus["page"]=="quiz"){//quiz
-        clearAll();
-        drawRules("regular");
-        window.speed=100;
-
-        for(k=0;k<window.currentHistory.length;k++){
-            period=28-window.currentHistory.length+k+1;
-            if(isDivNotThere("regular_history_square_"+period+"_1")){
-                drawHistoryPeriodLabels('regular',period);
-                drawHistoryPeriod('regular',period,0);
-                drawHistoryPeriod('regular',period,1);
-                fillHistory('regular',period,0,actionFromInteger(window.currentHistory[k][0]));
-                fillHistory('regular',period,1,actionFromInteger(window.currentHistory[k][1]));
-                //document.getElementById("regular_historyPayoffLabel_"+period).innerHTML=window.currentPayoffHistory[k][0];
-            }
-        }
-        document.getElementById("regular_historyIN").style.transform="translateX("+(-200)+"px)";
-
-        // fillHistory("slider",window.currentHistory,28,"all");
-        drawGame();
-        if(thisStatus["stage"]=="question"){
-          displayQuestion();
-          if(window.questionType==3 || window.questionType==5){
-            drawConstructor("regular");
-          }
-        }
-        else if(thisStatus["stage"]!="question"){
-          displaySolution();
-        }
-      }
-      else if(thisStatus["page"]=="quizSummary"){
-        message="Please wait for others finish the quiz. <br> You earned "+window.state["summary"]+".";
-        genericScreen(message);
-      }
-      else if(thisStatus["page"]=="defaultNotSet"){//default Rule Not Set yet
-        window.ruleSets=[];
-        window.ruleNumbers=[];
-        window.ruleLastUsed=[];
-        window.ruleFrequency=[];
-        window.firstPeriodRule=[];
-        deleteDiv("genericScreen");
-        deleteDiv("regularRuleList");
-        drawGame();
-        document.getElementById("gameTable").style.transform="scale(1)";
-        document.getElementById("gameTable").style.transition="all .5s ease-out";
-        drawIfNeeded("regularDefaultDiv");
-        document.getElementById("regularDefaultDiv").style.transform="scale(3)";
-        document.getElementById("regularDefaultDiv").style.transformOrigin="bottom left";
-        document.getElementById("regularDefaultDiv").style.transition="all .5s ease-out";
-        drawInfo();
-        drawMessage("Match will start in <time id='timer'>1:00</time><br>You must set your default rule before play can begin.","#FF0000");
-        moveTimer("timer");
-      }
-      else if(thisStatus["page"]=="hypothetical"){
-        console.log(thisStatus);
-        clearAll();
-        drawIfNeeded("hypothetical");
-        moveTimer("timer");
-      }
-      else if(thisStatus["page"]=="testing"){
-        clearAll();
-        drawGame();
-        drawDefault();
-        drawConstructor2();
-        drawHistory();    
-        drawRules();    
-      }
       else if(thisStatus["page"]=="game"){
         clearAll();
         drawGame();
         drawFirstPeriod();
         drawDefault();
-        drawConstructor2();
+        drawConstructor();
         drawHistory();    
         drawRules();  
         drawInfo();  
@@ -1912,372 +1442,5 @@ function statusManager(){
       }
   }
 }
-
-
-function doCostAnimation(){
-    costAnimation=createDiv("costAnimation");
-    costAnimation.innerHTML=window.ruleLockFixedCost;
-    document.getElementById("mainDiv").appendChild(costAnimation);
-    document.getElementById('costAnimation').style.transform="translate(-125px,750px) scale(2.75)";
-    setTimeout(function(){
-        document.getElementById('costAnimation').style.transform="scale(1)";
-        document.getElementById("costAnimation").style.transition="all 1.25s ease";
-        document.getElementById('topInfoRight').innerHTML="Total Earned Today: <span style='color:#008800'>"+window.totalPayoff+"</span> - <span style='color:#FF0000'>"+parseInt(window.unlockCosts-window.ruleLockFixedCost)+"</span> = "+(window.totalPayoff-parseInt(window.unlockCosts-window.ruleLockFixedCost));
-
-    },1);
-    setTimeout(function(){
-        deleteDiv("costAnimation");
-        document.getElementById('topInfoRight').innerHTML="Total Earned Today: <span style='color:#008800'>"+window.totalPayoff+"</span> - <span style='color:#FF0000'>"+parseInt(window.unlockCosts)+"</span> = "+(window.totalPayoff-parseInt(window.unlockCosts));
-    },1000)
-}
-
-function beginRules(incoming){
-    //console.log(incoming);
-    thisFirst=eval(JSON.parse(JSON.stringify(incoming['firstPeriodRule'])));
-    thisDefault=eval(JSON.parse(JSON.stringify(incoming['defaultRule'])));
-    if(window.thisDefault==0){
-        document.getElementById('chooseDefault0').className += " defaultSelected";
-        document.getElementById('chooseDefault1').className = "ySquare square";
-    }
-    else if(window.thisDefault==1){
-        document.getElementById('chooseDefault0').className = "wSquare square";
-        document.getElementById('chooseDefault1').className += " defaultSelected";
-    }
-
-    if(window.thisFirst==0){
-        document.getElementById('chooseFirstPeriod0').className += " defaultSelected";
-        document.getElementById('chooseFirstPeriod1').className = "ySquare square";
-    }
-    else if(window.thisFirst==1){
-        document.getElementById('chooseFirstPeriod0').className = "wSquare square";
-        document.getElementById('chooseFirstPeriod1').className += " defaultSelected";
-    }
-
-}
-
-
-
-function quizQuestion(incoming){
-  window.questionType=incoming['questionType'];
-  window.questionNumber=incoming['questionNumber'];
-  window.question=incoming['question'];
-  window.questionParams=incoming['questionParams'];
-  window.tries=incoming['tries']
-  window.price=incoming['price']
-  window.quizEarnings=incoming['quizEarnings']
-  window.currentHistory=incoming['history'];
-  window.actualX=-100;
-  window.deltaX=-100;
-  window.targetX=-100;
-  window.lastTimeCheck=(new Date()).getTime();
-
-    window.ruleSets=[]
-    window.ruleNumbers=[]
-    window.ruleLastUsed=[]
-    window.ruleFrequency=[]
-    window.firstPeriodRule=[]
-    window.firstPeriodRule['regular']=0;
-    window.ruleSets['regular']=incoming['rules'];
-    window.ruleNumbers['regular']=incoming['ruleNumbers'];
-    window.ruleLastUsed['regular']=incoming['ruleLastUsed'];
-    window.ruleFrequency['regular']=incoming['ruleFrequency'];
-  window.lastRule=-1;
-  window.lastRuleLength=-1;
-  window.constructors['regular']=[[-1,-1],[-1]];
-  window.answerStatement=incoming['answerStatement'];
-  window.questionStatement=incoming['questionStatement'];
-  statusManager();
-}
-
-
-function newHistory(incoming){
-  window.currentHistory=incoming['history'];
-  window.currentPayoffHistory=incoming['payoffHistory'];
-  window.currentPeriod=incoming['period'];
-  window.actionProfileFrequencies=incoming['actionProfileFrequencies'];
-  window.lastPlay=incoming['lastPlay'];
-
-  for(k=0;k<window.currentHistory.length;k++){
-    period=window.currentPeriod-window.currentHistory.length+k+1;
-    if(isDivNotThere("regular_history_square_"+period+"_1")){
-        drawHistoryPeriodLabels('regular',period);
-        drawHistoryPeriod('regular',period,0);
-        drawHistoryPeriod('regular',period,1);
-        fillHistory('regular',period,0,actionFromInteger(window.currentHistory[k][0]));
-        fillHistory('regular',period,1,actionFromInteger(window.currentHistory[k][1]));
-        document.getElementById("regular_historyPayoffLabel_"+period).innerHTML=window.currentPayoffHistory[k][0];
-    }
-  }
-
-  for(k=0;k<window.currentPeriod-21;k++){
-    deleteHistoryPeriod('regular',k);
-  }
-  document.getElementById("regular_historyIN").style.transform="translateX("+(1150-window.currentPeriod*50)+"px)";
-  document.getElementById("regular_historyIN").style.transition="all .15s ease";
-  document.getElementById("regular_historyIN").style.transitionDelay=".0015s";
-
-
-  if(window.state['page']=="game"){
-      drawHistoryPeriod('regular',window.currentPeriod+1,0);
-      drawHistoryPeriodLabels('regular',window.currentPeriod+1);
-    }
-    // window.currentPeriod=window.currentPeriod+1;
-  for(k=0;k<4;k++){
-    document.getElementById("gameTable_4_"+(k+1)).innerHTML=window.actionProfileFrequencies[k];
-  }
-  highlightPayoffs();
-  window.matchPayoff=incoming['matchPayoff'];
-  window.unlockCosts=incoming['unlockCosts'];
-  window.totalPayoff=incoming['totalPayoff'];
-  window.lockCosts=incoming['lockCosts'];
-  window.lastRule=incoming['lastRule'];
-  window.lastRuleLength=incoming['lastRuleLength'];
-  if(isNaN(window.actualX)){
-    window.actualX=-100;
-  }
-  else{
-    window.actualX=window.actualX+50
-  }
-  window.targetX=-100
-  window.lastTimeCheck=(new Date()).getTime();
-  window.serverTime=incoming['elapsed']*1000;
-  //statusManager();
-    drawInfo();
-}
-
-function highlightPayoffs(){
-  for(k=0;k<4;k++){
-    if(k==window.lastPlay){
-        document.getElementById("gameTable_4_"+(k+1)).style.color="red";
-        document.getElementById("gameTable_4_"+(k+1)).style.fontSize="200%";
-        document.getElementById("gameTable_4_"+(k+1)).style.transition = "all .5s ease-out";
-
-        document.getElementById("gameTable_2_"+(k+1)).style.color="green";
-        document.getElementById("gameTable_2_"+(k+1)).style.fontSize="200%";
-        document.getElementById("gameTable_2_"+(k+1)).style.transition = "all .5s ease-out";
-    }
-    else{
-        for(j=2;j<5;j++){
-            document.getElementById("gameTable_"+j+"_"+(k+1)).style.color="black";
-            document.getElementById("gameTable_"+j+"_"+(k+1)).style.fontSize="125%";
-        }
-    }
-
-    if(window.currentPeriod>0){
-        document.getElementById("regular_historyPayoffLabel_"+(window.currentPeriod)).style.color="green";
-        document.getElementById("regular_historyPayoffLabel_"+(window.currentPeriod)).style.fontSize="200%";
-        document.getElementById("regular_historyPayoffLabel_"+(window.currentPeriod)).style.transition = "all .5s ease-out";
-    }
-    if(window.currentPeriod>1){
-        document.getElementById("regular_historyPayoffLabel_"+(window.currentPeriod-1)).style.color="black";
-        document.getElementById("regular_historyPayoffLabel_"+(window.currentPeriod-1)).style.fontSize="100%";
-    }
-  }
-}
-
-
-function displayQuestion(){
-    quizDiv=createDiv("quizDiv");
-    $('#mainDiv').append(quizDiv);
-    deleteDiv("quizAnswerDiv");
-    deleteWarning();
-    quizEarningsDiv=createDiv("quizEarningsDiv");
-    quizEarningsDiv.innerHTML="Quiz Earnings: "+window.quizEarnings;
-    quizDiv.appendChild(quizEarningsDiv);
-
-    if(window.questionType==1){
-        quizQuestionDiv=createDiv("quizQuestionDiv");
-        quizQuestionDiv.innerHTML=window.questionNumber+". Given the current history, what action will be played in the next period?";
-
-        quizQuestionHint=createDiv("quizQuestionHint");
-        quizQuestionHint.innerHTML="Hint: for an example see lines 139-141 of the instructions.";
-        quizQuestionDiv.appendChild(quizQuestionHint);
-        var listEntryButton1 = document.createElement("a");
-        listEntryButton1.className = "wSquare square answerW";
-        answer=0;
-        confirmationStatement="Are you sure you want to submit W as your answer??";
-        if(thisStatus["stage"]=="question"){
-            var pf = partial(submitAnswer,confirmationStatement,answer,window.questionType);
-            listEntryButton1.addEventListener("click",pf);
-        }
-        quizDiv.appendChild(listEntryButton1);
-
-        var listEntryButton2 = document.createElement("a");
-        listEntryButton2.className = "ySquare square answerY";
-        answer=1;
-        confirmationStatement="Are you sure you want to submit Y as your answer??";
-        if(thisStatus["stage"]=="question"){
-            var pf = partial(submitAnswer,confirmationStatement,answer,window.questionType);
-            listEntryButton2.addEventListener("click",pf);
-        }
-        quizDiv.appendChild(listEntryButton2);
-    }
-    else if(window.questionType==2){
-        quizQuestionDiv=createDiv("quizQuestionDiv");
-        quizQuestionDiv.innerHTML=window.questionNumber+". "+window.questionStatement;
-
-
-        quizQuestionHint=createDiv("quizQuestionHint");
-        quizQuestionHint.innerHTML="Hint: for an example see lines 57-65 of the instructions.";
-        quizQuestionDiv.appendChild(quizQuestionHint);
-
-        for(k=1;k<=8;k++){
-            var answerButton = document.createElement("a");
-            answerButton.className = "blankSquare square answerW";
-            answerButton.style.top=(125)+"px";
-            answerButton.style.left=(-10+k*100)+"px";
-            answerButton.innerHTML=k;
-            answer=k;
-            confirmationStatement="Are you sure you want to submit "+k+" as your answer??";
-            if(thisStatus["stage"]=="question"){
-                var pf = partial(submitAnswer,confirmationStatement,answer,window.questionType);
-                answerButton.addEventListener("click",pf);
-            }
-            quizDiv.appendChild(answerButton);
-        }
-    }
-    else if(window.questionType==3){
-        quizQuestionDiv=createDiv("quizQuestionLeftDiv");
-        quizQuestionDiv.innerHTML=window.questionNumber+". ADD a rule to the set to ensure that "+window.actions[window.questionParams[0]]+" will be played next period.";
-        quizQuestionHint=createDiv("quizQuestionHint2");
-        quizQuestionHint.innerHTML="Hint: for an example see lines 142-148 of the instructions.";
-        quizQuestionDiv.appendChild(quizQuestionHint);
-
-    }
-    else if(window.questionType==4){
-        quizQuestionDiv=createDiv("quizQuestionDiv");
-        quizQuestionDiv.innerHTML=window.questionNumber+". DELETE a rule from the set to ensure that "+window.actions[window.questionParams[0]]+" will be played next period.";
-        quizQuestionHint=createDiv("quizQuestionHint");
-        quizQuestionHint.innerHTML="Hint: for an example see lines 142-148 of the instructions.";
-        quizQuestionDiv.appendChild(quizQuestionHint);
-    }
-    else if(window.questionType==5){
-        quizQuestionDiv=createDiv("quizQuestionLeftDiv");
-        quizQuestionDiv.innerHTML=window.questionNumber+". COPY and SWITCH a rule from the set to ensure that "+window.actions[window.questionParams[0]]+" will be played next period.";
-        quizQuestionHint=createDiv("quizQuestionHint2");
-        quizQuestionHint.innerHTML="Hint: for an example see lines 108-117 of the instructions on how to COPY and SWITCH a rule.";
-        quizQuestionDiv.appendChild(quizQuestionHint);
-
-    }
-    quizDiv.appendChild(quizQuestionDiv);
-}
-
-
-function submitAnswer(confirmationStatement,answer,questionType){
-    var confirmation=confirmAction(confirmationStatement);
-    if(confirmation){
-        var message={"type":"quizAnswer","answer":answer,"questionType":questionType};
-        sock.send(JSON.stringify(message));
-    }
-}
-
-function confirmAction(m){
-  var confirmed = confirm(m);
-  return confirmed;
-}
-
-function answerSolution(incoming){
-  window.answerMessage=incoming;
-  window.quizEarnings=incoming['quizEarnings']
-  statusManager();
-}
-
-
-         // msg['solution']="correct"
-         // msg['solutionText']="The answer is correct."
-         // msg['buttonText']="Next Question."
-
-
-
-function sendSimpleMessage(input){
-    var message={"type":input};
-    sock.send(JSON.stringify(message));    
-}
-
-
-
-//         sendSimpleMessage("nextQuestion")
-// sendSimpleMessage("tryAgain")
-
-
-
-function displaySolution(){
-    drawIfNeeded("quizDiv");
-    quizAnswerDiv=createDiv("quizAnswerDiv");
-    quizAnswerDiv.innerHTML=window.answerMessage['solutionText'];
-    quizAnswerDivButton=createDiv("quizAnswerDivButton");
-    quizAnswerDivButton.innerHTML=answerMessage['buttonText'];
-    if(window.answerMessage['solution']=="incorrect" && window.tries<2){
-        quizAnswerDiv.style.borderColor = "red";
-        quizAnswerDivButton.style.borderColor = "red";
-        quizAnswerDivButton.style.backgroundColor = "rgba(255,0,0,.2)";
-        var pf = partial(sendSimpleMessage,"tryAgain");
-        quizAnswerDivButton.addEventListener("click",pf);
-    }
-
-
-    else if(window.tries>1 && window.answerMessage['solution']=="incorrect"){
-        quizAnswerDiv.innerHTML=quizAnswerDiv.innerHTML+"<br>"+window.answerStatement
-        quizAnswerDiv.style.borderColor = "red";
-        quizAnswerDivButton.style.borderColor = "red";
-        quizAnswerDivButton.style.backgroundColor = "rgba(255,0,0,.2)";
-        var pf = partial(sendSimpleMessage,"tryAgain");
-        quizAnswerDivButton.addEventListener("click",pf);
-    }
-
-
-    else if(window.answerMessage['solution']=="correct"){
-        quizAnswerDiv.innerHTML=quizAnswerDiv.innerHTML+"<br>"+window.answerStatement
-        quizAnswerDiv.style.borderColor = "green";
-        quizAnswerDivButton.style.borderColor = "green";
-        quizAnswerDivButton.style.backgroundColor = "rgba(0,255,0,.2)";
-        var pf = partial(sendSimpleMessage,"nextQuestion");
-        quizAnswerDivButton.addEventListener("click",pf);
-    }
-
-    $('#mainDiv').append(quizAnswerDiv);
-    $('#quizAnswerDiv').append(quizAnswerDivButton);
-}
-
-
-function newPeriodTest(){
-    input=window.instructionInput[window.instructionDemoIndex%window.instructionInput.length];
-    window.currentPeriod=window.currentPeriod+1;
-    drawHistoryPeriod('regular',window.currentPeriod+1,0);
-    drawHistoryPeriod('regular',window.currentPeriod,1);
-    drawHistoryPeriodLabels('regular',window.currentPeriod);
-
-    fillHistory("regular",window.currentPeriod,0,input[0][0]);
-    fillHistory("regular",window.currentPeriod,1,input[0][1]);
-        window.nextPeriodPlay=input[1];
-        window.nextPeriodRuleLength=input[2];
-    //window.currentPeriod
-        window.nextPeriodRule=input[3];
-        drawNextAction("regular");
-  document.getElementById("regular_historyIN").style.transform="translateX("+(1150-window.currentPeriod*50)+"px)";
-  document.getElementById("regular_historyIN").style.transition="all .5s ease";
-  document.getElementById("regular_historyIN").style.transitionDelay=".5s";
-    window.instructionDemoIndex=window.instructionDemoIndex+1;
-}
-
-
-function messageManager(msg){
-  var incoming = JSON.parse(msg);
-  //console.log(incoming['type']);
-  window.state=incoming['status'];
-  window.timer=incoming['timer'];
-  window.selfTimer=incoming['selfTimer'];
-  window.timerCheck=(new Date()).getTime();
-  eval(incoming['type']+'(incoming);');
-}
-
-
-
-
-// window.elapsed=.00001*1000;
-// window.startTime=(new Date()).getTime()-window.elapsed;
-// pf=partial(doInstructions);
-// setTimeout(pf,100);
-
 
 
