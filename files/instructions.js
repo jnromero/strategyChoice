@@ -1,1528 +1,3 @@
-
-mainDiv.style.width="1280px";
-mainDiv.style.height="1024px";
-
-
-//Constructor testing stuff.
-
-function testConstructorComplete(constructor){
-    specified=true;
-    for(k=0;k<constructor.length;k++){
-        for(j=0;j<constructor[k].length;j++){
-            if(constructor[k][j]==-1){
-                specified=false;
-            }
-        }
-    }
-    return specified
-}
-
-function testConstructor(){
-  var error=0;
-  if(testConstructorComplete(window.ruleConstructor)==false){
-    var error=1;
-  }
-  else{
-    if(window.state['ruleInfo']!=undefined){
-        var M=window.state['ruleInfo'].length;
-        for(j=0;j<M;j++){
-          var rule1=window.ruleConstructor;
-          var rule2=window.state['ruleInfo'][j][2];
-          var thisError=compareRuleAndRule(rule1,rule2);
-          if(thisError>0){error=thisError+1;}
-        }
-    }
-  }
-  return error;
-}
-
-function compareRuleAndRule(rule1,rule2){
-    var error=1;//Same except output
-    if(rule1.length!=rule2.length){
-      error=0;//different
-    }
-    else{
-      for(i=0;i<rule1.length-1;i++){
-        if(rule1[i][0]!=rule2[i][0]){error=0;break;}
-        if(rule1[i][1]!=rule2[i][1]){error=0;break;}
-      }
-      if(error==1 && rule1[rule1.length-1][0]==rule2[rule2.length-1][0]){
-        error=2;//exactly the same
-      }
-    }
-    return error;
-}
-
-
-//CONSTRUCTOR STUFF HERE
-
-function drawInfo(){
-    placeText({"divid":"topInfo1","text":window.state["subjectID"],"top":"0px","fontSize":"150%","color":"blue","width":"300px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
-    placeText({"divid":"topInfo2","text":"Match #"+window.state["match"],"top":"0px","fontSize":"150%","color":"red","width":"300px","textAlign":"center","left":"300px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
-    placeText({"divid":"topInfo3","text":"Payoff this match: "+window.state["matchPayoff"][0],"top":"0px","fontSize":"150%","color":"black","width":"340px","textAlign":"center","left":"600px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
-    placeText({"divid":"topInfo4","text":"Total Earned Today: "+window.state["totalPayoff"],"top":"0px","fontSize":"150%","color":"green","width":"340px","textAlign":"center","left":"940px","backgroundColor":"rgba(0,255,0,0)","height":"50px"})
-}
-
-function drawGame(){
-    //Create Game div
-    var gameTable=createAndAddDiv("gameTable","mainDiv");
-    if(window.state['payoffs']==undefined){
-        window.state['payoffs']=[];
-        window.state['payoffs'][0]=[1,2,0,4];
-        window.state['payoffs'][1]=[1,2,0,4];
-        window.state['payoffs'][2]=[1,2,0,4];
-        window.state['payoffs'][3]=[1,2,0,4];
-    }
-    if (window.state['actionProfileFrequencies']==undefined){
-        window.state['actionProfileFrequencies']=[0,0,0,0]
-    }
-
-    table=[['My Choice','wSquare','wSquare','ySquare','ySquare'],
-        ['Other\'s Choice','wSquare','ySquare','wSquare','ySquare'],
-        ['My Payoff',window.state['payoffs'][0][0],window.state['payoffs'][1][0],window.state['payoffs'][2][0],window.state['payoffs'][3][0]],
-        ['Other\'s Payoff',window.state['payoffs'][0][1],window.state['payoffs'][1][1],window.state['payoffs'][2][1],window.state['payoffs'][3][1]],
-        ['Occurrences',window.state['actionProfileFrequencies'][0],window.state['actionProfileFrequencies'][1],window.state['actionProfileFrequencies'][2],window.state['actionProfileFrequencies'][3]]
-    ]
-    for(row=0;row<table.length;row++){
-        for(col=0;col<table[row].length;col++){
-            var entryDiv=createAndAddDiv("gameTable_"+row+"_"+col,"gameTable")
-            if(col==0){
-                entryDiv.className="entry entryTitle"
-                entryDiv.innerHTML=table[row][col];
-                entryDiv.style.transform="translate3d(0px,"+(row*50)+"px,0px)";
-            }
-            else{
-                entryDiv.style.transform="translate3d("+(100+col*50)+"px,"+(row*50)+"px,0px)";
-                if(table[row][col]=="wSquare"){
-                    entryDiv.className="wSquare square"                
-                }
-                else if(table[row][col]=="ySquare"){
-                    entryDiv.className="ySquare square"
-                }
-                else{
-                    entryDiv.className="entry"
-                    entryDiv.innerHTML=table[row][col];
-                }
-            }
-        }
-    }
-    highlightPayoffTableColumn();
-}
-
-
-function deleteRule(args){
-    var thisConstructor=args[0];
-    //List of pages where the button can be clicked
-    var pages=["preMatch","gameNonBinding"];
-    if(pages.indexOf(window.state['page'])>-1){
-        var message={"type":"deleteRule","rule":thisConstructor};
-        sock.send(JSON.stringify(message));
-    }
-    else if(window.state['page']=="instructionsEditRuleSet" && window.state['stage']==6 && window.state['answer']!="correct" && window.state['answer']!="incorrect"){
-        var confirmationStatement="Are you sure you want to submit this as your answer?";
-        submitQuizAnswer([{"question":"deleteRuleQuiz","constructor":thisConstructor},confirmationStatement]);
-    }
-    else{
-        alert("During the experiment, that rule would be deleted from the set of rules.");
-    }
-}
-
-function switchRules(){
-    var message={"type":"switchRuleOutput","thisRule":window.ruleConstructor};
-    sock.send(JSON.stringify(message));
-    window.ruleConstructor=[[-1,-1],[-1]];
-    drawConstructor();
-}
-
-function addRule(){
-    //List of pages where the button can be clicked
-    var pages=["preMatch","gameNonBinding"]
-    if(pages.indexOf(window.state['page'])>-1){
-        var message={"type":"addRule","thisRule":window.ruleConstructor};
-        sock.send(JSON.stringify(message));        
-    }
-    else if(window.state['page']=="instructionsEditRuleSet" && window.state['stage']==5 && window.state['answer']!="correct" && window.state['answer']!="incorrect"){
-        var confirmationStatement="Are you sure you want to submit this as your answer?";
-        submitQuizAnswer([{"question":"addRuleQuiz","constructor":window.ruleConstructor},confirmationStatement]);
-    }
-    else{
-        alert("During the experiment, that rule would be added to your set or rules.");
-    }
-    window.ruleConstructor=[[-1,-1],[-1]];
-    drawConstructor();
-}
-
-
-function setConstructor(args){
-    thisConstructor=JSON.parse(JSON.stringify(args[0]));
-    window.ruleConstructor=thisConstructor;
-    drawConstructor();
-}
-
-
-function drawConstructor(){
-    //Set constructor if not already set.
-    if(window.ruleConstructor==undefined){
-        window.ruleConstructor=[[-1,-1],[-1]];
-    }
-
-    //Create entire Div
-    constructorDiv=createAndAddDiv("ruleConstructor","mainDiv");
-    constructorDiv.className = "constructor";
-
-    //Create ConstructorIn div (so that you can scroll on long slider)
-    constructorIn2=createAndAddDiv("ruleConstructorIn2","ruleConstructor")
-    constructorIn=createAndAddDiv("ruleConstructorIn","ruleConstructorIn2")
-    constructorIn2.className = "constructorIn2";
-    constructorIn.className = "constructorIn";
-
-    if(window.ruleConstructor.length*50>525){  
-        constructorIn.setAttribute("style","width:"+(window.ruleConstructor.length+3)*50+"px");
-        constructorIn.style.left="0px";
-    }
-    else{
-        constructorIn.setAttribute("style","width:"+(window.ruleConstructor.length+1)*50+"px");        
-        constructorIn.style.left=((730-(window.ruleConstructor.length+1)*50)/2)+"px";
-    }
-
-    //plus button
-    plusButton=createAndAddDiv("plusConstructorButton","ruleConstructorIn")
-    plusButton.className="plusConstructorButton constructorButton";
-    plusButton.style.transform="translate3d(0px,80px,0px)";
-    clickButton("many","plusConstructorButton",constructorPlusMinus,"+",-1);
-
-
-    for(col=0;col<window.ruleConstructor.length;col++){
-        if(window.ruleConstructor.length-col>2 && window.ruleConstructor.length>2){
-            var minusButton = createAndAddDiv("minusConstructorButton_"+col,"ruleConstructorIn");
-            minusButton.className="minusConstructorButton constructorButton";
-            clickButton("many","minusConstructorButton_"+col,constructorPlusMinus,"-",col);
-            minusButton.style.transform="translate3d("+(col*50+60)+"px,0px,0px)";
-        }
-        for(row=0;row<window.ruleConstructor[col].length;row++){
-            action=actionFromInteger(window.ruleConstructor[col][row]);
-            var s = createAndAddDiv("square_"+col+"_"+row,"ruleConstructorIn")
-            clickButton("many","square_"+col+"_"+row,changeConstructorEntry,s.id,row,col);
-            s.className=action+"Square square";
-            s.style.transform="translate3d("+(50+col*50)+"px,"+(50*row+50)+"px,0px)";
-        }
-    }
-
-    drawConstructorSubmitButton();
-}
-
-function constructorPlusMinus(args){
-    changeType=args[0];
-    column=args[1];
-    if(changeType=="+"){
-        var additional=[[-1,-1]];
-        var added=additional.concat(window.ruleConstructor);
-        window.ruleConstructor=added;
-    }    
-    else if(changeType=="-"){
-        window.ruleConstructor.splice(column,1);
-    }
-    drawConstructor();
-}
-
-
-thisStatus=[]
-
-function drawDefault(){
-    placeText({"divid":"setDefaultDiv","text":"","top":"899px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,1)","height":"125px"});
-    placeText({"divid":"setDefaultTitle","text":"Default Rule","top":"0px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px","parentDiv":"setDefaultDiv"});
-
-    var s = createAndAddDiv("chooseDefault0","setDefaultDiv");
-    clickButton("many","chooseDefault0",setDefault,"setDefault",0);
-    s.className = "wSquare square";
-    s.style.transform="translate3d(-65px,50px,0px)";
-
-    var s = createAndAddDiv("chooseDefault1","setDefaultDiv");
-    clickButton("many","chooseDefault1",setDefault,"setDefault",1);
-    s.className = "ySquare square";
-    s.style.transform="translate3d(15px,50px,0px)";
-
-
-    if(window.state['defaultRule']==0){
-        var thisLeft="33px";
-    }
-    else if(window.state['defaultRule']==1){
-        var thisLeft="113px";
-    }
-
-    if(thisLeft!=undefined){
-        placeText({"divid":"defaultRuleHighlight","border":"5px solid green","top":"48px","left":thisLeft,"parentDiv":"setDefaultDiv","width":"54px","height":"54px"});
-    }
-}
-
-function drawFirstPeriod(){
-    placeText({"divid":"setFirstPeriodDiv","text":"","top":"774px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,1)","height":"125px"});
-    placeText({"divid":"setFirstPeriodTitle","text":"First Period Rule","top":"0px","fontSize":"100%","color":"black","width":"200px","textAlign":"center","left":"0px","backgroundColor":"rgba(0,255,0,0)","height":"50px","parentDiv":"setFirstPeriodDiv"});
-
-    var s = createAndAddDiv("chooseFirstPeriod0","setFirstPeriodDiv");
-    clickButton("many","chooseFirstPeriod0",setDefault,"setFirstPeriod",0);
-    s.className = "wSquare square";
-    s.style.transform="translate3d(-65px,50px,0px)";
-
-    var s = createAndAddDiv("chooseFirstPeriod1","setFirstPeriodDiv");
-    clickButton("many","chooseFirstPeriod1",setDefault,"setFirstPeriod",1);
-    s.className = "ySquare square";
-    s.style.transform="translate3d(15px,50px,0px)";
-
-
-    if(window.state['firstPeriodRule']==0){
-        var thisLeft="33px";
-    }
-    else if(window.state['firstPeriodRule']==1){
-        var thisLeft="113px";
-    }
-
-    if(thisLeft!=undefined){
-        placeText({"divid":"firstPeriodRuleHighlight","border":"5px solid green","top":"48px","left":thisLeft,"parentDiv":"setFirstPeriodDiv","width":"54px","height":"54px"});
-    }
-}
-
-
-function actionFromInteger(actionIN){
-    if(actionIN==0){action="w";}
-    else if(actionIN==1){action="y";}
-    else if(actionIN==-1){action="q";}
-    return action
-}
-
-function drawRule(constructor,ruleDivName,addToDiv,clickable,highlight){
-    //Create ConstructorIn div
-    var ruleDiv = createAndAddDiv(ruleDivName,addToDiv)
-    ruleDiv.className = "rule";
-    ruleDiv.setAttribute("style","width:"+(constructor.length)*50+"px");        
-    for(col=0;col<constructor.length;col++){
-        for(row=0;row<constructor[col].length;row++){
-            high=""
-            action=actionFromInteger(constructor[col][row]);
-            if(highlight==1){high=" highlight";}
-            var thisSquareId=ruleDivName+"_col_"+col+"_row_"+row;
-            var thisButton=createAndAddDiv(thisSquareId,ruleDivName);
-            thisButton.className =action+"Square square"+high;
-            if(clickable==1){
-                clickButton("many",thisSquareId,changeSquareType,thisSquareId);
-            }
-            thisButton.style.transform="translate3d("+(col*50)+"px,"+(row*50)+"px,0px)";
-        }
-    }
-    return ruleDivName
-}
-
-function changeSquareType(squareID){
-    var thisClassName=document.getElementById(squareID).className;
-    if(thisClassName[0]=="w"){
-        document.getElementById(squareID).className="y"+thisClassName.substring(1);
-    }
-    else if(thisClassName[0]=="y"){
-        document.getElementById(squareID).className="w"+thisClassName.substring(1);
-    }
-    else{
-        document.getElementById(squareID).className="w"+thisClassName.substring(1);
-    }
-
-}
-
-
-function drawListEntry(thisInfo){
-    //#each entry in the list should be like: [number,title,constructor,lastPlayed,totalPlayed]
-    var thisConstructor=thisInfo[2];
-    var lastPlayed=thisInfo[3];
-    var totalPlayed=thisInfo[4];
-    var title=thisInfo[1];
-    var ruleNumber=thisInfo[0];
-
-    var listEntry = createAndAddDiv("listEntry_"+ruleNumber,"ruleListIn");
-    listEntry.className = "listEntry";
-    listEntry.setAttribute("style","width:"+(thisConstructor.length+1.5)*50+"px");        
-
-    //draw Buttons if needed, or add spacing
-    if(ruleNumber=="default0" || ruleNumber=="default1"){
-        var listEntryNoButtons = createDiv("listEntryNoButtons_"+ruleNumber,"listEntry_"+ruleNumber);
-        listEntryNoButtons.className = "listEntryNoButtons";
-    }
-    else if(ruleNumber=="firstPeriod0" || ruleNumber=="firstPeriod1"){
-        var listEntryNoButtons = createDiv("listEntryNoButtons_"+ruleNumber,"listEntry_"+ruleNumber);
-        listEntryNoButtons.className = "listEntryNoButtons";
-    }
-    else{
-        // var listEntryCopyButton = createAndAddDiv("listEntryCopyButton_"+ruleNumber,"listEntry_"+ruleNumber);
-        // listEntryCopyButton.className = "listEntryCopyButton listEntryButton";
-        // listEntryCopyButton.style.transform="translate3d(15px,35px,0px)";
-        // listEntryCopyButton.innerHTML=String.fromCharCode(parseInt('2398',16));
-        // clickButton("many","listEntryCopyButton_"+ruleNumber,setConstructor,thisConstructor);
-
-
-        var listEntryDeleteButton = createAndAddDiv("listEntryDeleteButton_"+ruleNumber,"listEntry_"+ruleNumber);
-        listEntryDeleteButton.className = "listEntryDeleteButton listEntryButton";
-        listEntryDeleteButton.style.transform="translate3d(15px,60px,0px)";
-        listEntryDeleteButton.innerHTML=String.fromCharCode(parseInt('2718',16));
-        clickButton("many","listEntryDeleteButton_"+ruleNumber,deleteRule,thisConstructor);
-    }
-
-
-
-    //draw rule
-    drawRule(thisConstructor,"rule_"+ruleNumber,"listEntry_"+ruleNumber,0,0);
-    if(ruleNumber=="default0" || ruleNumber=="default1"){
-        document.getElementById("rule_"+ruleNumber).style.transform="translate3d(37px,50px,0px)";
-    }
-    else if(ruleNumber=="firstPeriod0" || ruleNumber=="firstPeriod1"){
-        document.getElementById("rule_"+ruleNumber).style.transform="translate3d(37px,50px,0px)";
-    }
-    else{
-        document.getElementById("rule_"+ruleNumber).style.transform="translate3d(60px,25px,0px)";
-    }
-
-
-    var listEntryTitle = createAndAddDiv("listEntryTitle_"+ruleNumber,"listEntry_"+ruleNumber);
-    listEntryTitle.className = "listEntryTitle";
-    listEntryTitle.innerHTML = title;
-
-    // placeText({"divid":"listEntryStats_last_"+ruleNumber,"text":lastPlayed,"top":"123px","fontSize":"100%","color":"black","width":"40%","textAlign":"left","left":"5%","backgroundColor":"rgba(0,255,0,0)","height":"25px","parentDiv":"listEntry_"+ruleNumber});
-    // placeText({"divid":"listEntryStats_total_"+ruleNumber,"text":totalPlayed,"top":"123px","fontSize":"100%","color":"black","width":"40%","textAlign":"right","left":"55%","backgroundColor":"rgba(0,255,0,0)","height":"25px","parentDiv":"listEntry_"+ruleNumber});
-
-}
-
-
-function drawRules(){
-    // window.state['rules']
-    var ruleList=createAndAddDiv("ruleList","mainDiv");
-    var ruleListIn=createAndAddDiv("ruleListIn","ruleList");
-
-    for(var k=0;k<window.state['ruleInfo'].length;k++){
-        var thisInfo=window.state['ruleInfo'][k];
-        drawListEntry(thisInfo);
-    }
-    //extra height for access to all the rules
-    // var thisHeight=document.getElementById("ruleListIn").clientHeight;
-    // console.log(thisHeight)
-    // if(thisHeight>524){
-    //     document.getElementById("ruleListIn").style.height=thisHeight+200+"px";
-    // }
-}
-
-
-function highlightPayoffTableColumn(){
-    // var gameTableHighlight=createAndAddDiv("gameTableHighlight","gameTable");
-    if(window.state['previousPayoffIndex']!=undefined){
-        placeText({"divid":"gameTableHighlight","parentDiv":"gameTable","border":"3px solid red","top":"0px","fontSize":"100%","color":"black","width":"50px","textAlign":"center","left":(150+window.state['previousPayoffIndex']*50)+"px","backgroundColor":"rgba(225,255,225,0)","height":"250px"});
-    }
-}
-
-function highlightGame(){
-    if(document.getElementById("gameHighlight")!=null){
-        var element = document.getElementById("gameHighlight");
-        element.parentNode.removeChild(element);
-    }
-
-    var gameHighlight = document.createElement("div");
-    gameHighlight.className="gameHighlight";
-    gameHighlight.id="gameHighlight";
-    gameHighlight.style.left=200+"px"
-    $('#gameTable').append(gameHighlight);
-}
-
-
-function drawRuleHighlight(ruleWidth,divName,parentDiv,color){
-    var ruleHighlight = createAndAddDiv(divName,parentDiv);
-    ruleHighlight.className="ruleHighlight";
-    if(ruleWidth>50){
-        var TL = createAndAddDiv(divName+"_tl",divName);
-        var B = createAndAddDiv(divName+"_b",divName);
-        var R = createAndAddDiv(divName+"_r",divName);
-        TL.className="ruleHighlightTopleft";
-        B.className="ruleHighlightBottom";
-        R.className="ruleHighlightRight";
-        TL.style.borderColor=color;
-        B.style.borderColor=color;
-        R.style.borderColor=color;
-
-        borderWidth=4;
-        ruleHighlight.style.width=ruleWidth+"px";
-        TL.style.width=ruleWidth+"px";
-        B.style.width=(ruleWidth-50)+"px";
-        R.style.left=(ruleWidth-50-borderWidth)+"px";
-    }
-    else{
-        var DH = createAndAddDiv(divName+"_dh",divName);
-        DH.className="ruleHighlightDefault";
-        DH.style.borderColor=color;
-    }
-
-}
-
-function highlightRule(thisRuleDiv,length){
-    if(divExists(thisRuleDiv)){
-        document.getElementById(thisRuleDiv).style.backgroundColor="rgba(0,255,0,.1)";
-        document.getElementById(thisRuleDiv).style.borderColor="rgba(0,255,0,1)";
-        var ruleWidth=length*50+50;
-        drawRuleHighlight(ruleWidth,"listRuleHighlight",thisRuleDiv,"red");
-        if(ruleWidth>50){
-            document.getElementById("listRuleHighlight") .style.left="60px"
-            document.getElementById("listRuleHighlight") .style.top="24px"
-        }
-        else{
-            document.getElementById("listRuleHighlight") .style.left="37px"
-            document.getElementById("listRuleHighlight") .style.top="49px"
-        }   
-    }
-}
-
-
-function highlightHistory(){
-    var drawH=false;
-    if(window.state['confirmed']=="yes" && window.state['supergameInfo']['supergameType']=="directResponse"){
-        var ruleWidth=50;
-        drawH=true;
-    }
-    if(window.state['supergameInfo']['supergameType']!="directResponse"){
-        var ruleWidth=window.state['nextChoiceInfo']['length']*50+50;
-        drawH=true;
-    }
-
-    if(window.state['confirmed']=="yes" && window.state['nonBindingChoice']=="otherAction"){
-        var ruleWidth=50;
-    }
-
-
-    if(drawH==true){
-        drawRuleHighlight(ruleWidth,"historyRuleHighlight","historyIN","red");
-        var translateAmount=-100+(window.state['period']+2)*50-ruleWidth;
-        document.getElementById("historyRuleHighlight").style.transform="translate3d("+translateAmount+"px,25px,0px)";
-    }
-}
-
-function setDefault(args){
-    var defaultOrFirstPeriod=args[0];//setDefault or setFirstPeriod
-    var thisChoice=args[1];
-    //List of pages where the button can be clicked
-    var pages=['setFirstPeriodRulePage',"setDefaultRulePage","preMatch","gameNonBinding"];
-    if(pages.indexOf(window.state['page'])>-1){
-        var message={"type":"setDefault","thisRule":thisChoice,"defaultType":defaultOrFirstPeriod};
-        sock.send(JSON.stringify(message));        
-    }
-    else if(window.state['page']=="instructionsEditRuleSet" && window.state['stage']==7 && window.state['answer']!="correct" && window.state['answer']!="incorrect"){
-        var confirmationStatement="Are you sure you want to submit this as your answer?";
-        submitQuizAnswer([{"question":"firstPeriodRuleQuiz","thisRule":thisChoice,"defaultType":defaultOrFirstPeriod},confirmationStatement]);
-    }
-}
-
-
-
-function changeConstructorEntry(args){
-
-    squareId=args[0];
-    row=args[1];
-    column=args[2];
-
-    var thisSquare=document.getElementById(squareId);
-    if(window.ruleConstructor[column][row]==0){
-        window.ruleConstructor[column][row]=1;
-    }
-    else if(window.ruleConstructor[column][row]==1){
-        window.ruleConstructor[column][row]=0;
-    }
-    else if(window.ruleConstructor[column][row]==-1){
-        window.ruleConstructor[column][row]=Math.floor(Math.random()*2);
-    }
-
-    if(window.ruleConstructor[column][row]==0){
-        thisSquare.className="wSquare square";        
-    }
-    else if(window.ruleConstructor[column][row]==1){
-        thisSquare.className="ySquare square";
-    }
-    drawConstructorSubmitButton();
-}
-
-
-function drawConstructorSubmitButton(){
-    deleteDiv('constructorSubmitButton');
-    error=testConstructor();
-    if(error==1){
-        placeText({"parentDiv":"ruleConstructor","divid":"constructorSubmitButton","text":"Set an action in each box of the rule to add it to your set.","top":"200px","fontSize":"125%","color":"blue","width":"730px","textAlign":"center","left":"0px","backgroundColor":"rgba(225,255,225,0)","height":"50px"})
-    }
-    else if(error==2){
-        var M=window.state['ruleInfo'].length;
-        for(j=0;j<M;j++){
-          var rule1=window.ruleConstructor;
-          var rule2=window.state['ruleInfo'][j][2];
-          var thisError=compareRuleAndRule(rule1,rule2);
-          if(thisError==1){var thisRuleConflict=window.state['ruleInfo'][j][1].split("#")[1];}
-        }
-        placeText({"parentDiv":"ruleConstructor","divid":"constructorSubmitButton","text":"Proposed rule has same input at Rule #"+thisRuleConflict+". You can't have two rules in the set with same input.","top":"200px","fontSize":"125%","color":"red","width":"730px","textAlign":"center","left":"0px","backgroundColor":"rgba(225,255,225,0)","height":"50px"})
-    }
-    else if(error==3){
-        placeText({"parentDiv":"ruleConstructor","divid":"constructorSubmitButton","text":"Proposed rule already in set.","top":"200px","fontSize":"125%","color":"red","width":"730px","textAlign":"center","left":"0px","backgroundColor":"rgba(225,255,225,0)","height":"50px"})
-    }
-    else{
-        placeText({"parentDiv":"ruleConstructor","divid":"constructorSubmitButton","text":"Add Rule","top":"200px","fontSize":"125%","color":"black","width":"330px","textAlign":"center","left":"200px","backgroundColor":"rgba(0,255,0,.2)","height":"50px"})
-        clickButton("once","constructorSubmitButton",addRule);
-    }
-}
-
-
-
-function drawHistory(){
-    placeText({"divid":"history","className":"history","top":"50px","fontSize":"100%","color":"black","width":"1280px","textAlign":"center","height":"150px","backgroundColor":"white"})
-    placeText({"parentDiv":"history","divid":"historyIN","fontSize":"100%","color":"black","width":"900px","textAlign":"center","height":"150px"})
-    drawHistoryLabels();
-    for(var period=window.state['history'].length-30;period<window.state['history'].length;period++){
-        if(period>-1){
-            drawHistoryEntry(period+1,window.state['history'][period],window.state['payoffHistory'][period][0]);
-        }
-    }
-    document.getElementById("historyIN").style.transform="translateX("+(1280-50-window.state['period']*50)+"px)";
-}
-
-
-function drawHighlights(){
-    if(window.state['animate']=="yes"){
-        document.getElementById("historyIN").style.transform="translateX("+(1280-50-window.state['period']*50+50)+"px)";
-        setTimeout(function(){
-            document.getElementById("historyIN").style.transform="translateX("+(1280-50-window.state['period']*50)+"px)";
-            document.getElementById("historyIN").style.transition = "transform 0.25s ease";
-            if(document.getElementById("historyPayoffLabel_"+(window.state['period']-1))!=null){
-                document.getElementById("historyPayoffLabel_"+(window.state['period']-1)).style.fontSize="200%";
-                document.getElementById("historyPayoffLabel_"+(window.state['period']-1)).style.color="green";
-                document.getElementById("historyPayoffLabel_"+(window.state['period']-1)).style.transition = "all 0.25s ease";
-
-                document.getElementById("gameTable_2_"+(window.state['previousPayoffIndex']+1)).style.fontSize="200%";
-                document.getElementById("gameTable_2_"+(window.state['previousPayoffIndex']+1)).style.color="green";
-                document.getElementById("gameTable_2_"+(window.state['previousPayoffIndex']+1)).style.transition = "all 0.25s ease";
-            }
-
-        },0);
-        setTimeout(function(){
-        highlightHistory();
-        },250);
-        drawNextAction();
-    }
-    else if(window.state['animate']=="no" || window.state['animate']==undefined){
-        drawNextAction();
-        highlightHistory();
-        if(document.getElementById("historyPayoffLabel_"+(window.state['period']-1))!=null){
-            document.getElementById("historyPayoffLabel_"+(window.state['period']-1)).style.fontSize="200%";
-            document.getElementById("historyPayoffLabel_"+(window.state['period']-1)).style.color="green";
-            document.getElementById("gameTable_2_"+(window.state['previousPayoffIndex']+1)).style.fontSize="200%";
-            document.getElementById("gameTable_2_"+(window.state['previousPayoffIndex']+1)).style.color="green";
-        }
-    }
-    var drawRuleHighlight=1;
-    if(window.state['confirmed']=="yes" && window.state['nonBindingChoice']=="otherAction"){
-        drawRuleHighlight=0;
-    }
-    else if(window.state['supergameInfo']['supergameType']=="directResponse"){
-        drawRuleHighlight=0;
-    }
-    if(drawRuleHighlight==1){
-        highlightRule("listEntry_"+window.state['nextChoiceInfo']['number'],window.state['nextChoiceInfo']['length']);                
-    }
-}
-
-function drawNextAction(){
-    var translateAmount=(window.state['period']-1)*50;
-    var period=window.state['period'];
-    //Draw period Label
-    placeText({
-        "parentDiv":"historyIN",
-        "divid":"historyPeriodLabel_"+period,
-        "width":"50px",
-        "left":translateAmount+"px",
-        "height":"25px",
-        "text":period,
-    });
-
-    var divID='history_square_'+(period+1)+'_0';
-    // s=createAndAddDiv(divID,"historyIN")
-    var thisFormat={
-        "parentDiv":"historyIN",
-        "divid":divID,
-        "width":"50px",
-        "left":translateAmount+"px",
-        "height":"50px",
-        "top":"25px",
-    }
-    if(window.state['confirmed']=="no" && window.state['supergameInfo']['supergameType']!="directResponse"){
-        thisFormat['className']=actionFromInteger(window.state['nextChoiceInfo']['action'])+"Square square";
-        thisFormat['opacity']="0.3";
-        placeText(thisFormat);
-    }
-    else if(window.state['confirmed']=="yes" && window.state['supergameInfo']['supergameType']=="instructions"){
-        thisFormat['className']=actionFromInteger(window.state['nextChoiceInfo']['action'])+"Square square";
-        placeText(thisFormat);
-    }
-    else if(window.state['confirmed']=="yes" && window.state['supergameInfo']['supergameType']!="directResponse"){
-        thisFormat['className']=actionFromInteger(window.state['lastPlay'])+"Square square";
-        placeText(thisFormat);
-    }
-    else if(window.state['confirmed']=="no" && window.state['supergameInfo']['supergameType']=="directResponse"){
-        thisFormat['className']="qSquare square";
-        placeText(thisFormat);
-    }
-    else if(window.state['confirmed']=="yes" && window.state['supergameInfo']['supergameType']=="directResponse"){
-        thisFormat['className']=window.state['choice'].toLowerCase()+"Square square confirmed";
-        placeText(thisFormat);
-    }
-}
-
-
-
-
-
-
-
-function drawHistoryEntry(period,choices,payoff){
-    var translateAmount=(period)*50-50;
-
-    //Draw period Label
-    placeText({
-        "parentDiv":"historyIN",
-        "divid":"historyPeriodLabel_"+period,
-        "width":"50px",
-        "left":translateAmount+"px",
-        "height":"25px",
-        "text":period,
-    });
-
-    placeText({
-        "parentDiv":"historyIN",
-        "divid":"history_square_"+period+"_0",
-        "width":"50px",
-        "left":translateAmount+"px",
-        "height":"50px",
-        "top":"25px",
-        "className":actionFromInteger(choices[0])+"Square square",
-    });
-
-    placeText({
-        "parentDiv":"historyIN",
-        "divid":"history_square_"+period+"_1",
-        "width":"50px",
-        "left":translateAmount+"px",
-        "height":"50px",
-        "top":"75px",
-        "className":actionFromInteger(choices[1])+"Square square",
-    });
-
-    //draw payoff label
-    placeText({
-        "parentDiv":"historyIN",
-        "divid":"historyPayoffLabel_"+period,
-        "width":"50px",
-        "left":translateAmount+"px",
-        "height":"25px",
-        "text":payoff,
-        "top":"125px"
-    });
-}
-
-
-
-function drawHistoryEntryOLD(period,choices,payoff){
-    var translateAmount=(period)*50+50;
-    historyLabel=createAndAddDiv("historyPeriodLabel_"+period,"historyIN")
-    historyLabel.style.transform="translateX("+translateAmount+"px)";
-    historyLabel.innerHTML=period;
-    historyLabel.className="historyPeriodLabel";
-
-    s=createAndAddDiv("history_square_"+period+"_0","historyIN")
-    s.className =actionFromInteger(choices[0])+"Square square";
-    s.style.transform="translate3d("+translateAmount+"px,25px,0px)";
-
-    s=createAndAddDiv("history_square_"+period+"_1","historyIN")
-    s.className =actionFromInteger(choices[1])+"Square square";
-    s.style.transform="translate3d("+translateAmount+"px,75px,0px)";
-
-
-    payoffLabel=createAndAddDiv("historyPayoffLabel_"+period,"historyIN")
-    payoffLabel.style.transform="translate3d("+translateAmount+"px,125px,0px)";
-    payoffLabel.className="historyPayoffLabel";
-    payoffLabel.innerHTML=payoff;
-}
-
-
-
-function drawHistoryLabels(type){
-    var historyLabelPeriod=createAndAddDiv("historyLabelPeriod","history");
-    historyLabelPeriod.className="historyLabels short";
-    historyLabelPeriod.innerHTML="Period";
-
-    var historyLabelMyChoice=createAndAddDiv("historyLabelMyChoice","history");
-    historyLabelMyChoice.className="historyLabels tall";
-    historyLabelMyChoice.innerHTML="My Choice";
-
-    var historyLabelOtherChoice=createAndAddDiv("historyLabelOtherChoice","history");
-    historyLabelOtherChoice.className="historyLabels tall";
-    historyLabelOtherChoice.innerHTML="Other's Choice";
-
-    var historyLabelPayoff=createAndAddDiv("historyLabelPayoff","history");
-    historyLabelPayoff.className="historyLabels short";
-    historyLabelPayoff.innerHTML="My Payoff";
-}
-
-
-function alreadySubmitted(message){
-    placeText({"divid":"alreadySubmittedMessage","text":message,"border":"1px solid green","top":"125px","fontSize":"100%","color":"black","width":"150px","textAlign":"center","left":"1125px","backgroundColor":"rgba(225,255,225,1)","height":"50px"})
-    setTimeout(function(){
-        document.getElementById('alreadySubmittedMessage').style.transform="translateX(300px)";
-        document.getElementById("alreadySubmittedMessage").style.transition="transform 1s linear";
-        document.getElementById("alreadySubmittedMessage").style.transitionDelay=".0015s";
-    },1000);
-}
-
-
-function confirmChoice(){
-    deleteWarning();
-    var message={"type":"confirmChoice"};
-    sock.send(JSON.stringify(message));
-}
-
-function drawWarningMessage(){
-    if(window.state['warning']=="yes"){
-        var thisDiv=createAndAddDiv("makeChoiceWarning","mainDiv");
-        thisDiv.className = "arrow_box arrow_box_right";
-        thisDiv.innerHTML = "Choice will be made automatically in <br> <time id='selfTimer'>1:00</time>";
-        thisDiv.style.left="975px";
-        thisDiv.style.top="50px";
-        thisDiv.style.opacity="0.85";
-        thisDiv.style.backgroundColor="white";
-        moveTimer("selfTimer");
-    }
-}
-
-function deleteWarning(){
-    deleteDiv("makeChoiceWarning");
-}
-
-
-
-
-
-
-
-function payoffsOnly(){
-    clearAll();
-    placeText({"divid":"payoffsOnly1","text":"Please take this time to review the payoff table.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    placeText({"divid":"payoffsOnly2","text":"You will be able to make rules in <time id='all'>1:00</time>","top":"100px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    moveTimer("all");
-    drawGame();
-    document.getElementById("gameTable").style.transform="translate(-115px,-50px) scale(3)";
-    document.getElementById("gameTable").style.transformOrigin="bottom right";
-}
-
-
-function genericMatchConfirmationPage(){
-    clearAll();
-    placeText({"divid":"firstSetOfMatches","text":window.state['supergameInfo']['supergameTypeConfirmation'],
-        "top":"225px","fontSize":"300%","color":"red","width":"980px","textAlign":"left","left":"150px","backgroundColor":"rgba(255,0,0,0)","height":"150px","height":"75px"});
-    placeText({"divid":"firstSetOfMatchesConfirm","text":"Click here to start match #"+window.state['match']+".","top":"804px","fontSize":"200%","color":"green","textAlign":"center","height":"100px","backgroundColor":"rgba(0,255,0,.1)","width":"600px","left":"340px"})
-    clickButton("once","firstSetOfMatchesConfirm",confirmMatchType);
-}
-
-function confirmMatchType(){
-    var message={"type":"confirmMatchType"};
-    sock.send(JSON.stringify(message));
-}
-
-
-function setFirstPeriodRulePage(){
-    clearAll();
-    placeText({"divid":"setFirstPeriod2","text":"The match will start in <time id='"+window.state['group']+"'>1:00</time>.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    moveTimer(window.state['group']);
-    drawGame();
-    drawFirstPeriod();
-    document.getElementById("setFirstPeriodDiv").style.transform="scale(4) translate3d(60px,-160px,0px)";
-    document.getElementById("setFirstPeriodDiv").style.transformOrigin="top left";
-
-    if(window.state['firstPeriodRule']==undefined){
-        placeText({"divid":"mustSetFirstPeriod","text":"Before you can make rules, set your first period rule.","top":"650px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    }
-    else{
-        placeText({"divid":"mustSetFirstPeriod","text":"Click here to continue to set default rule.","top":"654px","fontSize":"200%","color":"green","textAlign":"center","height":"100px","backgroundColor":"rgba(0,255,0,.1)","width":"600px","left":"340px"})
-        clickButton("once","mustSetFirstPeriod",makeSelection,[["page","setDefaultRulePage"]]);
-    }
-}
-
-
-
-function setDefaultRulePage(){
-    clearAll();
-    // placeText({"divid":"setFirstPeriod1","text":"Next, set your default rule.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    placeText({"divid":"setFirstPeriod2","text":"The first match will start in <time id='"+window.state['group']+"'>1:00</time>.","top":"25px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    moveTimer(window.state['group']);
-    drawGame();
-    drawDefault();
-    document.getElementById("setDefaultDiv").style.transform="scale(4) translate3d(60px,-192px,0px)";
-    document.getElementById("setDefaultDiv").style.transformOrigin="top left";
-
-    if(window.state['defaultRule']==undefined){
-        placeText({"divid":"mustSetDefault","text":"Before you can make rules, set your default rule.","top":"650px","fontSize":"300%","color":"red","width":"1280px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,0,0,0)","height":"100px"});
-    }
-    else{
-        placeText({"divid":"mustSetDefault","text":"Click here to continue to construct more rules.","top":"654px","fontSize":"200%","color":"green","textAlign":"center","height":"100px","backgroundColor":"rgba(0,255,0,.1)","width":"600px","left":"340px"})
-        clickButton("once","mustSetDefault",makeSelection,[["page","preMatch"]]);
-    }
-
-    drawFirstPeriod();
-}
-
-
-function preMatch(){
-    clearAll();
-    //deleteHypothetical();
-    drawGame();
-    drawFirstPeriod();
-    drawDefault();
-    drawConstructor();
-    drawHistory();
-    drawRules();    
-    document.getElementById("ruleList").style.width="930px";
-    document.getElementById("ruleListIn").style.minWidth="930px";
-    drawHighlights();
-    drawInfo();
-    drawPreMatchInfo();
-    drawSupergameTypeReminder();
-}
-
-
-function drawPreMatchInfo(){
-    var thisRule="sdf";
-    placeText({
-        "divid":"directChoiceInfoBack",
-        "text":"",
-        "width":"350px",
-        "top":"225px",
-        "textAlign":"center",
-        "left":"930px",
-        "backgroundColor":"rgba(255,255,255,1)",
-        "border":"1px solid rgba(0,255,0,1)",
-        "height":"524px"});
-
-    placeText({
-        "divid":"directChoiceInfo",
-        "text":"",
-        "width":"350px",
-        "top":"225px",
-        "textAlign":"center",
-        "left":"930px",
-        "backgroundColor":"rgba(0,255,0,.05)",
-        "height":"524px"});
-
-    placeText({"parentDiv":"directChoiceInfo","divid":"timerMessage","text":"The next match will start in <time id='"+window.state['group']+"'>1:00</time>.","top":"25px","fontSize":"35px","color":"red","textAlign":"center","left":"25px","backgroundColor":"rgba(0,255,0,0)","height":"150px","lineHeight":"50px","userSelect":"none","width":"300px"});
-    moveTimer(window.state['group']);
-
-
-    placeText({
-        "parentDiv":"directChoiceInfo",
-        "divid":"directChoiceInfo1",
-        "text":"If you are ready to start the match, click the button below.",
-        "width":"320px",
-        "top":"155px",
-        "fontSize":"25px",
-        "textAlign":"center",
-        "left":"15px",
-        "height":"50px",
-        "lineHeight":"35px",
-    });
-
-
-    if(window.state["startMatchConfirm"]!="yes"){
-        placeText({
-            "parentDiv":"directChoiceInfo",
-            "divid":"startMatchButton",
-            "text":"Start Match",
-            "width":"280px",
-            "top":"250px",
-            "fontSize":"28px",
-            "textAlign":"center",
-            "left":"35px",
-            "height":"75px",
-            "backgroundColor":"rgba(0,255,0,.1)",
-            "border":"3px solid rgba(0,255,0,.1)"
-        });
-        hoverDiv("startMatchButton",{'border':'3px solid green'});
-        clickButton("once","startMatchButton",startMatchButton);
-    }
-    else{
-        placeText({
-            "parentDiv":"directChoiceInfo",
-            "divid":"startMatchButton",
-            "text":"Waiting for others to start match",
-            "width":"280px",
-            "top":"250px",
-            "fontSize":"18px",
-            "textAlign":"center",
-            "left":"35px",
-            "height":"75px",
-            "backgroundColor":"rgba(0,255,0,.1)",
-            "border":"3px solid rgba(0,255,0,.1)"
-        });
-
-    }
-
-    placeText({
-        "parentDiv":"directChoiceInfo",
-        "divid":"directChoiceInfo2",
-        "text":"After you click the button, you will still be able to continue editing your rules.  Once everyone has clicked the continue button (or the time has expired) the match will start.",
-        "width":"320px",
-        "top":"375px",
-        "fontSize":"18px",
-        "textAlign":"center",
-        "left":"15px",
-        "height":"50px",
-        "lineHeight":"25px",
-    });
-}
-
-function startMatchButton(){
-    var message={"type":"startMatchButton"};
-    sock.send(JSON.stringify(message));
-}
-
-function gameOLD(){
-    clearAll();
-    drawGame();
-    drawFirstPeriod();
-    drawDefault();
-    drawConstructor();
-    drawHistory();  
-    drawRules();  
-    drawHighlights();  
-    drawInfo();  
-}
-
-
-
-function gameNonBinding(){
-    clearAll();
-    drawGame();
-    drawFirstPeriod();
-    drawDefault();
-    drawConstructor();
-    drawHistory();  
-    drawRules();  
-    document.getElementById("ruleList").style.width="930px";
-    document.getElementById("ruleListIn").style.minWidth="930px";
-    drawHighlights();  
-    drawInfo();  
-    drawChoiceOption();
-    drawSupergameTypeReminder();
-}
-
-function drawSupergameTypeReminder(){
-    placeText({
-        "color":"rgba(200,0,0,1)",
-        "fontSize":"20px",
-        'left':"0px",
-        "width":"930px",
-        "text":window.state['supergameInfo']['supergameTypeMessage2'],
-        "top":"675px",
-        "textAlign":"left",
-        "height":"75px",
-        "lineHeight":"25px",
-        "padding":"12px",
-        "backgroundColor":"rgba(255,200,200,.8)",
-    })
-}
-
-function gameNoChange(){
-    clearAll();
-    drawGame();
-    drawHistory();  
-    drawRules();  
-    drawHighlights();  
-    drawInfo();  
-    gameNoChangeMessage();
-}
-
-
-function gameNoChangeMessage(){
-    placeText({"divid":"directChoiceMessage2","width":"930px","text":"","top":"774px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,1)","height":"250px"})
-    placeText({"color":"red","parentDiv":"directChoiceMessage2","fontSize":"30px",'left':"200px","width":"530px","text":window.state['supergameInfo']['supergameTypeMessage'],"top":"50px","textAlign":"center","height":"150px","lineHeight":"50px"})
-}
-
-window.ruleColors=[]
-window.ruleColors["Y"]="rgba(142,214,255,1)";
-window.ruleColors["W"]="rgba(255,255,0,1)";
-
-function drawChoiceOption(){
-    var thisRule="sdf";
-    placeText({
-        "divid":"directChoiceInfoBack",
-        "text":"",
-        "width":"350px",
-        "top":"225px",
-        "textAlign":"center",
-        "left":"930px",
-        "backgroundColor":"rgba(255,255,255,1)",
-        "border":"1px solid rgba(0,255,0,1)",
-        "height":"524px"})
-
-
-    if(window.state['nextChoiceInfo']['action']==0){
-        var nextAction="W";
-        var otherAction="Y";
-    }
-    else{
-        var nextAction="Y";
-        var otherAction="W";
-    }
-
-    if(window.state['period']==1){
-        var text1="Since it is the first period, the";
-        var text2="will be used to make your choice, so your rule set will select action "+nextAction+".  To select action "+nextAction+" click below:";
-    }
-    else{
-        var text1="Given your current rule set,";
-        var text2="is the longest rule that fits the history, so your rule set will select action "+nextAction+".  To select action "+nextAction+" click below:";
-    }
-    if(window.state['nextChoiceInfo']['info'][1]=="Default Rule"){
-        text1+=" the";
-    }
-
-    placeText({
-        "divid":"directChoiceInfo",
-        "text":"",
-        "width":"350px",
-        "top":"225px",
-        "textAlign":"center",
-        "left":"930px",
-        "backgroundColor":"rgba(0,255,0,.05)",
-        "height":"524px"})
-
-    placeText({
-        "text":text1,
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"-20px",
-        "textAlign":"center",
-        "left":"0px",
-        "fontSize":"20px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-    });
-
-    placeText({
-        "text":window.state['nextChoiceInfo']['info'][1],
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"15px",
-        "textAlign":"center",
-        "left":"0px",
-        "fontSize":"28px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-        "color":"blue",
-    });
-
-    placeText({
-        "text":text2,
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"50px",
-        "textAlign":"left",
-        "left":"0px",
-        "fontSize":"20px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-    });
-
-
-
-
-    placeText({
-        "divid":"makeRuleSetChoice",
-        "text":"Play action "+nextAction+" as prescribed by your set of rules.",
-        "parentDiv":"directChoiceInfo",
-        "width":"310px",
-        "top":"175px",
-        "textAlign":"left",
-        "left":"20px",
-        "fontSize":"24px",
-        "lineHeight":"25px",
-        "height":"85px",
-        "padding":"15px",
-        "backgroundColor":window.ruleColors[nextAction],
-        "border":"1px solid black"
-    });
-
-    placeText({
-        "text":"You can instead choose action "+otherAction+" by clicking below (or pressing down):",
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"250px",
-        "textAlign":"left",
-        "left":"0px",
-        "fontSize":"20px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-    });
-
-
-
-
-    placeText({
-        "divid":"makeOtherChoice",
-        "text":"Play action "+otherAction+" instead.",
-        "parentDiv":"directChoiceInfo",
-        "width":"310px",
-        "top":"345px",
-        "textAlign":"center",
-        "left":"20px",
-        "fontSize":"24px",
-        "height":"85px",
-        "lineHeight":"75px",
-        "backgroundColor":window.ruleColors[otherAction],
-        "border":"1px solid black"
-    });
-
-
-    placeText({
-        "text":"Can also select by clicking the DOWN arrow key on keyboard.",
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"375px",
-        "textAlign":"center",
-        "left":"0px",
-        "fontSize":"10px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-    });
-
-    placeText({
-        "text":"Can also select by clicking the UP arrow key on keyboard.",
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"210px",
-        "textAlign":"center",
-        "left":"0px",
-        "fontSize":"10px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-    });
-
-    placeText({
-        "divid":"otherActionWarning",
-        "text":window.state['supergameInfo']['supergameTypeMessage'],
-        //This will not be an option starting in match 21.  Your rule set will play automatically.",
-        "parentDiv":"directChoiceInfo",
-        "width":"280px",
-        "top":"450px",
-        "textAlign":"left",
-        "left":"40px",
-        "fontSize":"18px",
-        "lineHeight":"20px",
-        "height":"75px",
-        "padding":"0px",
-        "color":"transparent"
-    });
-
-
-    if(window.state['confirmed']=="no"){
-        placeText({
-            "divid":"makeOtherChoiceButton",
-            "text":"",
-            "parentDiv":"directChoiceInfo",
-            "width":"310px",
-            "top":"345px",
-            "textAlign":"center",
-            "left":"20px",
-            "fontSize":"24px",
-            "height":"85px",
-            "lineHeight":"50px",
-            "border":"1px solid black"
-        });
-
-        placeText({
-            "divid":"makeRuleSetChoiceButton",
-            "parentDiv":"directChoiceInfo",
-            "width":"310px",
-            "top":"175px",
-            "textAlign":"left",
-            "left":"20px",
-            "height":"85px",
-            "border":"1px solid black"
-        });
-
-
-        hoverDiv("makeOtherChoiceButton",{'border':'3px solid red'});
-        hoverDiv("makeRuleSetChoiceButton",{'border':'3px solid red'});
-        clickButton("once","makeOtherChoiceButton",confirmChoiceNonBinding,"otherAction");
-        clickButton("once","makeRuleSetChoiceButton",confirmChoiceNonBinding,"ruleSet");        
-        pressKey("once","up",confirmChoiceNonBinding,"ruleSet")
-        pressKey("once","down",confirmChoiceNonBinding,"otherAction")
-        hoverDivChangeOtherDiv("makeOtherChoiceButton","otherActionWarning",{'color':'red'});
-    }
-    else{
-        if(window.state['nonBindingChoice']=="otherAction"){
-            placeText({
-                "divid":"makeOtherChoice2",
-                "text":"",
-                "parentDiv":"directChoiceInfo",
-                "width":"310px",
-                "top":"345px",
-                "textAlign":"center",
-                "left":"20px",
-                "fontSize":"24px",
-                "height":"85px",
-                "border":"3px solid red"
-            });
-            document.getElementById("otherActionWarning").style.color="red";
-        }
-        else if(window.state['nonBindingChoice']=="ruleSet"){
-            placeText({
-                "divid":"makeRuleSetChoice2",
-                "parentDiv":"directChoiceInfo",
-                "width":"310px",
-                "top":"175px",
-                "textAlign":"left",
-                "left":"20px",
-                "fontSize":"24px",
-                "lineHeight":"30px",
-                "height":"85px",
-                "padding":"15px",
-                "border":"3px solid red"
-            });
-        }
-    }
-}
-
-function confirmChoiceNonBinding(args){
-    removePressKeyListener("up");
-    removePressKeyListener("down");
-    removeListeners("makeOtherChoice");
-    removeListeners("makeRuleSetChoice");
-    var message={"type":"confirmChoiceNonBinding","choiceType":args[0]};
-    sock.send(JSON.stringify(message));
-}
-
-
-function drawDirectResponse(){
-
-    placeText({"divid":"directChoiceMessage2","width":"930px","text":"","top":"774px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,1)","height":"250px"})
-    placeText({"color":"red","parentDiv":"directChoiceMessage2","fontSize":"30px",'left':"200px","width":"530px","text":window.state['supergameInfo']['supergameTypeMessage'],"top":"75px","textAlign":"center","height":"100px","lineHeight":"50px"})
-
-
-    placeText({"divid":"directChoice","text":"","top":"250px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"475px"})
-    placeText({"divid":"directChoiceMessage","text":"","top":"250px","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"475px"})
-    if(window.state['confirmed']=="no" && window.state['page']=="gameDirectResponse"){
-        placeText({"text":"Select your choice for period "+(window.state['period'])+" by clicking one of the buttons below:","top":"250px","textAlign":"center","left":"0px","height":"100px","fontSize":"300%"})
-        placeText({"text":"You will not be able to see the choice of the other subject until after you make your choice.","top":"650px","textAlign":"center","left":"0px","height":"50px","fontSize":"200%"})
-
-        var directChoiceW=createAndAddDiv("directChoiceW","mainDiv");
-        directChoiceW.className="wSquare square";
-        directChoiceW['style']['transform']="scale(5)";
-        directChoiceW['style']['transformOrigin']="top left";
-        directChoiceW['style']['top']="350px";
-        directChoiceW['style']['left']="325px";
-
-        var directChoiceY=createAndAddDiv("directChoiceY","mainDiv");
-        directChoiceY.className="ySquare square";
-        directChoiceY['style']['transform']="scale(5)";
-        directChoiceY['style']['transformOrigin']="top left";
-        directChoiceY['style']['top']="350px";
-        directChoiceY['style']['left']="705px";
-
-
-        clickButton("once","directChoiceW",confirmChoiceDirectResponse,0);
-        pressKey("once","left",confirmChoiceDirectResponse,0)
-        clickButton("once","directChoiceY",confirmChoiceDirectResponse,1);
-        pressKey("once","right",confirmChoiceDirectResponse,1)
-        hoverDiv("directChoiceW",{'border':'2px solid rgba(0,255,0,1)'})
-        hoverDiv("directChoiceY",{'border':'2px solid rgba(0,255,0,1)'})
-    }
-    else{
-        if(window.state['page']=="gameDirectResponse"){var thisPeriod=window.state['period'];}
-        else{var thisPeriod=window.state['period']-1;}
-        placeText({"text":"You selected "+window.state['choice']+" as your choice for period "+(thisPeriod)+".","top":"250px","textAlign":"center","left":"0px","height":"100px","fontSize":"300%"})
-        placeText({"text":"Please wait for the other subject to make their choice.","top":"650px","textAlign":"center","left":"0px","height":"50px","fontSize":"200%"})
-
-        if(window.state['choice']=="W"){
-            var directChoiceW=createAndAddDiv("directChoiceW","mainDiv");
-            directChoiceW.className="wSquare square";
-            directChoiceW['style']['transform']="scale(5)";
-            directChoiceW['style']['transformOrigin']="top left";
-            directChoiceW['style']['left']="325px";
-            directChoiceW['style']['top']="350px";            
-            directChoiceW['style']['border']="2px solid red";            
-        }
-        if(window.state['choice']=="Y"){
-            var directChoiceY=createAndAddDiv("directChoiceY","mainDiv");
-            directChoiceY.className="ySquare square";
-            directChoiceY['style']['transform']="scale(5)";
-            directChoiceY['style']['transformOrigin']="top left";
-            directChoiceY['style']['top']="350px";
-            directChoiceY['style']['left']="705px";
-            directChoiceY['style']['border']="2px solid red";            
-        }
-        // highlightHistory();
-    }
-
-
-    if(divExists("directChoiceW")){
-        placeText({
-            "text":"Can also select by clicking the LEFT arrow key on keyboard.",
-            "top":"550px",
-            "textAlign":"center",
-            "left":"340px",
-            "height":"15px",
-            'width':'220px',
-            "lineHeight":"20px",
-            "fontSize":"15px"})
-    }
-
-    if(divExists("directChoiceY")){
-        placeText({
-            "text":"Can also select by clicking the RIGHT arrow key on keyboard.",
-            "top":"550px",
-            "textAlign":"center",
-            "left":"720px",
-            "height":"15px",
-            'width':'220px',
-            "lineHeight":"20px",
-            "fontSize":"15px"})
-    }
-
-
-}
-
-
-function gameDirectResponse(){
-    clearAll();
-    drawGame();
-    drawInfo();  
-    drawHistory();  
-    // drawHighlights();
-    drawDirectResponse()
-    drawHighlights();
-}
-
-
-function confirmChoiceDirectResponse(args){
-    console.log("confirmChoiceDirectResponse!!!!!!!!");
-    removePressKeyListener("left");
-    removePressKeyListener("right");
-    deleteDiv("directChoiceW");
-    deleteDiv("directChoiceY");
-    var message={"type":"confirmChoiceDirectResponse","choice":args[0]};
-    sock.send(JSON.stringify(message));
-}
-
-
-function postMatch(){
-    clearAll();
-    drawGame();
-    drawInfo();
-    drawHistory();
-
-    if(window.state['supergameInfo']['supergameType']=="nonBinding"){
-        drawFirstPeriod();
-        drawDefault();
-        drawConstructor();
-        drawRules();    
-        drawInfo();
-        if(window.state['stage']=="wait"){
-            placeText({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
-            placeText({"divid":"matchOverMessage2","text":"Please wait for other subjects to finish their matches.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
-        }
-        else if(window.state['stage']=="timer"){
-            placeText({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
-            placeText({"divid":"matchOverMessage2","text":"The next match will start in  <time id='"+window.state['group']+"'>1:00</time>.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
-            moveTimer(window.state['group']);
-        }
-    }
-    if(window.state['supergameInfo']['supergameType']=="noChange"){
-        drawRules();    
-        drawInfo();
-        gameNoChangeMessage();
-        if(window.state['stage']=="wait"){
-            placeText({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
-            placeText({"divid":"matchOverMessage2","text":"Please wait for other subjects to finish their matches.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
-        }
-        else if(window.state['stage']=="timer"){
-            placeText({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
-            placeText({"divid":"matchOverMessage2","text":"The next match will start in  <time id='"+window.state['group']+"'>1:00</time>.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
-            moveTimer(window.state['group']);
-        }
-    }
-    if(window.state['supergameInfo']['supergameType']=="directResponse"){
-        if(window.state['stage']=="wait"){
-            placeText({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
-            placeText({"divid":"matchOverMessage2","text":"Please wait for other subjects to finish their matches.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
-        }
-        else if(window.state['stage']=="timer"){
-            placeText({"divid":"matchOverMessage","text":"Match Finished.","top":"50px","fontSize":"250%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,.75)","height":"150px"})
-            placeText({"divid":"matchOverMessage2","text":"This match will end in  <time id='"+window.state['group']+"'>1:00</time>.","top":"135px","fontSize":"100%","color":"red","textAlign":"center","left":"0px","backgroundColor":"rgba(255,255,255,0)","height":"50px"})
-            moveTimer(window.state['group']);
-        }
-        drawDirectResponse();
-    }
-}
-
-function statusManager(){
-  thisStatus=window.state;
-  console.log(thisStatus)
-  if(runFunctionFromString(thisStatus["page"])==false){
-      if(thisStatus[0]==-1){
-        message="Loading...";
-        genericScreen(message);
-      }
-      else if(thisStatus["page"]=="generic"){
-        clearAll();
-        genericScreen(thisStatus["message"]);
-      }
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
@@ -1568,9 +43,14 @@ function statusManager(){
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
+
+
+
+
 
 
 function overviewScreen(){
+    console.log("234234234");
     clearAll();
     drawBackAndForwardButtons();
 
@@ -1584,7 +64,7 @@ function overviewScreen(){
 
     if(window.state['stage']>=1){
         placeText({"text":"You are about to participate in an <a style='color:red'>economics experiment</a>.",
-            "top":"150px",
+            "top":"100px",
             "fontSize":"300%",
             "color":"black",
             "width":"1280px",
@@ -1598,7 +78,7 @@ function overviewScreen(){
     if(window.state['stage']>=2){
         placeText({
             "text":"If you listen carefully, you could earn a large amount of money, that will be paid to you in cash, in private, at the end of the experiment.",
-            "top":"400px",
+            "top":"200px",
             "fontSize":"300%",
             "color":"black",
             "width":"1080px",
@@ -1611,76 +91,7 @@ function overviewScreen(){
     if(window.state['stage']>=3){
         placeText({
             "text":"If you have any questions, or need any assistance of any kind, please raise your hand and an experimenter will help you out. ",
-            "top":"700px",
-            "fontSize":"300%",
-            "color":"black",
-            "width":"1080px",
-            "textAlign":"left",
-            "left":"100px",
-            "backgroundColor":"rgba(0,0,0,0)",
-            "height":"50px"});
-    }
-
-
-    var buttonTops=[0,150,400,700,900];
-    placeText({"divid":"continueButton","text":"Continue.","top":buttonTops[parseInt(window.state['stage'])+1]+"px","fontSize":"300%","color":"green","width":"680px","textAlign":"center","left":"300px","height":"100px","lineHeight":"100px","backgroundColor":"rgba(0,255,0,.1)"})
-    if(window.state['stage']<=2){
-        clickButton("once","continueButton",makeSelection,[["stage",parseInt(window.state['stage'])+1]]);
-    }
-    else{
-        clickButton("once","continueButton",makeSelection,[["page","overviewScreen2"],["stage",1]]);
-    }
-}
-
-///////////////////////////////NEW PAGE//////////////////////////////////////////////
-///////////////////////////////NEW PAGE//////////////////////////////////////////////
-///////////////////////////////NEW PAGE//////////////////////////////////////////////
-
-
-
-function overviewScreen2(){
-    clearAll();
-    drawBackAndForwardButtons();
-
-
-        placeText({"text":"Experiment Overview",
-            "top":"0px",
-            "fontSize":"400%",
-            "color":"blue",
-            "height":"100px"});
-
-
-
-    if(window.state['stage']>=1){
-        placeText({
-            "text":"During the experiment, do not talk, laugh or exclaim out loud and be sure to keep your eyes on your screen only",
-            "top":"150px",
-            "fontSize":"300%",
-            "color":"black",
-            "width":"1080px",
-            "textAlign":"left",
-            "left":"100px",
-            "backgroundColor":"rgba(0,0,0,0)",
-            "height":"50px"});
-    }
-
-    if(window.state['stage']>=2){
-        placeText({
-            "text":"In addition, please <a style='color:black'>turn off your cell phones, etc.</a> and put them away during the experiment.",
-            "top":"350px",
-            "fontSize":"300%",
-            "color":"black",
-            "width":"1080px",
-            "textAlign":"left",
-            "left":"100px",
-            "backgroundColor":"rgba(0,0,0,0)",
-            "height":"50px"});
-    }
-
-    if(window.state['stage']>=3){
-        placeText({
-            "text":"Anybody that violates these rules will be asked to leave.",
-            "top":"550px",
+            "top":"400px",
             "fontSize":"300%",
             "color":"black",
             "width":"1080px",
@@ -1692,8 +103,8 @@ function overviewScreen2(){
 
     if(window.state['stage']>=4){
         placeText({
-            "text":"We appreciate your cooperation.",
-            "top":"750px",
+            "text":"During the experiment, do not talk, laugh or exclaim out loud and be sure to keep your eyes on your screen only",
+            "top":"550px",
             "fontSize":"300%",
             "color":"black",
             "width":"1080px",
@@ -1703,9 +114,35 @@ function overviewScreen2(){
             "height":"50px"});
     }
 
-    var buttonTops=[0,150,350,550,750,900];
+    if(window.state['stage']>=5){
+        placeText({
+            "text":"In addition, please <a style='color:black'>turn off your cell phones, etc.</a> and put them away during the experiment.",
+            "top":"700px",
+            "fontSize":"300%",
+            "color":"black",
+            "width":"1080px",
+            "textAlign":"left",
+            "left":"100px",
+            "backgroundColor":"rgba(0,0,0,0)",
+            "height":"50px"});
+    }
+
+    if(window.state['stage']>=6){
+        placeText({
+            "text":"Anybody that violates these rules will be asked to leave.",
+            "top":"850px",
+            "fontSize":"300%",
+            "color":"black",
+            "width":"1080px",
+            "textAlign":"left",
+            "left":"100px",
+            "backgroundColor":"rgba(0,0,0,0)",
+            "height":"50px"});
+    }
+
+    var buttonTops=[0,100,200,350,550,700,850,924];
     placeText({"divid":"continueButton","text":"Continue.","top":buttonTops[parseInt(window.state['stage'])+1]+"px","fontSize":"300%","color":"green","width":"680px","textAlign":"center","left":"300px","height":"100px","lineHeight":"100px","backgroundColor":"rgba(0,255,0,.1)"})
-    if(window.state['stage']<=3){
+    if(window.state['stage']<=5){
         clickButton("once","continueButton",makeSelection,[["stage",parseInt(window.state['stage'])+1]]);
     }
     else{
@@ -1716,7 +153,6 @@ function overviewScreen2(){
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
-
 
 
 function agendaScreen(){
@@ -1743,7 +179,7 @@ function agendaScreen(){
             "height":"100px"});
     }
     if(window.state['stage']>=2){
-        placeText({"text":"- You can earn \$5 if you answer the quiz questions correctly.",
+        placeText({"text":"- Each question is worth $0.25.",
             "top":"175px",
             "fontSize":"200%",
             "color":"black",
@@ -1753,7 +189,7 @@ function agendaScreen(){
             "backgroundColor":"rgba(0,0,0,0)",
             "height":"100px"});
 
-        placeText({"text":"- If you incorrectly answer 3 or more questions, then you will earn \$0.",
+        placeText({"text":"- You only get one chance to answer each question.",
             "top":"225px",
             "fontSize":"200%",
             "color":"black",
@@ -1806,7 +242,7 @@ function agendaScreen(){
             "backgroundColor":"rgba(0,0,0,0)",
             "height":"100px"});
 
-        placeText({"text":"- The exchange rate today is: 2500 Francs = $1.00",
+        placeText({"text":"- The exchange rate today is: 1000 Francs = $1.00",
             "top":"725px",
             "fontSize":"200%",
             "color":"black",
@@ -1845,7 +281,7 @@ function instructionsMatches(){
 
 
     if(window.state['stage']>=1){
-        placeText({"text":"The experiment today consists of <a style='color:red'>60 matches</a>.","top":"100px","fontSize":"300%","color":"black","width":"1280px","textAlign":"left","left":"100px","backgroundColor":"rgba(0,0,0,0)","height":"100px"});
+        placeText({"text":"The experiment today consists of <a style='color:red'>10 matches</a>.","top":"100px","fontSize":"300%","color":"black","width":"1280px","textAlign":"left","left":"100px","backgroundColor":"rgba(0,0,0,0)","height":"100px"});
     }
 
     if(window.state['stage']==1){
@@ -1928,7 +364,7 @@ function instructionsPeriods(){
     }
 
     if(window.state['stage']>=3){
-        placeText({"text":"1. Each period a 20 sided dice containing each of the numbers 1 through 20 will be rolled.",
+        placeText({"text":"1. Each period a 100 sided dice containing each of the numbers 1 through 100 will be rolled.",
             "top":"400px",
             "fontSize":"200%",
             "color":"black",
@@ -1961,7 +397,7 @@ function instructionsPeriods(){
             "height":"100px",
             "lineHeight":"50px"});
 
-        placeText({"text":"4. Therefore, in every period, there is a 1 out of 20 chance that the match will end.",
+        placeText({"text":"4. Therefore, in every period, there is a 1 out of 100 chance that the match will end.",
             "top":"550px",
             "fontSize":"200%",
             "color":"black",
@@ -2117,7 +553,7 @@ function instructionsPeriodsSimulation(){
     var k=-1;
     var top=0;
     while(3<4){
-        var thisNumber=Math.floor(Math.random()*20);
+        var thisNumber=Math.floor(Math.random()*100);
         k=k+1;
         j=j+1;
 
@@ -2265,9 +701,9 @@ function matchesAndPeriodsQuiz1(){
 
         if(window.state['answer']=="correct"){
             createAndAddElement("option","defaultOption","dropdownQuiz1");
-            document.getElementById("defaultOption").innerHTML="60";
+            document.getElementById("defaultOption").innerHTML="10";
             placeText({"parentDiv":"quizBackground",
-                "text":"That is correct, the number of matches is 60.",
+                "text":"That is correct, the number of matches is 10.",
                 "color":"green",
                 "top":"550px",
                 "fontSize":"300%",
@@ -2289,9 +725,9 @@ function matchesAndPeriodsQuiz1(){
         }
         else if(window.state['answer']=="incorrect"){
             createAndAddElement("option","defaultOption","dropdownQuiz1");
-            document.getElementById("defaultOption").innerHTML="60";
+            document.getElementById("defaultOption").innerHTML="10";
             placeText({"parentDiv":"quizBackground",
-                "text":"That is incorrect, the number of matches is 60.",
+                "text":"That is incorrect, the number of matches is 10.",
                 "color":"red",
                 "top":"550px",
                 "fontSize":"300%",
@@ -2347,7 +783,7 @@ function matchesAndPeriodsQuiz2(){
 
 
         var questionTitle="Quiz Question #2:"
-        var questionStatement="Suppose the match is in period 26, what is the chance that the match does NOT continue to a new period? (remember a 20 side dice is rolled every period)"
+        var questionStatement="Suppose the match is in period 26, what is the chance that the match continues to a new period? (remember a 100 side dice is rolled every period)"
         var nextStep=[["stage","1"],["page","fitTheHistoryInstructions"]];
         placeText({"divid":"quizBackground","textAlign":"left","top":"50px","height":"900px","backgroundColor":"rgba(255,0,0,.1)","width":"1180px","left":"50px"});
 
@@ -2371,9 +807,9 @@ function matchesAndPeriodsQuiz2(){
 
         if(window.state['answer']=="correct"){
             createAndAddElement("option","defaultOption","dropdownQuiz1");
-            document.getElementById("defaultOption").innerHTML="1 out of 20";
+            document.getElementById("defaultOption").innerHTML="1 out of 100";
             placeText({"parentDiv":"quizBackground",
-                "text":"That is correct, the chance that the match ends is 1 out of 20 in EVERY period.",
+                "text":"That is correct, the chance of another period is 1 out of 100 in EVERY period.",
                 "width":"1000px",
                 "left":"90px",
                 "textAlign":"left",
@@ -2398,9 +834,9 @@ function matchesAndPeriodsQuiz2(){
         }
         else if(window.state['answer']=="incorrect"){
             createAndAddElement("option","defaultOption","dropdownQuiz1");
-            document.getElementById("defaultOption").innerHTML="1 out of 20";
+            document.getElementById("defaultOption").innerHTML="1 out of 100";
             placeText({"parentDiv":"quizBackground",
-                "text":"That is incorrect, the chance that the match ends is 1 out of 20 in EVERY period.",
+                "text":"That is incorrect, the chance of another period is 1 out of 100 in EVERY period.",
                 "width":"1000px",
                 "left":"90px",
                 "textAlign":"left",
@@ -2429,7 +865,7 @@ function matchesAndPeriodsQuiz2(){
             createAndAddElement("option","defaultOption","dropdownQuiz1");
             for(var k=0;k<150;k++){
                 createAndAddElement("option","option"+k,"dropdownQuiz1");
-                document.getElementById("option"+k).innerHTML=k+" out of 20";
+                document.getElementById("option"+k).innerHTML=k+" out of 100";
                 document.getElementById("option"+k).fontSize="400%";
             }
 
@@ -3157,7 +1593,7 @@ function instructionsHighlightListener(divID,ruleLength,color){
         drawRuleHighlight(ruleLength,"listRuleHighlight",divID,color);
         if(document.getElementById("historyIN")!=null){
             drawRuleHighlight(ruleLength,"listRuleHighlight2","historyIN",color);
-            document.getElementById('listRuleHighlight2').style.transform="translate3d("+(1800-ruleLength)+"px,25px,0px)";
+            document.getElementById('listRuleHighlight2').style.transform="translate3d("+(1900-ruleLength)+"px,25px,0px)";
         }
     })
 
@@ -3174,7 +1610,7 @@ function instructionsHighlightListEntry(listEntryDiv,ruleDiv,ruleLength,color){
         document.getElementById(listEntryDiv).style.border="2px solid "+color;
         drawRuleHighlight(ruleLength,"instructionsRuleHighlight",ruleDiv,color);
         drawRuleHighlight(ruleLength,"instructionsHistoryHighlight","historyIN",color);
-        document.getElementById('instructionsHistoryHighlight').style.transform="translate3d("+(1800-ruleLength)+"px,25px,0px)";
+        document.getElementById('instructionsHistoryHighlight').style.transform="translate3d("+(1900-ruleLength)+"px,25px,0px)";
     })
 
     document.getElementById(listEntryDiv).addEventListener("mouseout", function(){
@@ -3225,7 +1661,7 @@ function fitTheHistoryInstructions(){
 
 
         drawRule([[0,0],[0,1],[1]],"testRule","mainDiv",0,0)
-        document.getElementById("testRule").style.transform="translate3d(225px,500px,0px) scale(2)";
+        document.getElementById("testRule").style.transform="translate3d(225px,350px,0px) scale(2)";
         instructionsHighlightListener("testRule",150,"red");
 
         placeText({"divid":"continueButton","text":"Click here to see rule that DOES NOT fit the history","top":"550px","fontSize":"300%","color":"green","width":"500px","textAlign":"center","left":"670px","height":"150px","lineHeight":"75px","backgroundColor":"rgba(0,255,0,.1)"})
@@ -3249,7 +1685,7 @@ function fitTheHistoryInstructions(){
 
 
         drawRule([[0,1],[1,1],[1]],"testRule2","mainDiv",0,0)
-        document.getElementById("testRule2").style.transform="translate3d(865px,500px,0px) scale(2)";
+        document.getElementById("testRule2").style.transform="translate3d(865px,350px,0px) scale(2)";
         instructionsHighlightListener("testRule2",150,"blue");
 
         placeText({"divid":"continueButton","text":"Click here to see more examples","top":"925px","fontSize":"300%","color":"green","width":"600px","textAlign":"center","left":"340px","backgroundColor":"rgba(0,255,0,.1)","height":"100px"})
@@ -3265,34 +1701,34 @@ function fitTheHistoryInstructions(){
 
         drawRule([[0,1],[0]],"fits1","mainDiv",0,0);
         document.getElementById("fits1").style.fontSize="100%";
-        document.getElementById("fits1").style.transform="translate3d(50px,500px,0px)";
+        document.getElementById("fits1").style.transform="translate3d(50px,350px,0px)";
         instructionsHighlightListener("fits1",100,correctColor);
 
 
         drawRule([[0,1],[1]],"fits2","mainDiv",0,0)
         document.getElementById("fits2").style.fontSize="100%";
-        document.getElementById("fits2").style.transform="translate3d(200px,500px,0px)";
+        document.getElementById("fits2").style.transform="translate3d(200px,350px,0px)";
         instructionsHighlightListener("fits2",100,correctColor);
 
         drawRule([[0,0],[0,1],[0]],"fits3","mainDiv",0,0)
         document.getElementById("fits3").style.fontSize="100%";
-        document.getElementById("fits3").style.transform="translate3d(350px,500px,0px)";
+        document.getElementById("fits3").style.transform="translate3d(350px,350px,0px)";
         instructionsHighlightListener("fits3",150,correctColor);
 
 
         drawRule([[0,0],[0,1],[1]],"fits4","mainDiv",0,0)
         document.getElementById("fits4").style.fontSize="100%";
-        document.getElementById("fits4").style.transform="translate3d(50px,625px,0px)";
+        document.getElementById("fits4").style.transform="translate3d(50px,475px,0px)";
         instructionsHighlightListener("fits4",150,correctColor);
 
-        drawRule([[0,1],[0,0],[0,1],[0]],"fits5","mainDiv",0,0)
+        drawRule([[1,1],[0,0],[0,1],[0]],"fits5","mainDiv",0,0)
         document.getElementById("fits5").style.fontSize="100%";
-        document.getElementById("fits5").style.transform="translate3d(250px,625px,0px)";
+        document.getElementById("fits5").style.transform="translate3d(250px,475px,0px)";
         instructionsHighlightListener("fits5",200,correctColor);
 
-        drawRule([[0,0],[0,0],[0,1],[1,1],[0,1],[0,0],[0,1],[1]],"fits6","mainDiv",0,0)
+        drawRule([[0,0],[0,1],[0,0],[1,0],[1,1],[0,0],[0,1],[1]],"fits6","mainDiv",0,0)
         document.getElementById("fits6").style.fontSize="100%";
-        document.getElementById("fits6").style.transform="translate3d(50px,750px,0px)";
+        document.getElementById("fits6").style.transform="translate3d(50px,600px,0px)";
         instructionsHighlightListener("fits6",400,correctColor);
 
 
@@ -3304,33 +1740,33 @@ function fitTheHistoryInstructions(){
 
         drawRule([[0,0],[1]],"fits11","mainDiv",0,0)
         document.getElementById("fits11").style.fontSize="100%";
-        document.getElementById("fits11").style.transform="translate3d(690px,500px,0px)";
+        document.getElementById("fits11").style.transform="translate3d(690px,350px,0px)";
         instructionsHighlightListener("fits11",100,incorrectColor);
 
 
         drawRule([[1,0],[0]],"fits12","mainDiv",0,0)
         document.getElementById("fits12").style.fontSize="100%";
-        document.getElementById("fits12").style.transform="translate3d(840px,500px,0px)";
+        document.getElementById("fits12").style.transform="translate3d(840px,350px,0px)";
         instructionsHighlightListener("fits12",100,incorrectColor);
 
         drawRule([[0,0],[1,0],[1]],"fits13","mainDiv",0,0)
         document.getElementById("fits13").style.fontSize="100%";
-        document.getElementById("fits13").style.transform="translate3d(990px,500px,0px)";
+        document.getElementById("fits13").style.transform="translate3d(990px,350px,0px)";
         instructionsHighlightListener("fits13",150,incorrectColor);
 
         drawRule([[1,0],[0,1],[0]],"fits14","mainDiv",0,0)
         document.getElementById("fits14").style.fontSize="100%";
-        document.getElementById("fits14").style.transform="translate3d(690px,625px,0px)";
+        document.getElementById("fits14").style.transform="translate3d(690px,475px,0px)";
         instructionsHighlightListener("fits14",150,incorrectColor);
 
         drawRule([[1,0],[0,0],[0,1],[1]],"fits15","mainDiv",0,0)
         document.getElementById("fits15").style.fontSize="100%";
-        document.getElementById("fits15").style.transform="translate3d(890px,625px,0px)";
+        document.getElementById("fits15").style.transform="translate3d(890px,475px,0px)";
         instructionsHighlightListener("fits15",200,incorrectColor);
 
         drawRule([[0,0],[1,1],[0,0],[1,0],[1,1],[0,0],[0,1],[0]],"fits16","mainDiv",0,0)
         document.getElementById("fits16").style.fontSize="100%";
-        document.getElementById("fits16").style.transform="translate3d(690px,750px,0px)";
+        document.getElementById("fits16").style.transform="translate3d(690px,600px,0px)";
         instructionsHighlightListener("fits16",400,incorrectColor);
 
         placeText({"divid":"continueButton","text":"Click here for quiz questions","top":"925px","fontSize":"300%","color":"red","width":"600px","textAlign":"center","left":"340px","backgroundColor":"rgba(255,0,0,.1)","height":"100px"})
@@ -3348,15 +1784,15 @@ function fitTheHistoryInstructions(){
 
         drawRule([[0,1],[1,0],[1,1],[0,1],[0]],"quizRule1","mainDiv",0,0)
         document.getElementById("quizRule1").style.fontSize="100%";
-        document.getElementById("quizRule1").style.transform="translate3d(190px,625px,0px)";
+        document.getElementById("quizRule1").style.transform="translate3d(190px,475px,0px)";
 
         drawRule([[0,1],[0,1],[1,0],[0,1],[1]],"quizRule2","mainDiv",0,0)
         document.getElementById("quizRule2").style.fontSize="100%";
-        document.getElementById("quizRule2").style.transform="translate3d(500px,625px,0px)";
+        document.getElementById("quizRule2").style.transform="translate3d(500px,475px,0px)";
 
         drawRule([[0,0],[1,0],[0,1],[0,1],[0]],"quizRule3","mainDiv",0,0)
         document.getElementById("quizRule3").style.fontSize="100%";
-        document.getElementById("quizRule3").style.transform="translate3d(810px,625px,0px)";
+        document.getElementById("quizRule3").style.transform="translate3d(810px,475px,0px)";
 
 
         placeText({"divid":"quizNone","text":"None of the above rules fit the history.","top":"750px","fontSize":"150%","color":"blue","width":"300px","textAlign":"center","left":"300px","backgroundColor":"rgba(0,0,255,.1)","height":"100px","lineHeight":"35px","padding":"15px"})
@@ -3380,8 +1816,8 @@ function fitTheHistoryInstructions(){
             instructionsHighlightListener("quizRule1",250,"black");
             instructionsHighlightListener("quizRule2",250,"black");
             instructionsHighlightListener("quizRule3",250,"black");
-            hoverDiv2("quizNone","black");
-            hoverDiv2("quizMultiple","black");
+            hoverDiv("quizNone","black");
+            hoverDiv("quizMultiple","black");
 
             confirmation="Are you sure you want to submit this as your answer?";
             var thisDiv="quizRule1";
@@ -3407,15 +1843,15 @@ function fitTheHistoryInstructions(){
 
         drawRule([[1,0],[0,1],[1,0],[0,0],[0]],"quizRule1","mainDiv",0,0)
         document.getElementById("quizRule1").style.fontSize="100%";
-        document.getElementById("quizRule1").style.transform="translate3d(290px,625px,0px)";
+        document.getElementById("quizRule1").style.transform="translate3d(290px,475px,0px)";
 
         drawRule([[0,0],[0,1],[0]],"quizRule2","mainDiv",0,0)
         document.getElementById("quizRule2").style.fontSize="100%";
-        document.getElementById("quizRule2").style.transform="translate3d(600px,625px,0px)";
+        document.getElementById("quizRule2").style.transform="translate3d(600px,475px,0px)";
 
         drawRule([[0,0],[0,1],[1,1],[0,1],[0]],"quizRule3","mainDiv",0,0)
         document.getElementById("quizRule3").style.fontSize="100%";
-        document.getElementById("quizRule3").style.transform="translate3d(810px,625px,0px)";
+        document.getElementById("quizRule3").style.transform="translate3d(810px,475px,0px)";
 
 
 
@@ -3439,8 +1875,8 @@ function fitTheHistoryInstructions(){
             instructionsHighlightListener("quizRule1",250,"black");
             instructionsHighlightListener("quizRule2",150,"black");
             instructionsHighlightListener("quizRule3",250,"black");
-            hoverDiv2("quizNone","black");
-            hoverDiv2("quizMultiple","black");
+            hoverDiv("quizNone","black");
+            hoverDiv("quizMultiple","black");
 
             confirmation="Are you sure you want to submit this as your answer?";
             var thisDiv="quizRule1";
@@ -3465,15 +1901,15 @@ function fitTheHistoryInstructions(){
 
         drawRule([[1,1],[0,1],[0,0],[0,1],[0]],"quizRule1","mainDiv",0,0)
         document.getElementById("quizRule1").style.fontSize="100%";
-        document.getElementById("quizRule1").style.transform="translate3d(240px,625px,0px)";
+        document.getElementById("quizRule1").style.transform="translate3d(240px,475px,0px)";
 
         drawRule([[1,0],[1,0],[0,1],[0]],"quizRule2","mainDiv",0,0)
         document.getElementById("quizRule2").style.fontSize="100%";
-        document.getElementById("quizRule2").style.transform="translate3d(550px,625px,0px)";
+        document.getElementById("quizRule2").style.transform="translate3d(550px,475px,0px)";
 
         drawRule([[0,1],[0,1],[0,0],[1,1],[0]],"quizRule3","mainDiv",0,0)
         document.getElementById("quizRule3").style.fontSize="100%";
-        document.getElementById("quizRule3").style.transform="translate3d(810px,625px,0px)";
+        document.getElementById("quizRule3").style.transform="translate3d(810px,475px,0px)";
 
 
 
@@ -3497,8 +1933,8 @@ function fitTheHistoryInstructions(){
             instructionsHighlightListener("quizRule1",250,"black");
             instructionsHighlightListener("quizRule2",200,"black");
             instructionsHighlightListener("quizRule3",250,"black");
-            hoverDiv2("quizNone","black");
-            hoverDiv2("quizMultiple","black");
+            hoverDiv("quizNone","black");
+            hoverDiv("quizMultiple","black");
 
             confirmation="Are you sure you want to submit this as your answer?";
             var thisDiv="quizRule1";
@@ -3697,7 +2133,7 @@ function instructionMultipleRulesFitTheHistory(){
         window.state["totalPayoff"]="Instructions";
         window.state['period']=36;
 
-        window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[50,12],[12,50]];
+        window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[50,12],[12,50]];
         window.state["history"]=[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[0,1]];
 
         window.state['ruleInfo']=[
@@ -3735,7 +2171,7 @@ function instructionMultipleRulesFitTheHistory(){
         window.state["totalPayoff"]="Instructions";
         window.state['period']=10;
 
-        window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[12,50],[50,12],[32,32],[50,12],[25,25],[50,12]];//,[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[50,12],[12,50]];
+        window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[12,50],[50,12],[38,38],[50,12],[25,25],[50,12]];//,[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[50,12],[12,50]];
         window.state["history"]=[[0,0],[1,1],[1,0],[0,1],[1,0],[0,0],[1,0],[1,1],[1,0]]//,[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[0,1]];
 
         window.state['ruleInfo']=[
@@ -3774,7 +2210,7 @@ function instructionMultipleRulesFitTheHistory(){
         window.state["totalPayoff"]="Instructions";
         window.state['period']=18;
 
-        window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[12,50],[50,12],[32,32],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[50,12],[12,50]];
+        window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[12,50],[50,12],[38,38],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[50,12],[12,50]];
         window.state["history"]=[[0,0],[1,1],[1,0],[0,1],[1,0],[0,0],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1]];//,,[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[0,1]];
 
         window.state['ruleInfo']=[
@@ -3846,7 +2282,7 @@ function instructionMultipleRulesFitTheHistory(){
         window.state["totalPayoff"]="Instructions";
         window.state['period']=36;
 
-        window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[25,32],[12,50],[32,25],[50,50],[12,12],[50,12]];
+        window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[25,38],[12,50],[38,25],[50,50],[12,12],[50,12]];
         window.state["history"]=[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[1,1],[0,1],[0,0],[1,0],[0,1],[1,0]];
 
         window.state['ruleInfo']=[
@@ -3908,7 +2344,7 @@ function instructionMultipleRulesFitTheHistory(){
             document.getElementById(correctDiv).style.border="5px solid rgba(0,255,0,1)";
         }
         else{
-            // hoverDiv2("quizRuleFPR","black");
+            // hoverDiv("quizRuleFPR","black");
             var thisColor="rgba(255,0,0,1)"
             instructionsHighlightListEntry("quizRuleFPR","rule_firstPeriod1",50,thisColor);
             instructionsHighlightListEntry("quizRuleDR","rule_default0",50,thisColor);
@@ -3933,7 +2369,6 @@ function instructionMultipleRulesFitTheHistory(){
             clickButton("many",thisDiv,submitQuizAnswer,{"question":"quizSelectRuleFromSet1","div":thisDiv},confirmation);
         }
 
-        drawQuizEarnings();
 
     }
 
@@ -3943,7 +2378,7 @@ function instructionMultipleRulesFitTheHistory(){
         window.state["totalPayoff"]="Instructions";
         window.state['period']=36;
 
-        window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[32,50],[25,12],[32,50]];
+        window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[38,50],[25,12],[38,50]];
         window.state["history"]=[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,0],[1,1],[0,0]];
 
         window.state['ruleInfo']=[
@@ -4024,7 +2459,6 @@ function instructionMultipleRulesFitTheHistory(){
             clickButton("many",thisDiv,submitQuizAnswer,{"question":qName,"div":thisDiv},confirmation);
         }
 
-        drawQuizEarnings();
 
     }
 
@@ -4034,7 +2468,7 @@ function instructionMultipleRulesFitTheHistory(){
         window.state["totalPayoff"]="Instructions";
         window.state['period']=36;
 
-        window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[50,12],[50,50]];
+        window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[50,12],[50,50]];
         window.state["history"]=[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[1,0]];
 
         window.state['ruleInfo']=[
@@ -4083,7 +2517,7 @@ function instructionMultipleRulesFitTheHistory(){
         placeText({"divid":"quizRuleR4","top":"225px","width":"225px","left":"825px","height":"150px","backgroundColor":"rgba(255,0,0,0)"});
 
         if(window.state['answer']=="correct"){
-            placeText({"parentDiv":"quizBackground","text":"That is correct, click on the correct box again to continue.","color":"green","top":"250px","fontSize":"250%","textAlign":"left","width":"880px","left":"100px","height":"75px"});
+            placeText({"parentDiv":"quizBackground","text":"That is correct, click on the correct box again to continue.","color":"green","top":"250px","fontSize":"300%","textAlign":"left","width":"880px","left":"100px","height":"75px"});
             clickButton("once",correctDiv,makeSelection,nextStep);
             document.getElementById(correctDiv).style.border="5px solid rgba(0,255,0,1)";
         }
@@ -4115,7 +2549,6 @@ function instructionMultipleRulesFitTheHistory(){
             clickButton("many",thisDiv,submitQuizAnswer,{"question":qName,"div":thisDiv},confirmation);
         }
 
-        drawQuizEarnings();
 
     }
 
@@ -4202,12 +2635,12 @@ function instructionsEditRuleSet(){
         var thisText="To delete a rule, you can click the delete button next to the rule in the rule set. (try it below)"
         placeText({"text":thisText,"top":"275px","fontSize":"300%","color":"black","width":"1080px","textAlign":"left","left":"100px","backgroundColor":"rgba(0,0,0,0)","height":"50px"}) 
 
-        createAndAddDiv("ruleListIn","mainDiv")
-        document.getElementById("ruleListIn").style.backgroundColor="rgba(0,0,0,0)";
+        createAndAddDiv("ruleList","mainDiv")
+        document.getElementById("ruleList").style.backgroundColor="rgba(0,0,0,0)";
         drawListEntry(["rule3","Rule #3",[[1,0],[0,1],[0]],"",""]);
-        document.getElementById("ruleListIn").style.left="1050px";
-        document.getElementById("ruleListIn").style.top="650px";
-        document.getElementById("ruleListIn").style.transform="scale(2)";
+        document.getElementById("ruleList").style.left="1050px";
+        document.getElementById("ruleList").style.top="650px";
+        document.getElementById("ruleList").style.transform="scale(2)";
     }
 
     if(window.state['stage']==4){ 
@@ -4407,17 +2840,9 @@ function finishQuiz(){
         "backgroundColor":"rgba(0,0,0,0)",
         "height":"100px"});
 
-    placeText({"text":"You earned \$5 on the quiz.",
-        "top":"300px",
-        "fontSize":"300%",
-        "color":"green",
-        "width":"1280px",
-        "backgroundColor":"rgba(0,0,0,0)",
-        "height":"100px"});
-
-        // drawQuizEarnings();
-        // // document.getElementById("quizEarningsInfo").style.fontSize="100%";
-        // document.getElementById("quizEarningsInfo").style.transform="translate3d(0,-550px,0px)";
+        drawQuizEarnings();
+        document.getElementById("quizEarningsInfo").style.fontSize="300%";
+        document.getElementById("quizEarningsInfo").style.transform="translate3d(0,-550px,0px)";
 
     placeText({"text":"While you wait for other subjects, you can do the following:",
         "top":"500px",
@@ -4467,7 +2892,7 @@ function testInterface(){
     window.state["totalPayoff"]="Instructions";
     window.state['period']=36;
 
-    window.state["payoffHistory"]=[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[50,12],[12,50]];
+    window.state["payoffHistory"]=[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[50,12],[12,50]];
     window.state["history"]=[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[0,1]];
 
     window.state['ruleInfo']=[
@@ -4530,41 +2955,16 @@ function drawBackAndForwardButtons(){
 
 function drawQuizEarnings(){
     if(window.state['quizInfo']==undefined){
-        placeText({"divid":"quizEarningsInfo","text":"You have answered 0 questions incorrectly.  You can still miss 2 questions and receive the \$5 for the quiz.","color":"black","top":"850px","fontSize":"150%","textAlign":"center","width":"1000px","left":"140px","height":"75px"});
+        placeText({"divid":"quizEarningsInfo","text":"Quiz Earnings: $0.00 (Answered 0 out of 0 correctly)","color":"black","top":"850px","fontSize":"150%","textAlign":"center","width":"1000px","left":"140px","height":"75px"});
     }
     else{
-        var correct=window.state['quizInfo'][1]+"/"+window.state['quizInfo'][2];
-        var incorrect=window.state['quizInfo'][2]-window.state['quizInfo'][1];
-        if(incorrect==0){
-            placeText({"divid":"quizEarningsInfo",
-                "backgroundColor":"rgba(220,255,220,1)",
-                "text":"You have answered "+correct+" correctly.  You can still answer 2 questions incorrectly and receive the \$5 for the quiz.",
-                "color":"green","top":"850px","fontSize":"150%","textAlign":"center","width":"1200px","left":"40px","height":"75px"});
-        }
-        else if(incorrect==1){
-            placeText({"divid":"quizEarningsInfo",
-                "backgroundColor":"rgba(220,255,220,1)",
-                "text":"You have answered "+correct+" correctly.  To receive the \$5, you can only answer ONE MORE QUESTION INCORRECTLY.",
-                "color":"red","top":"850px","fontSize":"150%","textAlign":"center","width":"1200px","left":"40px","height":"75px"});
-        }
-        else if(incorrect==2){
-            placeText({"divid":"quizEarningsInfo",
-                "backgroundColor":"rgba(255,220,220,1)",
-                "text":"You have answered "+correct+" correctly.  YOU WILL NOT RECEIVE THE \$5 IF YOU INCORRECTLY ANSWER ANOTHER QUESTION.",
-                "color":"red","top":"850px","fontSize":"150%","textAlign":"center","width":"1200px","left":"40px","height":"75px"});
-        }
-        else if(incorrect>2){
-            placeText({"divid":"quizEarningsInfo",
-                "backgroundColor":"rgba(255,220,220,1)",
-                "text":"You have missed more than two questions so you earn \$0. The experiment will start automatically when everyone else has finished their quiz.",
-                "color":"red","top":"850px","fontSize":"150%","textAlign":"center","width":"1200px","left":"40px","height":"75px"});
-        }
+        placeText({"divid":"quizEarningsInfo","text":"Quiz Earnings: $"+window.state['quizInfo'][0]+" (Answered "+window.state['quizInfo'][1]+" out of "+window.state['quizInfo'][2]+" correctly)","color":"black","top":"850px","fontSize":"150%","textAlign":"center","width":"1000px","left":"140px","height":"75px"});            
     }
 }
 
 
 
-function hoverDiv2(div1,color){
+function hoverDiv(div1,color){
     document.getElementById(div1).addEventListener("mouseover", function(){
         document.getElementById(div1).style.border="2px solid "+color;
         document.getElementById(div1).style.boxSizing = "border-box";
@@ -4715,7 +3115,6 @@ function clickPayoffTableRow(args){
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
 ///////////////////////////////NEW PAGE//////////////////////////////////////////////
-
 
 
 

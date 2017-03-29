@@ -25,7 +25,7 @@ body {
 .square {
     text-decoration:none;
     display:inline-block;
-    font-size: 125%;
+    font-size: 18px;
     visibility:visible;
     box-sizing: border-box;
     width: 50px;
@@ -787,7 +787,7 @@ body {
 }
 
 .rule {
-    position: relative;
+    position: absolute;
     overflow: hidden;
     background-color:transparent;
     padding: 0px;
@@ -1099,6 +1099,7 @@ body {
     height:100px;
     left:0px;
     top:0px;
+    border-color: rgba(255,0,0,1);
 }
 
 .gameHighlight {
@@ -1119,8 +1120,8 @@ body {
     width: 150px;
     height: 100px;
     box-sizing: border-box;
-    border-top:4px solid red;
-    border-left:4px solid red;
+    border-top:4px solid;
+    border-left:4px solid;
 }
 
 
@@ -1130,8 +1131,8 @@ body {
     width: 100px;
     height: 50px;
     box-sizing: border-box;
-    border-bottom:4px solid red;
-    border-right:4px solid red;
+    border-bottom:4px solid green;
+    border-right:4px solid green;
 }
 
 .ruleHighlightRight {
@@ -1140,8 +1141,8 @@ body {
     width: 54px;
     height: 50px;
     box-sizing: border-box;
-    border-bottom:4px solid red;
-    border-right:4px solid red;
+    border-bottom:4px solid green;
+    border-right:4px solid green;
 }
 
 .ruleHighlightDefault {
@@ -1316,4 +1317,15 @@ body {
     transition-delay:.5s;
     background-color: transparent;
     z-index: 999;
+}
+
+#makeChoiceWarning{
+    font-size: 125%;
+    left:1075px;
+    top:200px;
+}
+
+#warningTimer{
+    line-height: 50px;
+    font-size: 200%;
 }

@@ -28,23 +28,12 @@ class experimentClass():
    # - list of all subjects at self.data['subjectIDs']
   
 
-   #changes to make for testing
-   # showPayoffTime
-   # setMatchingsByQuiz
-
-   # add delay
-   # key down
-   # mess with fonts
-   # subject ID at top
-
-
    def setParameters(self):
       print("setParameters")
-      self.data['exchangeRate']=float(1)/2500
-      self.data['showPayoffTime']=60
+      self.data['exchangeRate']=float(1)/1250
+      self.data['showPayoffTime']=2
       self.data['postMatchTime']=10
       self.data['expectedPeriodsPerSupergame']=20
-      self.data['currentSupergameType']={}
 
 
       self.data['totalMatches']=60
@@ -54,24 +43,12 @@ class experimentClass():
 
 
       self.data["matchTypeInfo"]={}
-      self.data["matchTypeInfo"]["low"]={}
-      self.data["matchTypeInfo"]["high"]={}
-
-
-      thisMatchInfo={}
-      thisMatchInfo['supergameType']="directResponse"
-      thisMatchInfo['supergameTypeConfirmation']="In all 60 matches you will make choices directly without constructing rules."
-      thisMatchInfo['supergameTypeMessage']="In all 60 you will make choices directly without constructing rules."
-      thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
-      self.data["matchTypeInfo"]["low"][1]=thisMatchInfo
-
-
       thisMatchInfo={}
       thisMatchInfo['supergameType']="directResponse"
       thisMatchInfo['supergameTypeConfirmation']="In matches 1-10 you will make choices directly without constructing rules."
       thisMatchInfo['supergameTypeMessage']="In matches 1-10 you will make choices directly without constructing rules."
       thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
-      self.data["matchTypeInfo"]["high"][1]=thisMatchInfo
+      self.data["matchTypeInfo"][1]=thisMatchInfo
 
 
       thisMatchInfo={}
@@ -80,8 +57,8 @@ class experimentClass():
       thisMatchInfo['supergameTypeMessage']="Warning: Starting in match #21 your rule set will play automatically and this will not be an option."
       thisMatchInfo['supergameTypeMessage2']="Reminder: You will not be able to make any changes to your rule set between match #21 and match #30.  The rule set you have at the end of match #20 will make all choices for you automatically at that point."
       thisMatchInfo['supergameTypeContinuePage']="setFirstPeriodRulePage"
-      self.data["matchTypeInfo"]["high"][11]=thisMatchInfo
-      self.data['preStageLengths'][11]=600
+      self.data["matchTypeInfo"][1]=thisMatchInfo
+      self.data['preStageLengths'][1]=600
 
 
       thisMatchInfo={}
@@ -89,21 +66,14 @@ class experimentClass():
       thisMatchInfo['supergameTypeConfirmation']="In matches 21-30 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
       thisMatchInfo['supergameTypeMessage']="In matches 21-30 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
       thisMatchInfo['supergameTypeContinuePage']="gameNoChange"
-      self.data["matchTypeInfo"]["high"][21]=thisMatchInfo
-
-      thisMatchInfo={}
-      thisMatchInfo['supergameType']="directResponse"
-      thisMatchInfo['supergameTypeConfirmation']="In matches 31-60 you will make choices directly without constructing rules."
-      thisMatchInfo['supergameTypeMessage']="In matches 31-60 you will make choices directly without constructing rules."
-      thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
-      self.data["matchTypeInfo"]["high"][31]=thisMatchInfo
+      self.data["matchTypeInfo"][3]=thisMatchInfo
 
 
-      self.data['periodsPerMatch']= ["No period 0",18, 20, 12, 6, 49, 13, 10, 13, 5, 22, 21, 13, 49, 2, 15, 14, 27, 1, 51, 11, 7, 4, 1, 43, 49, 4, 26, 20, 7, 27, 4, 27, 14, 17, 19, 28, 2, 23, 24, 45, 15, 6, 2, 52, 8, 25, 32, 2, 40, 8, 5, 8, 39, 11, 6, 46, 32, 43, 27, 29]
+      self.data['periodsPerMatch']=[20,22, 6, 6, 45, 16, 3, 24, 18, 12, 48]
 
-      self.data['currentMatch']={}
-      self.data['currentMatch']['high']=0
-      self.data['currentMatch']['low']=0
+
+
+      self.data['currentMatch']=0
 
       #payoffs
       self.data['matchType']="regular"
@@ -111,7 +81,7 @@ class experimentClass():
       # self.data['payoffs']=[[3,3],[1,5],[4,1],[2,2]]
       # self.data['payoffs']=[[1,5],[2,6],[3,7],[4,8]]
       # self.data['payoffs']=[[48,48],[12,50],[50,12],[25,25]]
-      self.data['payoffs']=[[32,32],[12,50],[50,12],[25,25]]
+      self.data['payoffs']=[[38,38],[12,50],[50,12],[25,25]]
 
       self.setQuizAnswers()
 
@@ -130,20 +100,19 @@ class experimentClass():
          self.updateStatus(sid)
 
 
-   def setPairs(self,theseSubjectsIN,currentMatch):
-      theseSubjects=theseSubjectsIN[:]
+   def setPairs(self,theseSubjects):
       random.shuffle(theseSubjects)
       for k in range(len(theseSubjects)/2):
          sub1=theseSubjects[2*k+0]
          sub2=theseSubjects[2*k+1]
 
-         self.data[sub1].partners[currentMatch]=sub2
-         self.data[sub1].roles[currentMatch]=0
-         self.data[sub1].gameTable[currentMatch]=self.data['payoffs']
+         self.data[sub1].partners[self.data['currentMatch']]=sub2
+         self.data[sub1].roles[self.data['currentMatch']]=0
+         self.data[sub1].gameTable[self.data['currentMatch']]=self.data['payoffs']
 
-         self.data[sub2].partners[currentMatch]=sub1
-         self.data[sub2].roles[currentMatch]=1
-         self.data[sub2].gameTable[currentMatch]=self.reversePays(self.data['payoffs'])
+         self.data[sub2].partners[self.data['currentMatch']]=sub1
+         self.data[sub2].roles[self.data['currentMatch']]=1
+         self.data[sub2].gameTable[self.data['currentMatch']]=self.reversePays(self.data['payoffs'])
 
 
    def notAcceptingClientsAnymore(self):
@@ -158,8 +127,6 @@ class experimentClass():
       goodQuiz=[]
       badQuiz=[]
       for sid in self.data['subjectIDs']:
-         # if sid in ['subject0',"subject1",'subject2',"subject3"]:
-         #    goodQuiz.append(sid)
          if self.data[sid].quizEarnings[0]==5:
             goodQuiz.append(sid)
          else:
@@ -173,18 +140,22 @@ class experimentClass():
          badQuiz.append(thisSID)
 
       self.data['groups']={}
-      self.data['groups']["high"]=goodQuiz
-      self.data['groups']["low"]=badQuiz
+      self.data['groups'][0]=goodQuiz
+      self.data['groups'][1]=badQuiz
 
 
-      for sid in self.data['groups']["high"]:
+      for sid in self.data['groups'][0]:
          self.data[sid].group="high"
-      for sid in self.data['groups']["low"]:
+         self.data[sid].timePerQuestion=60
+         self.data[sid].timeUntilWarning=5
+      for sid in self.data['groups'][1]:
          self.data[sid].group="low"
+         self.data[sid].timePerQuestion=4
+         self.data[sid].timeUntilWarning=1
       print("matching set!!!!!!!")
 
 
-   def makeMatching(self,group):
+   def makeMatching(self):
       print("makeMatching")
       if self.data['matchType']=="trial":
          #trail - creat Dummy clients
@@ -197,8 +168,9 @@ class experimentClass():
          for sid in self.data['subjectIDs']:
             self.data[sid].partners[self.data['currentMatch']]='randomPlayer'
       elif self.data['matchType']=="regular":
-         if len(self.data['groups'][group])>0:
-            self.setPairs(self.data['groups'][group],self.data['currentMatch'][group])
+         for group in self.data['groups']:
+            if len(self.data['groups'][group])>0:
+               self.setPairs(self.data['groups'][group])
    
 
    def makeMyChoice(self,subjectID):
@@ -212,11 +184,10 @@ class experimentClass():
 
 
 
-   def gameOver(self,group):
-      for sid in self.data['groups'][group]:
-         self.data[sid].totalPayoffStringFunction(self.data['exchangeRate'])
-         self.data[sid].totalPayoffString
-         self.data[sid].status={"page":"generic","message":["ID:"+sid,"<br>Total Francs: %.02f"%(self.data[sid].totalPayoffs),"<br>Quiz Pay: %.02f"%(self.data[sid].quizEarnings[0]),"<br>Total Pay: %s"%(self.data[sid].totalPayoffString)]}
+   def gameOver(self):
+      for sid in self.data['subjectIDs']:
+         totalPay=(self.data[sid].totalPayoffs[0]-self.data[sid].lockCosts)*self.data['exchangeRate']+self.data[sid].quizEarnings
+         self.data[sid].status={"page":"generic","message":["ID:"+sid,"<br>Game Pay: %.02f"%((self.data[sid].totalPayoffs[0]-self.data[sid].lockCosts)*self.data['exchangeRate']),"<br>Quiz Pay: %.02f"%(self.data[sid].quizEarnings),"<br>Total Pay: %.02f"%(totalPay)]}
          self.updateStatus(sid)
 
 
@@ -234,18 +205,13 @@ class experimentClass():
       self.showPayoffs()
 
    def showPayoffs(self):
-      self.initializeTimer("all",self.data['showPayoffTime'],self.startPreMatchBoth)
+      self.initializeTimer("all",self.data['showPayoffTime'],self.startPreMatch)
       for sid in self.data['subjectIDs']:
          #completely reset status for everyone
          self.data[sid].status={"page":"payoffsOnly"}
          self.data[sid].status['payoffs']=self.data['payoffs']
-         self.data[sid].status['group']=self.data[sid].group
          self.updateStatus(sid)
 
-
-   def startPreMatchBoth(self):
-      self.startPreMatch("high")
-      self.startPreMatch("low")
 
    def setSubjectsPage(self,pageName):
       for sid in self.data['subjectIDs']:
@@ -255,10 +221,10 @@ class experimentClass():
 
 
 
-   def newDirectResponseMatch(self,group):
+   def newDirectResponseMatch(self):
       print("NEW MATCH DIRECT RESPONSE")
-      for sid in self.data['groups'][group]:
-         self.data[sid].newMatch(self.data['currentMatch'][group])
+      for sid in self.data['subjectIDs']:
+         self.data[sid].newMatch(self.data['currentMatch'])
          self.data[sid].updateNonRuleStats()
          self.data[sid].status["page"]="gameDirectResponse"
          self.updateStatus(sid)
@@ -266,16 +232,15 @@ class experimentClass():
 
    def confirmMatchType(self,message,client):
       sid=client.subjectID
-      group=self.data[sid].group
       if self.data[sid].status["supergameInfo"]["supergameTypeContinuePage"]=="gameNoChange":
          self.data[sid].status['page']=self.data[sid].status["supergameInfo"]["supergameTypeContinuePage"]
          self.updateStatus(sid)
          allSet=1
-         for sid in self.data['groups'][group]:
+         for sid in self.data['subjectIDs']:
             if self.data[sid].status["page"]!="gameNoChange":
                allSet=0
          if allSet==1:
-            self.initializeTimer(group,self.periodTime,self.makeChoicesNoChange,group)
+            self.initializeTimer("all",self.periodTime,self.makeChoicesNoChange)
          else:
             self.updateStatus(sid)
       else:
@@ -285,24 +250,23 @@ class experimentClass():
 
    def startMatchButton(self,message,client):
       sid=client.subjectID
-      group=self.data[sid].group
-      self.data[sid].status['startMatchConfirm']="yes"
+      self.data[sid].status['startMatchConfim']="yes"
       self.updateStatus(sid)
       allSet=1
-      for sid in self.data['groups'][group]:
-         if self.data[sid].status['startMatchConfirm']=="no":
+      for sid in self.data['subjectIDs']:
+         if self.data[sid].status['startMatchConfim']=="no":
             allSet=0
       if allSet==1:
-         self.cancelTimerFunction(group)
-         self.startMatchNonBinding(group)
+         self.cancelTimerFunction("all")
+         self.startMatchNonBinding()
       self.monitorMessage()
 
-   def newMatchNonBinding(self,group):
+   def newMatchNonBinding(self):
       print("NEW NON BINDING MATCH")
-      self.initializeTimer(group,self.data['preStageLengths'][self.data['currentMatch'][group]],self.startMatchNonBinding,group)
-      for sid in self.data['groups'][group]:
-         self.data[sid].newMatch(self.data['currentMatch'][group])
-         self.data[sid].status['startMatchConfirm']="no"
+      self.initializeTimer("all",self.data['preStageLengths'][self.data['currentMatch']],self.startMatchNonBinding)
+      for sid in self.data['subjectIDs']:
+         self.data[sid].newMatch(self.data['currentMatch'])
+         self.data[sid].status['startMatchConfim']="no"
          if self.data[sid].rules['current']['firstPeriod']==[]:
             self.data[sid].status['page']="setFirstPeriodRulePage"
             self.updateStatus(sid)      
@@ -312,31 +276,33 @@ class experimentClass():
 
 
 
-   def newMatchNoChange(self,group):
+   def newMatchNoChange(self):
       print("NEW MATCH NO CHANGe")
       self.periodTime=2
-      self.initializeTimer(group,self.periodTime,self.makeChoicesNoChange,group)
+      self.initializeTimer("all",self.periodTime,self.makeChoicesNoChange)
 
-      for sid in self.data['groups'][group]:
-         self.data[sid].newMatch(self.data['currentMatch'][group])
+      for sid in self.data['subjectIDs']:
+         self.data[sid].newMatch(self.data['currentMatch'])
          self.data[sid].status["page"]="gameNoChange"
          self.data[sid].status["supergameType"]="noChange"
          self.updateRules(sid)
 
-   def makeChoicesNoChange(self,group):
+   def makeChoicesNoChange(self):
       self.periodTime=max(self.periodTime*.9,.1)
-      self.initializeTimer(group,self.periodTime,self.makeChoicesNoChange,group)
-      for sid in self.data['groups'][group]:
+      self.initializeTimer("all",self.periodTime,self.makeChoicesNoChange)
+      for sid in self.data['subjectIDs']:
          self.data[sid].confirmChoiceNoChange()
-      for sid in self.data['groups'][group]:
+
+      for sid in self.data['subjectIDs']:
          self.finishPeriod(sid)
 
 
 
 
-   def startMatchNonBinding(self,group):
-      if self.checkToSeeIfAllDefaultsHaveBeenSet(group):
-         for sid in self.data['groups'][group]:
+   def startMatchNonBinding(self):
+      if self.checkToSeeIfAllDefaultsHaveBeenSet():
+         self.data['startTime']=time.time()
+         for sid in self.data['subjectIDs']:
             self.data[sid].status['page']="gameNonBinding"
             self.data[sid].matchRunning=1
             self.data[sid].currentPeriod=1
@@ -349,45 +315,44 @@ class experimentClass():
    #       self.data[sid].status['supergameTypeMessage']=self.data['supergameTypeMessages'][match]
    #       self.updateStatus(sid)
 
-   def startPreMatch(self,group):
-      #group is "high" or "low"
-      self.data['currentMatch'][group]+=1
-      if self.data['currentMatch'][group]<=self.data['totalMatches']:
-         self.makeMatching(group)
-         if self.data['currentMatch'][group] in self.data["matchTypeInfo"][group]:
-            thisMatchInfo=self.data["matchTypeInfo"][group][self.data['currentMatch'][group]]
-            for sid in self.data['groups'][group]:
+   def startPreMatch(self):
+      self.data['currentMatch']=self.data['currentMatch']+1
+      if self.data['currentMatch']<=self.data['totalMatches']:
+         self.makeMatching()
+         if self.data['currentMatch'] in self.data["matchTypeInfo"]:
+            thisMatchInfo=self.data["matchTypeInfo"][self.data['currentMatch']]
+            for sid in self.data['subjectIDs']:
                self.data[sid].status["supergameInfo"]=thisMatchInfo
-            self.data['currentSupergameType'][group]=thisMatchInfo['supergameType']
-         if self.data['currentSupergameType'][group]=="directResponse":
-            self.newDirectResponseMatch(group)
-         elif self.data['currentSupergameType'][group]=="nonBinding":
-            self.newMatchNonBinding(group)
-         elif self.data['currentSupergameType'][group]=="noChange":
-            self.newMatchNoChange(group)
+            self.thisSupergameType=thisMatchInfo['supergameType']
+         if self.thisSupergameType=="directResponse":
+            self.newDirectResponseMatch()
+         elif self.thisSupergameType=="nonBinding":
+            self.newMatchNonBinding()
+         elif self.thisSupergameType=="noChange":
+            self.newMatchNoChange()
 
          #first set confirmation page if needed (do this after you start the match)
-         if self.data['currentMatch'][group] in self.data["matchTypeInfo"][group]:
+         if self.data['currentMatch'] in self.data["matchTypeInfo"]:
             #cancel the noChange timer so taht they don't start until everyone has confirmed
-            if self.data['currentSupergameType'][group]=="noChange":
-               self.cancelTimerFunction(group)
-            for sid in self.data['groups'][group]:
+            if self.thisSupergameType=="noChange":
+               self.cancelTimerFunction("all")
+            for sid in self.data['subjectIDs']:
                self.data[sid].status['page']="genericMatchConfirmationPage"
                self.updateStatus(sid)
 
-      elif self.data['currentMatch'][group]>self.data['totalMatches']:
-         self.gameOver(group)#game over
+      elif self.data['currentMatch']>self.data['totalMatches']:
+         self.gameOver()#game over
 
 
-   def checkToSeeIfAllDefaultsHaveBeenSet(self,group):
+   def checkToSeeIfAllDefaultsHaveBeenSet(self):
       allDefaultRulesSet=1
-      for sid in self.data['groups'][group]:
+      for sid in self.data['subjectIDs']:
          if len(self.data[sid].rules['current']['firstPeriod'])==0 or len(self.data[sid].rules['current']['default'])==0:
             allDefaultRulesSet=0
       if allDefaultRulesSet==0:
          print("not all default Rules Set")
-         self.initializeTimer(group,10,self.startMatchNonBinding,group)
-         for sid in self.data['groups'][group]:
+         self.initializeTimer("all",10,self.startMatchNonBinding)
+         for sid in self.data['subjectIDs']:
             self.updateStatus(sid)      
          # self.nextPeriodCall=reactor.callLater(2,self.startMatch)
          return False
@@ -410,24 +375,20 @@ class experimentClass():
 
 
    def getClientHistory(self,subjectID):
-      group=self.data[subjectID].group
-      currentMatch=self.data['currentMatch'][group]
-      myHistory=self.data[subjectID].history[currentMatch]
-      theirHistory=self.data[subjectID].opponentHistory[currentMatch]
+      myHistory=self.data[subjectID].history[self.data['currentMatch']]
+      theirHistory=self.data[subjectID].opponentHistory[self.data['currentMatch']]
       history=[]
       for a,b in zip(myHistory,theirHistory):
          history.append([a,b])
       return history
    
    def getClientPayoffHistory(self,subjectID):
-      group=self.data[subjectID].group
-      currentMatch=self.data['currentMatch'][group]
-      myHistory=self.data[subjectID].history[currentMatch]
-      theirHistory=self.data[subjectID].opponentHistory[currentMatch]
+      myHistory=self.data[subjectID].history[self.data['currentMatch']]
+      theirHistory=self.data[subjectID].opponentHistory[self.data['currentMatch']]
       history=[]
       for a,b in zip(myHistory,theirHistory):
          index=2*a+b
-         thisPayoff=self.data[subjectID].gameTable[currentMatch][index]
+         thisPayoff=self.data[subjectID].gameTable[self.data['currentMatch']][index]
          history.append(thisPayoff)
       return history
 
@@ -455,6 +416,7 @@ class experimentClass():
       self.data[sid].status['warning']="no"
       self.cancelTimerFunction(sid)
       self.data[sid].confirmChoice()
+      self.updateRules(sid)
       self.checkPartner(sid)
 
    def confirmChoice(self,message,client):
@@ -468,57 +430,53 @@ class experimentClass():
       #print "Confi Choice",client.subjectID
       sid=client.subjectID
       self.data[sid].confirmChoiceNonBinding(message["choiceType"])
+      self.updateRules(sid)
       self.checkPartner(sid)
 
 
-   def checkPartner(self,sid):
-      myGroup=self.data[sid].group
-      currentMatch=self.data['currentMatch'][myGroup]
-      myPartner=self.data[sid].partners[currentMatch]
+   def checkPartner(self,subjectID):
+      myPartner=self.data[subjectID].partners[self.data['currentMatch']]
       if myPartner=="randomPlayer":
-         self.finishPeriod(sid)
+         self.finishPeriod(subjectID)
       else:
          if self.data[myPartner].status['confirmed']=="yes":
-            self.finishPeriod(sid)
+            self.finishPeriod(subjectID)
             self.finishPeriod(myPartner)
          else:
-            self.updateRules(sid)      
             "sdf"
             #send message to confirm that you are waiting now.
 
    def finishPeriod(self,subjectID):
       #Get opponents choices and payoffs
-      group=self.data[subjectID].group
-      currentMatch=self.data['currentMatch'][group]
       subject1=subjectID
-      subject2=self.data[subjectID].partners[currentMatch]
+      subject2=self.data[subjectID].partners[self.data['currentMatch']]
 
       self.data[subject1].currentPeriod+=1
 
-      choice1=self.data[subject1].history[currentMatch][-1][0]
+      choice1=self.data[subject1].history[self.data['currentMatch']][-1][0]
 
       if subject2=="randomPlayer":
          choice2=random.choice([0,1])
       else:
-         choice2=self.data[subject2].history[currentMatch][-1][0]
+         choice2=self.data[subject2].history[self.data['currentMatch']][-1][0]
 
-      self.data[subject1].opponentHistory[currentMatch].append(choice2)
+      self.data[subject1].opponentHistory[self.data['currentMatch']].append(choice2)
       index1=2*choice1+choice2
-      payoff1=self.data[subject1].gameTable[currentMatch][index1][0]
-      payoff2=self.data[subject1].gameTable[currentMatch][index1][1]
+      payoff1=self.data[subject1].gameTable[self.data['currentMatch']][index1][0]
+      payoff2=self.data[subject1].gameTable[self.data['currentMatch']][index1][1]
 
       if self.data['matchType']=="regular" or self.data['matchType']=="regularDemo":
-         self.data[subject1].matchPayoffs[currentMatch][0]+=payoff1
-         self.data[subject1].matchPayoffs[currentMatch][1]+=payoff2
+         self.data[subject1].matchPayoffs[self.data['currentMatch']][0]+=payoff1
+         self.data[subject1].matchPayoffs[self.data['currentMatch']][1]+=payoff2
          self.data[subject1].totalPayoffs+=payoff1
          self.data[subject1].totalPayoffStringFunction(self.data['exchangeRate'])
 
-      self.data[subject1].actionProfileFrequencies[currentMatch][index1]+=1
+      self.data[subject1].actionProfileFrequencies[self.data['currentMatch']][index1]+=1
       self.data[subject1].status['previousPayoffIndex']=index1
 
       self.data[subject1].status["confirmed"]="no"
       self.data[subject1].status["animate"]="yes"
-      if self.data[subject1].currentPeriod<=self.data['periodsPerMatch'][currentMatch]:
+      if self.data[subject1].currentPeriod<=self.data['periodsPerMatch'][self.data['currentMatch']]:
          #start next period
          '# self.initializePeriodTimer(subject1)'
       else:
@@ -528,12 +486,12 @@ class experimentClass():
 
          #check if everyone is done
          allDone=1
-         for sid in self.data['groups'][group]:
+         for sid in self.data['subjectIDs']:
             if self.data[sid].status["page"]!="postMatch":
                allDone=0
          if allDone==1:
-            self.initializeTimer(group,self.data['postMatchTime'],self.startPreMatch,group)
-            for sid in self.data['groups'][group]:
+            self.initializeTimer("all",self.data['postMatchTime'],self.startPreMatch)
+            for sid in self.data['subjectIDs']:
                self.data[sid].status["stage"]="timer"
                self.updateRules(sid)
       self.updateRules(subject1)
@@ -580,9 +538,9 @@ class experimentClass():
       self.setMatchingsByQuiz()
       for sid in self.data['subjectIDs']:
          if self.data[sid].group=="high":
-            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself).<br> Everyone in your group earned $5.00 on the quiz."%(len(self.data['groups']["high"]))]}
+            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself).<br> Everyone in your group earned $5.00 on the quiz."%(len(self.data['groups'][0]))]}
          else:
-            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself)."%(len(self.data['groups']["low"]))]}
+            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself)."%(len(self.data['groups'][1]))]}
          self.updateStatus(sid)
 
 
@@ -701,8 +659,7 @@ class experimentClass():
 
 
    def updateRules(self,sid):
-      group=self.data[sid].group
-      if self.data['currentSupergameType'][group]!="directResponse":
+      if self.thisSupergameType!="directResponse":
          self.data[sid].updateRuleStats()
       self.data[sid].updateNonRuleStats()
       self.updateStatus(sid)
@@ -768,7 +725,7 @@ class experimentClass():
          self.data[subjectID].setFirstPeriodRule(random.choice([0,1]),0,0,'regular')
          self.data[subjectID].setDefaultRule(random.choice([0,1]),0,0,'regular')
          self.data['currentMatch']=0
-         self.data['payoffs']=[[32,32],[12,50],[50,12],[25,25]]
+         self.data['payoffs']=[[38,38],[12,50],[50,12],[25,25]]
          self.data['preStageLengths']=[20,20,60,60,60,60,60,60,60,60,60,60]
          for k in range(20):
             self.data[subjectID].gameTable[k]=self.data['payoffs']
@@ -867,7 +824,7 @@ class experimentClass():
          self.data[sid].status["answer"]="incorrect"
       self.data[sid].quizEarnings[2]+=1#totalTries
 
-      if self.data[sid].quizEarnings[1]>17:#17
+      if self.data[sid].quizEarnings[1]>0:#17
          self.data[sid].quizEarnings[0]=5#money
 
       if self.data[sid].quizEarnings[2]==20:
@@ -896,15 +853,15 @@ class experimentClass():
       self.setMatchingsByQuiz()
       for sid in self.data['subjectIDs']:
          if self.data[sid].group=="high":
-            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself).<br> Everyone in your group earned $5.00 on the quiz."%(len(self.data['groups']["high"]))]}
+            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself).<br> Everyone in your group earned $5.00 on the quiz."%(len(self.data['groups'][0]))]}
          else:
-            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself)."%(len(self.data['groups']["low"]))]}
+            self.data[sid].status={"page":"generic","message":["There are %s participants in your group (including yourself)."%(len(self.data['groups'][1]))]}
          self.updateStatus(sid)
       self.monitorMessage()
 
 
    def setInstructionsStatus(self):
-      thisStatus={"previousPayoffIndex":1,"payoffHistory":[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[50,12],[12,50]],"period":36,"warning":"yes","actionProfileFrequencies":[6,6,13,10],"animate":"no","matchPayoff":[1200,934],"confirmed":"no","firstPeriodRule":0,"match":2,"totalPayoff":1313,"lastPlay":-1,"defaultRule":0,"stage":"timer","nextChoiceInfo":{"action":0,"length":0,"number":"default0"},"message":["Loading..."],"lastChoiceInfo":{"action":0,"length":0,"number":"default0"},"choices":["W","Y"],"ruleInfo":[["firstPeriod0","First Period Rule",[[0]],"M2P1",2],["default0","Default Rule",[[0]],"M2P35",11]],"payoffs":[[32,32],[12,50],[50,12],[25,25]],"page":"game","history":[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[0,1]]}
+      thisStatus={"previousPayoffIndex":1,"payoffHistory":[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[50,12],[12,50]],"period":36,"warning":"yes","actionProfileFrequencies":[6,6,13,10],"animate":"no","matchPayoff":[1200,934],"confirmed":"no","firstPeriodRule":0,"match":2,"totalPayoff":1313,"lastPlay":-1,"defaultRule":0,"stage":"timer","nextChoiceInfo":{"action":0,"length":0,"number":"default0"},"message":["Loading..."],"lastChoiceInfo":{"action":0,"length":0,"number":"default0"},"choices":["W","Y"],"ruleInfo":[["firstPeriod0","First Period Rule",[[0]],"M2P1",2],["default0","Default Rule",[[0]],"M2P35",11]],"payoffs":[[38,38],[12,50],[50,12],[25,25]],"page":"game","history":[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[1,0],[0,1]]}
       for sid in self.data['subjectIDs']:
          self.data[sid].status=thisStatus
          self.updateStatus(sid)
@@ -912,18 +869,19 @@ class experimentClass():
    def confirmChoiceDirectResponse(self,message,client):
       sid=client.subjectID
       self.data[sid].confirmChoiceDirectResponse(message['choice'])
+      self.updateRules(sid)      
       self.checkPartner(sid)
 
    def experimentSpecificMonitorTableEntries(self):
       self.data['monitorTableInfo']=[
       ['Group'         ,'self.data[sid].group'],
       ['Page'         ,'self.data[sid].status["page"]'],
-      ['Match'          ,'self.data["currentMatch"][self.data[sid].group]'],
+      ['Match'          ,'self.data["currentMatch"]'],
       ['Period'         ,'self.data[sid].currentPeriod'],
       ['#Rules'        ,"len(self.data[sid].rules['current']['regular'])"],
-      ['play t-3'        ,"self.data[sid].history[self.data['currentMatch'][self.data[sid].group]][-3][0]"],
-      ['play t-2'        ,"self.data[sid].history[self.data['currentMatch'][self.data[sid].group]][-2][0]"],
-      ['play t-1'        ,"self.data[sid].history[self.data['currentMatch'][self.data[sid].group]][-1][0]"],
+      ['play t-3'        ,"self.data[sid].history[self.data['currentMatch']][-3][0]"],
+      ['play t-2'        ,"self.data[sid].history[self.data['currentMatch']][-2][0]"],
+      ['play t-1'        ,"self.data[sid].history[self.data['currentMatch']][-1][0]"],
       ['TotalPayoff'     ,"self.data[sid].totalPayoffString"],
       # ['MatchPay'       ,'self.data[sid].myMatchPayoffs[self.data["currentMatch"]]'],
       # ['Pay t-3'        ,'self.data[sid].payoffHistory[self.data["currentMatch"]][-3]'],
@@ -980,12 +938,11 @@ class subjectClass():
       self.resetAllRules()
       self.timePerQuestion=20
       self.timeUntilWarning=5
-      self.totalPayoffString="$0"
       # self.setInstructionStatus()
 
    def setInstructionStatus(self):
       # self.status["previousPayoffIndex"]=1
-      self.status["payoffHistory"]=[[32,32],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[32,32],[12,50],[25,25],[50,12],[50,12],[32,32],[50,12],[12,50],[50,12],[25,25],[32,32],[50,12],[50,12],[32,32],[32,32],[12,50],[25,25],[12,50],[32,32],[12,50]]
+      self.status["payoffHistory"]=[[38,38],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[50,12],[25,25],[12,50],[38,38],[12,50],[25,25],[50,12],[50,12],[38,38],[50,12],[12,50],[50,12],[25,25],[38,38],[50,12],[50,12],[38,38],[38,38],[12,50],[25,25],[12,50],[38,38],[12,50]]
       self.status["period"]=36
       self.status["warning"]="yes"
       self.status["actionProfileFrequencies"]=[6,6,13,10]
@@ -1003,7 +960,7 @@ class subjectClass():
       self.status["lastChoiceInfo"]={"action":0,"length":0,"number":"default0"}
       self.status["choices"]=["W","Y"]
       self.status["ruleInfo"]=[["firstPeriod0","First Period Rule",[[0]],"M2P1",2],["default0","Default Rule",[[0]],"M2P35",11]]
-      self.status["payoffs"]=[[32,32],[12,50],[50,12],[25,25]]
+      self.status["payoffs"]=[[38,38],[12,50],[50,12],[25,25]]
       self.status["history"]=[[0,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[1,0],[1,1],[0,1],[0,0],[0,1],[1,1],[1,0],[1,0],[0,0],[1,0],[0,1],[1,0],[1,1],[0,0],[1,0],[1,0],[0,0],[0,0],[0,1],[1,1],[0,1],[0,0],[0,1]]
       self.status['supergameInfo']={}
       self.status['supergameInfo']['supergameType']="instructions"
@@ -1012,8 +969,8 @@ class subjectClass():
       # self.status['page']='instructionMultipleRulesFitTheHistory'
       # self.status['page']='instructionsMatches'
       self.status['page']='overviewScreen'
-      # self.status['page']='instructionsPayoffTable'
-      self.status['stage']='1'
+      self.status['page']='instructionsPayoffTable'
+      self.status['stage']='4'
       self.status['quizStatus']='working'
       self.appendStatus()
 
@@ -1099,6 +1056,7 @@ class subjectClass():
       self.matchRunning=0
       self.status['confirmed']="no"
       self.status['match']=match
+      self.totalPayoffString="$0"
    def getRuleByList(self,ruleList):
       thisRule=[x for x in self.rules['all']['regular'] if x.rule==ruleList]
       if len(thisRule)==0:
