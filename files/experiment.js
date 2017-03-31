@@ -1334,10 +1334,10 @@ function drawOtherActionConfirmation(){
 
 
     placeText({"parentDiv":"alertForeground","text":"After the current history your rule set will play:","left":"100px","width":"580px","textAlign":"right","height":"100px","top":"225px","fontSize":"28px","lineHeight":"100px"});
-    placeText({"parentDiv":"alertForeground","className":"ySquare square","left":"700px","width":"50px","height":"50px","top":"250px"});
+    placeText({"parentDiv":"alertForeground","className":nextAction+"Square square","left":"700px","width":"50px","height":"50px","top":"250px"});
 
     placeText({"parentDiv":"alertForeground","text":"You are currently trying to play:","left":"100px","width":"580px","textAlign":"right","height":"100px","top":"325px","fontSize":"28px","lineHeight":"100px"});
-    placeText({"parentDiv":"alertForeground","className":"wSquare square","left":"700px","width":"50px","height":"50px","top":"350px"});
+    placeText({"parentDiv":"alertForeground","className":otherAction+"Square square","left":"700px","width":"50px","height":"50px","top":"350px"});
 
 
     placeText({"parentDiv":"alertForeground","text":"Since your rule set will play automatically for you in the future, you should consider changing your rule set so that it plays the action you want it to after every history.","left":"50px","width":"780px","textAlign":"left","height":"100px","top":"450px","fontSize":"28px","lineHeight":"50px","color":"red"});
