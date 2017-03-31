@@ -42,7 +42,7 @@ class experimentClass():
       print("setParameters")
       self.data['exchangeRate']=float(1)/2500
       self.data['showPayoffTime']=60
-      self.data['postMatchTime']=10
+      self.data['postMatchTime']=5
       self.data['expectedPeriodsPerSupergame']=20
       self.data['currentSupergameType']={}
 
@@ -58,6 +58,7 @@ class experimentClass():
       self.data["matchTypeInfo"]["high"]={}
 
 
+      #low quiz people
       thisMatchInfo={}
       thisMatchInfo['supergameType']="directResponse"
       thisMatchInfo['supergameTypeConfirmation']="In all 60 matches you will make choices directly without constructing rules."
@@ -65,7 +66,7 @@ class experimentClass():
       thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
       self.data["matchTypeInfo"]["low"][1]=thisMatchInfo
 
-
+      #treatment 1
       thisMatchInfo={}
       thisMatchInfo['supergameType']="directResponse"
       thisMatchInfo['supergameTypeConfirmation']="In matches 1-10 you will make choices directly without constructing rules."
@@ -73,30 +74,108 @@ class experimentClass():
       thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
       self.data["matchTypeInfo"]["high"][1]=thisMatchInfo
 
-
       thisMatchInfo={}
       thisMatchInfo['supergameType']="nonBinding"
-      thisMatchInfo['supergameTypeConfirmation']="In matches 11-20 you can construct rules and edit your rule set. You will be told which action your rule set will make, but can still choose the other action if you want.<br><br> In matches 21-30 you will NOT be able to edit your rule set.  The rule set that you have at the end of match #20 will make all choices for you automatically."
+      thisMatchInfo['supergameTypeConfirmation']="In matches 11-20 you can construct rules and edit your rule set. You will be told which action your rule set will make, but can still choose the other action if you want.<br><br> In matches 21-50 you will NOT be able to edit your rule set.  The rule set that you have at the end of match #20 will make all choices for you automatically."
       thisMatchInfo['supergameTypeMessage']="Warning: Starting in match #21 your rule set will play automatically and this will not be an option."
-      thisMatchInfo['supergameTypeMessage2']="Reminder: You will not be able to make any changes to your rule set between match #21 and match #30.  The rule set you have at the end of match #20 will make all choices for you automatically at that point."
+      thisMatchInfo['supergameTypeMessage2']="Reminder: You will not be able to make any changes to your rule set between match #21 and match #50.  The rule set you have at the end of match #20 will make all choices for you automatically at that point."
       thisMatchInfo['supergameTypeContinuePage']="setFirstPeriodRulePage"
       self.data["matchTypeInfo"]["high"][11]=thisMatchInfo
       self.data['preStageLengths'][11]=600
 
-
       thisMatchInfo={}
       thisMatchInfo['supergameType']="noChange"
-      thisMatchInfo['supergameTypeConfirmation']="In matches 21-30 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
-      thisMatchInfo['supergameTypeMessage']="In matches 21-30 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
+      thisMatchInfo['supergameTypeConfirmation']="In matches 21-50 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
+      thisMatchInfo['supergameTypeMessage']="In matches 21-50 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
       thisMatchInfo['supergameTypeContinuePage']="gameNoChange"
       self.data["matchTypeInfo"]["high"][21]=thisMatchInfo
 
       thisMatchInfo={}
       thisMatchInfo['supergameType']="directResponse"
-      thisMatchInfo['supergameTypeConfirmation']="In matches 31-60 you will make choices directly without constructing rules."
-      thisMatchInfo['supergameTypeMessage']="In matches 31-60 you will make choices directly without constructing rules."
+      thisMatchInfo['supergameTypeConfirmation']="In matches 51-60 you will make choices directly without constructing rules."
+      thisMatchInfo['supergameTypeMessage']="In matches 51-60 you will make choices directly without constructing rules."
       thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
-      self.data["matchTypeInfo"]["high"][31]=thisMatchInfo
+      self.data["matchTypeInfo"]["high"][51]=thisMatchInfo
+
+      #treatment 2
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="directResponse"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 1-10 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeMessage']="In matches 1-10 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
+      # self.data["matchTypeInfo"]["high"][1]=thisMatchInfo
+
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="directResponse"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 11-20 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeMessage']="In matches 11-20 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
+      # self.data["matchTypeInfo"]["high"][11]=thisMatchInfo
+
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="nonBinding"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 21-30 you can construct rules and edit your rule set. You will be told which action your rule set will make, but can still choose the other action if you want.<br><br> In matches 31-60 you will NOT be able to edit your rule set.  The rule set that you have at the end of match #30 will make all choices for you automatically."
+      # thisMatchInfo['supergameTypeMessage']="Warning: Starting in match #31 your rule set will play automatically and this will not be an option."
+      # thisMatchInfo['supergameTypeMessage2']="Reminder: You will not be able to make any changes to your rule set between match #31 and match #60.  The rule set you have at the end of match #30 will make all choices for you automatically at that point."
+      # thisMatchInfo['supergameTypeContinuePage']="setFirstPeriodRulePage"
+      # self.data["matchTypeInfo"]["high"][21]=thisMatchInfo
+      # self.data['preStageLengths'][21]=600
+
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="noChange"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 31-60 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
+      # thisMatchInfo['supergameTypeMessage']="In matches 31-60 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
+      # thisMatchInfo['supergameTypeContinuePage']="gameNoChange"
+      # self.data["matchTypeInfo"]["high"][31]=thisMatchInfo
+
+
+      #TESTING###########################################################################################
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="directResponse"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 1-10 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeMessage']="In matches 1-10 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
+      # self.data["matchTypeInfo"]["high"][1]=thisMatchInfo
+
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="nonBinding"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 11-20 you can construct rules and edit your rule set. You will be told which action your rule set will make, but can still choose the other action if you want.<br><br> In matches 21-30 you will NOT be able to edit your rule set.  The rule set that you have at the end of match #20 will make all choices for you automatically."
+      # thisMatchInfo['supergameTypeMessage']="Warning: Starting in match #21 your rule set will play automatically and this will not be an option."
+      # thisMatchInfo['supergameTypeMessage2']="Reminder: You will not be able to make any changes to your rule set between match #21 and match #30.  The rule set you have at the end of match #20 will make all choices for you automatically at that point."
+      # thisMatchInfo['supergameTypeContinuePage']="setFirstPeriodRulePage"
+      # self.data["matchTypeInfo"]["low"][1]=thisMatchInfo
+      # self.data['preStageLengths'][1]=600
+
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="noChange"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 21-50 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
+      # thisMatchInfo['supergameTypeMessage']="In matches 21-50 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
+      # thisMatchInfo['supergameTypeContinuePage']="gameNoChange"
+      # self.data["matchTypeInfo"]["high"][21]=thisMatchInfo
+
+      # thisMatchInfo={}
+      # thisMatchInfo['supergameType']="directResponse"
+      # thisMatchInfo['supergameTypeConfirmation']="In matches 51-60 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeMessage']="In matches 51-60 you will make choices directly without constructing rules."
+      # thisMatchInfo['supergameTypeContinuePage']="gameDirectResponse"
+      # self.data["matchTypeInfo"]["high"][51]=thisMatchInfo
+
+      # self.data['showPayoffTime']=1
+      # self.data['postMatchTime']=2
+
+      # self.data['matchStartTimes']={}
+      # self.data['matchStartTimes']["low"]={}
+      # self.data['matchStartTimes']["high"]={}
+
+      #TESTING###########################################################################################
+
+
+
+
+
+
+
+
 
 
       self.data['periodsPerMatch']= ["No period 0",18, 20, 12, 6, 49, 13, 10, 13, 5, 22, 21, 13, 49, 2, 15, 14, 27, 1, 51, 11, 7, 4, 1, 43, 49, 4, 26, 20, 7, 27, 4, 27, 14, 17, 19, 28, 2, 23, 24, 45, 15, 6, 2, 52, 8, 25, 32, 2, 40, 8, 5, 8, 39, 11, 6, 46, 32, 43, 27, 29]
@@ -229,6 +308,7 @@ class experimentClass():
          self.updateStatus(sid)
 
    def startExperiment(self,message,client):
+      self.data['startExperimentButtonPressTime']=time.time()
       self.experimentSpecificMonitorTableEntries()
       self.taskDone(message)
       self.showPayoffs()
@@ -324,7 +404,7 @@ class experimentClass():
          self.updateRules(sid)
 
    def makeChoicesNoChange(self,group):
-      self.periodTime=max(self.periodTime*.9,.1)
+      self.periodTime=max(self.periodTime*.85,.1)
       self.initializeTimer(group,self.periodTime,self.makeChoicesNoChange,group)
       for sid in self.data['groups'][group]:
          self.data[sid].confirmChoiceNoChange()
@@ -352,6 +432,7 @@ class experimentClass():
    def startPreMatch(self,group):
       #group is "high" or "low"
       self.data['currentMatch'][group]+=1
+      self.data['matchStartTimes'][group][self.data['currentMatch'][group]]=time.time()
       if self.data['currentMatch'][group]<=self.data['totalMatches']:
          self.makeMatching(group)
          if self.data['currentMatch'][group] in self.data["matchTypeInfo"][group]:
@@ -463,12 +544,30 @@ class experimentClass():
       self.confirmChoiceFromPython(sid)
 
 
+   def cancelOtherActionConfirm(self,message,client):
+      sid=client.subjectID
+      otherAction=self.getOthersAction(sid)
+      self.data[sid].otherActionAttempts.append(["cancel",time.time(),self.data[sid].currentPeriod,self.data[sid].currentMatch,otherAction])
+      self.data[sid].status['otherActionConfirmation']="false"
+      self.updateRules(sid)
 
+   def getOthersAction(self,sid):
+      history=[[x[0],y] for x,y in zip(self.data[sid].history[self.data[sid].currentMatch],self.data[sid].opponentHistory[self.data[sid].currentMatch])]
+      thisRule=self.data[sid].pickRule(history)
+      thisRuleChoice=thisRule.output
+      otherAction=1-thisRuleChoice#other action
+      return otherAction
    def confirmChoiceNonBinding(self,message,client):
       #print "Confi Choice",client.subjectID
       sid=client.subjectID
-      self.data[sid].confirmChoiceNonBinding(message["choiceType"])
-      self.checkPartner(sid)
+      if message["choiceType"]=="otherActionConfirmNeeded":
+         self.data[sid].status['otherActionConfirmation']="true"
+         self.updateRules(sid)
+         otherAction=self.getOthersAction(sid)
+         self.data[sid].otherActionAttempts.append(["attempt",time.time(),self.data[sid].currentPeriod,self.data[sid].currentMatch,otherAction])
+      else:
+         self.data[sid].confirmChoiceNonBinding(message["choiceType"])
+         self.checkPartner(sid)
 
 
    def checkPartner(self,sid):
@@ -981,6 +1080,7 @@ class subjectClass():
       self.timePerQuestion=20
       self.timeUntilWarning=5
       self.totalPayoffString="$0"
+      self.otherActionAttempts=[]
       # self.setInstructionStatus()
 
    def setInstructionStatus(self):
@@ -1236,6 +1336,7 @@ class subjectClass():
       history=[[x[0],y] for x,y in zip(self.history[self.currentMatch],self.opponentHistory[self.currentMatch])]
       thisRule=self.pickRule(history)
       thisRuleChoice=thisRule.output
+      self.status['otherActionConfirmation']="false"
       if choice=="ruleSet":
          self.lastPlay=thisRuleChoice
          thisRule.ruleUsed(self.currentMatch,self.currentPeriod)
@@ -1245,6 +1346,7 @@ class subjectClass():
          self.status['lastChoiceInfo']['length']=thisRule.length
       elif choice=="otherAction":
          self.lastPlay=1-thisRuleChoice#other action
+         self.otherActionAttempts.append(["confirm",time.time(),self.currentPeriod,self.currentMatch,self.lastPlay])
          thisRule.ruleNotUsed(self.currentMatch,self.currentPeriod)
          self.status['lastChoiceInfo']={}
          self.status['lastChoiceInfo']['action']=self.lastPlay

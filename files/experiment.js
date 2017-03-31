@@ -1155,7 +1155,7 @@ function drawChoiceOption(){
     });
 
     placeText({
-        "text":"You can instead choose action "+otherAction+" by clicking below (or pressing down):",
+        "text":"You can instead choose action "+otherAction+" by clicking below:",
         "parentDiv":"directChoiceInfo",
         "width":"350px",
         "top":"250px",
@@ -1180,24 +1180,24 @@ function drawChoiceOption(){
         "left":"20px",
         "fontSize":"24px",
         "height":"85px",
-        "lineHeight":"75px",
+        "lineHeight":"85px",
         "backgroundColor":window.ruleColors[otherAction],
         "border":"1px solid black"
     });
 
 
-    placeText({
-        "text":"Can also select by clicking the DOWN arrow key on keyboard.",
-        "parentDiv":"directChoiceInfo",
-        "width":"350px",
-        "top":"375px",
-        "textAlign":"center",
-        "left":"0px",
-        "fontSize":"10px",
-        "lineHeight":"30px",
-        "height":"75px",
-        "padding":"25px",
-    });
+    // placeText({
+    //     "text":"Can also select by clicking the DOWN arrow key on keyboard.",
+    //     "parentDiv":"directChoiceInfo",
+    //     "width":"350px",
+    //     "top":"375px",
+    //     "textAlign":"center",
+    //     "left":"0px",
+    //     "fontSize":"10px",
+    //     "lineHeight":"30px",
+    //     "height":"75px",
+    //     "padding":"25px",
+    // });
 
     placeText({
         "text":"Can also select by clicking the UP arrow key on keyboard.",
@@ -1258,10 +1258,10 @@ function drawChoiceOption(){
 
         hoverDiv("makeOtherChoiceButton",{'border':'3px solid red'});
         hoverDiv("makeRuleSetChoiceButton",{'border':'3px solid red'});
-        clickButton("once","makeOtherChoiceButton",confirmChoiceNonBinding,"otherAction");
         clickButton("once","makeRuleSetChoiceButton",confirmChoiceNonBinding,"ruleSet");        
         pressKey("once","up",confirmChoiceNonBinding,"ruleSet")
-        pressKey("once","down",confirmChoiceNonBinding,"otherAction")
+        // pressKey("once","down",confirmChoiceNonBinding,"otherAction")
+        clickButton("once","makeOtherChoiceButton",confirmChoiceNonBinding,"otherActionConfirmNeeded");
         hoverDivChangeOtherDiv("makeOtherChoiceButton","otherActionWarning",{'color':'red'});
     }
     else{
@@ -1296,6 +1296,10 @@ function drawChoiceOption(){
             });
         }
     }
+    if(window.state['otherActionConfirmation']=="true"){
+        removePressKeyListener("up");
+        drawOtherActionConfirmation();
+    }
 }
 
 function confirmChoiceNonBinding(args){
@@ -1306,6 +1310,57 @@ function confirmChoiceNonBinding(args){
     var message={"type":"confirmChoiceNonBinding","choiceType":args[0]};
     sock.send(JSON.stringify(message));
 }
+
+
+function drawOtherActionConfirmation(){
+    placeText({"zIndex":"99999","divid":"alertBackground","width":"100%","height":"100%","backgroundColor":"rgba(100,100,100,.7)"});
+    placeText({"parentDiv":"alertBackground","divid":"alertForeground","left":"200px","width":"880px","height":"824px","top":"100px","backgroundColor":"rgba(255,255,255,1)"});
+    placeText({"parentDiv":"alertForeground","text":window.state['supergameInfo']['supergameTypeMessage2'],"left":"20px","width":"840px","height":"384px","top":"20px","fontSize":"28px","lineHeight":"50px","color":"blue"});
+
+
+    if(window.state['nextChoiceInfo']['action']==0){
+        var nextAction="w";
+        var otherAction="y";
+        var otherActionUpper="Y";
+    }
+    else{
+        var nextAction="y";
+        var otherAction="w";
+        var otherActionUpper="W";
+    }
+
+    placeText({"divid":"otherActionContinue","parentDiv":"alertForeground","text":"Continue and play action "+otherActionUpper+" right now.","left":"150px","width":"240px","height":"100px","top":"675px","fontSize":"20px","padding":"20px","lineHeight":"30px","border":"1px solid black","backgroundColor":window.ruleColors[otherActionUpper]});
+    placeText({"divid":"otherActionCancel","parentDiv":"alertForeground","text":"Cancel, and go back to change rule set.","left":"490px","width":"240px","height":"100px","top":"675px","fontSize":"20px","padding":"20px","lineHeight":"30px","border":"1px solid black","backgroundColor":"rgba(255,0,0,.1)"});
+
+
+    placeText({"parentDiv":"alertForeground","text":"After the current history your rule set will play:","left":"100px","width":"580px","textAlign":"right","height":"100px","top":"225px","fontSize":"28px","lineHeight":"100px"});
+    placeText({"parentDiv":"alertForeground","className":"ySquare square","left":"700px","width":"50px","height":"50px","top":"250px"});
+
+    placeText({"parentDiv":"alertForeground","text":"You are currently trying to play:","left":"100px","width":"580px","textAlign":"right","height":"100px","top":"325px","fontSize":"28px","lineHeight":"100px"});
+    placeText({"parentDiv":"alertForeground","className":"wSquare square","left":"700px","width":"50px","height":"50px","top":"350px"});
+
+
+    placeText({"parentDiv":"alertForeground","text":"Since your rule set will play automatically for you in the future, you should consider changing your rule set so that it plays the action you want it to after every history.","left":"50px","width":"780px","textAlign":"left","height":"100px","top":"450px","fontSize":"28px","lineHeight":"50px","color":"red"});
+
+
+    clickButton("once","otherActionCancel",cancelOtherActionConfirm);   
+    clickButton("once","otherActionContinue",confirmChoiceOtherAction,"continue");        
+
+}
+
+function confirmChoiceOtherAction(args){
+    removeListeners("otherActionContinue");
+    removeListeners("otherActionCancel");
+    var message={"type":"confirmChoiceNonBinding","choiceType":"otherAction"};
+    sock.send(JSON.stringify(message));
+}
+
+function cancelOtherActionConfirm(args){
+    var message={"type":"cancelOtherActionConfirm"};
+    sock.send(JSON.stringify(message));
+}
+
+
 
 
 function drawDirectResponse(){
