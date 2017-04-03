@@ -1465,7 +1465,6 @@ function gameDirectResponse(){
 
 
 function confirmChoiceDirectResponse(args){
-    console.log("confirmChoiceDirectResponse!!!!!!!!");
     removePressKeyListener("left");
     removePressKeyListener("right");
     deleteDiv("directChoiceW");
@@ -1527,7 +1526,6 @@ function postMatch(){
 
 function statusManager(){
   thisStatus=window.state;
-  console.log(thisStatus)
   if(runFunctionFromString(thisStatus["page"])==false){
       if(thisStatus[0]==-1){
         message="Loading...";

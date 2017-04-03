@@ -68,7 +68,16 @@ class experimentClass():
 
 
       self.data['thisTreatment']=1
-      self.data['thisSession']=1
+      self.data['thisSession']=2
+
+      #ToDO
+      #Treatment  Session     Status
+      #     1        1          Done
+      #     2        1          Done
+      #     1        2          
+      #     2        2          
+      #     1        3          
+      #     2        3          
 
       if self.data['thisTreatment']==1:
          #treatment 1
@@ -157,7 +166,7 @@ class experimentClass():
          thisMatchInfo['supergameTypeConfirmation']="In matches 21-50 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
          thisMatchInfo['supergameTypeMessage']="In matches 21-50 you will NOT be able to edit your rule set.  Your rule set will make choices for you automatically."
          thisMatchInfo['supergameTypeContinuePage']="gameNoChange"
-         self.data["matchTypeInfo"]["high"][21]=thisMatchInfo
+         self.data["matchTypeInfo"]["low"][2]=thisMatchInfo
 
          thisMatchInfo={}
          thisMatchInfo['supergameType']="directResponse"
@@ -189,6 +198,10 @@ class experimentClass():
          session=[33, 39, 4, 13, 29, 15, 13, 5, 19, 4, 33, 14, 19, 9, 1, 10, 48, 21, 9, 1, 16, 9, 11, 2, 4, 5, 9, 8, 22, 10, 32, 23, 2, 28, 5, 19, 5, 20, 1, 31, 8, 5, 68, 15, 12, 4, 13, 13, 37, 37, 5, 18, 40, 20, 25, 2, 24, 47, 41, 25]
       elif self.data['thisSession']==3:
          session=[10, 55, 15, 1, 48, 49, 74, 13, 4, 33, 11, 28, 4, 13, 7, 1, 24, 31, 27, 12, 17, 3, 4, 8, 9, 31, 33, 6, 23, 22, 5, 14, 97, 3, 8, 3, 65, 16, 20, 5, 35, 41, 35, 8, 7, 52, 23, 18, 29, 7, 1, 48, 20, 28, 16, 7, 2, 12, 1, 8]
+      
+      if self.data['thisTreatment']==3:
+         #testing
+         session=[1, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 48, 49, 74, 13, 4, 33, 11, 28, 4, 13, 7, 1, 24, 31, 27, 12, 17, 3, 4, 8, 9, 31, 33, 6, 23, 22, 5, 14, 97, 3, 8, 3, 65, 16, 20, 5, 35, 41, 35, 8, 7, 52, 23, 18, 29, 7, 1, 48, 20, 28, 16, 7, 2, 12, 1, 8]
 
 
       self.data['periodsPerMatch']= ["No period 0"]+session
@@ -254,8 +267,6 @@ class experimentClass():
       goodQuiz=[]
       badQuiz=[]
       for sid in self.data['subjectIDs']:
-         # if sid in ['subject0',"subject1",'subject2',"subject3"]:
-         #    goodQuiz.append(sid)
          if self.data[sid].quizEarnings[0]==5:
             goodQuiz.append(sid)
          else:
@@ -422,12 +433,13 @@ class experimentClass():
 
    def makeChoicesNoChange(self,group):
       self.periodTime=max(self.periodTime*.85,.1)
+      # self.periodTime=max(self.periodTime*.85,.02)
       self.initializeTimer(group,self.periodTime,self.makeChoicesNoChange,group)
       for sid in self.data['groups'][group]:
          self.data[sid].confirmChoiceNoChange()
       for sid in self.data['groups'][group]:
          self.finishPeriod(sid)
-
+      self.monitorMessage()
 
 
 
@@ -585,7 +597,7 @@ class experimentClass():
       else:
          self.data[sid].confirmChoiceNonBinding(message["choiceType"])
          self.checkPartner(sid)
-
+      self.monitorMessage()
 
    def checkPartner(self,sid):
       myGroup=self.data[sid].group
@@ -652,9 +664,10 @@ class experimentClass():
             for sid in self.data['groups'][group]:
                self.data[sid].status["stage"]="timer"
                self.updateRules(sid)
+         self.monitorMessage()
+
       self.updateRules(subject1)
       self.data[subject1].status["animate"]="no"
-      self.monitorMessage()
 
 
 
@@ -822,7 +835,7 @@ class experimentClass():
          self.data[sid].updateRuleStats()
       self.data[sid].updateNonRuleStats()
       self.updateStatus(sid)
-      self.monitorMessage()
+      #self.monitorMessage()
 
 
    def findRuleClassByList(self,ruleIN,subjectID):
@@ -1029,6 +1042,7 @@ class experimentClass():
       sid=client.subjectID
       self.data[sid].confirmChoiceDirectResponse(message['choice'])
       self.checkPartner(sid)
+      monitorMessage()
 
    def experimentSpecificMonitorTableEntries(self):
       self.data['monitorTableInfo']=[
