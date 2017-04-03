@@ -41,7 +41,7 @@ class experimentClass():
    def setParameters(self):
       print("setParameters")
       self.data['exchangeRate']=float(1)/2500
-      self.data['showPayoffTime']=60
+      self.data['showPayoffTime']=2
       self.data['postMatchTime']=5
       self.data['expectedPeriodsPerSupergame']=20
       self.data['currentSupergameType']={}
@@ -1042,7 +1042,7 @@ class experimentClass():
       sid=client.subjectID
       self.data[sid].confirmChoiceDirectResponse(message['choice'])
       self.checkPartner(sid)
-      monitorMessage()
+      self.monitorMessage()
 
    def experimentSpecificMonitorTableEntries(self):
       self.data['monitorTableInfo']=[
