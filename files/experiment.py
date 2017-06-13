@@ -67,7 +67,7 @@ class experimentClass():
       self.data["matchTypeInfo"]["low"][1]=thisMatchInfo
 
 
-      self.data['thisTreatment']=1
+      self.data['thisTreatment']=3
       self.data['thisSession']=2
 
       #ToDO
@@ -143,7 +143,6 @@ class experimentClass():
          self.data["matchTypeInfo"]["high"][31]=thisMatchInfo
 
       elif self.data['thisTreatment']==3:
-
          #TESTING###########################################################################################
          thisMatchInfo={}
          thisMatchInfo['supergameType']="directResponse"
@@ -439,7 +438,7 @@ class experimentClass():
          self.data[sid].confirmChoiceNoChange()
       for sid in self.data['groups'][group]:
          self.finishPeriod(sid)
-      self.monitorMessage()
+      self.updateMonitorTable()
 
 
 
